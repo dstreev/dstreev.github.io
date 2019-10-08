@@ -58,6 +58,11 @@
   </url>
   
   <url>
+    <loc>http://blog.streever.com/categories/hadoop/</loc>
+    <lastmod>2019-04-17T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/tags/hdp/</loc>
     <lastmod>2019-04-17T19:47:29-07:00</lastmod>
   </url>
@@ -69,6 +74,11 @@
   
   <url>
     <loc>http://blog.streever.com/articles/in-place-centos6-to-centos7-hdp/</loc>
+    <lastmod>2019-04-17T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/upgrade/</loc>
     <lastmod>2019-04-17T19:47:29-07:00</lastmod>
   </url>
   

@@ -20,5 +20,23 @@
       <description></description>
     </item>
     
+    <item>
+      <title>HADOOP</title>
+      <link>http://blog.streever.com/categories/hadoop/</link>
+      <pubDate>Wed, 17 Apr 2019 19:47:29 -0700</pubDate>
+      
+      <guid>http://blog.streever.com/categories/hadoop/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Upgrade</title>
+      <link>http://blog.streever.com/categories/upgrade/</link>
+      <pubDate>Wed, 17 Apr 2019 19:47:29 -0700</pubDate>
+      
+      <guid>http://blog.streever.com/categories/upgrade/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>
