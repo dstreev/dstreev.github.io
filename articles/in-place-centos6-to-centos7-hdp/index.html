@@ -136,7 +136,7 @@ Unfortunately,..."/>
 
 <p>This approach is pretty conservative and general only practically for a small number of nodes.</p>
 
-<p>With replication set to 3, the default, you can only decommission two nodes at a time.  Beyond that, you risk data being unavailable for a period.  See <a href="/upgrades/its-your-last-block.html">It&rsquo;s your last block</a>.</p>
+<p>With replication set to 3, the default, you can only decommission two nodes at a time.  Beyond that, you risk data being unavailable for a period.  See <a href="/images/upgrades/its-your-last-block.html">It&rsquo;s your last block</a>.</p>
 
 <p>With rack awareness, it&rsquo;s possible to do this a rack at a time.  But beware, if rack awareness wasn&rsquo;t initially configured, you can experience data loss/availability issues.  Always monitor the namenode for data availability issues.</p>
 
@@ -180,7 +180,7 @@ Unfortunately,..."/>
 
 <p>With the chosen host, go ahead and shut it down. And start the OS migration process.</p>
 
-<p><img src="/upgrades/host_not_connected.png" alt="" /></p>
+<p><img src="/images/upgrades/host_not_connected.png" alt="" /></p>
 
 <p>As I mentioned earlier, all persisted state information needs to be on a different physical drive(s) than the OS.  The reason for this is that we&rsquo;re going to rebuild the OS partition completely.  This means formatting <strong>ONLY THE ROOT DEVICE</strong> and reinstalling the new OS on it.  As long as the persisted stores are on other devices, our data is safe.</p>
 
@@ -204,29 +204,29 @@ Unfortunately,..."/>
 
 <p>Now that we have the host rebuilt with the basics and an <em>Ambari-Agent</em> up and running, we should be able to see the host connected to Ambari via the Hosts Page.</p>
 
-<p><img src="/upgrades/host_connected.png" alt="" /></p>
+<p><img src="/images/upgrades/host_connected.png" alt="" /></p>
 
 <p>At this point, you have a host that has been re-associated to Ambari successfully.  In the host details section, you&rsquo;ll notice how the host now identifies with version 7 of the OS.  And at this point, the host will have none of the HDP libraries installed.</p>
 
-<p><img src="/upgrades/host_detail_os7.png" alt="" /></p>
+<p><img src="/images/upgrades/host_detail_os7.png" alt="" /></p>
 
 <p>While none of the HDP libraries are installed, you&rsquo;ll notice that Ambari knows what services should be on the host.  That&rsquo;s because the host FQDN matches the previous OS version of the host and when the &lsquo;ambari-agent&rsquo; registered back with the &lsquo;ambari-server&rsquo;, the host assumed the former identity.</p>
 
-<p><img src="/upgrades/host_available_not_installed.png" alt="" /></p>
+<p><img src="/images/upgrades/host_available_not_installed.png" alt="" /></p>
 
 <p>This host will also NOT have the previous system accounts for HDP, yet.  IE: hdfs, yarn, hive, etc&hellip;</p>
 
 <p>Ambari Server has a new feature, added in 2.6, that allows us to recover a host in this state.  From the &lsquo;host&rsquo; window there&rsquo;s a &lsquo;Host Action&rsquo; button in the upper right corner.</p>
 
-<p><img src="/upgrades/host_action_button.png" alt="" /></p>
+<p><img src="/images/upgrades/host_action_button.png" alt="" /></p>
 
 <p>Select this and &lsquo;Recover Host&rsquo;.  Ambari will reinstall and configure all the missing services on this host, as they were before.</p>
 
-<p><img src="/upgrades/recover_host_action.png" alt="" /></p>
+<p><img src="/images/upgrades/recover_host_action.png" alt="" /></p>
 
 <p>We&rsquo;re almost there, do NOT start the services yet!!!  The remounted data directories that still contain all our data (that was the whole point of this exercise) need to be fixed.  Most likely that the POSIX UID&rsquo;s for the user and group assigned in the previous OS, do NOT match or even exist in the new OS.  So the data drive permissions will not be properly configured.  We need to fix this before starting the services.</p>
 
-<p><img src="/upgrades/host_data_dir_permissions_broke.png" alt="" /></p>
+<p><img src="/images/upgrades/host_data_dir_permissions_broke.png" alt="" /></p>
 
 <p>Locate each of the data directories and adjust (recursively) the ownership to match the new uid&rsquo;s.  For example:
 The NN data directory at <code>/data/0/hadoop/hdfs/namenode</code>.  We need to ensure hdfs:hadoop owns the directory.</p>
@@ -234,7 +234,7 @@ The NN data directory at <code>/data/0/hadoop/hdfs/namenode</code>.  We need to 
 <pre><code>chown -R hdfs:hadoop /data/0/hadoop/hdfs/namenode
 </code></pre>
 
-<p><img src="/upgrades/host_data_dir_permissions_fixed.png" alt="" /></p>
+<p><img src="/images/upgrades/host_data_dir_permissions_fixed.png" alt="" /></p>
 
 <p>Make these adjustments for each of the data directories on the host including, but not limited to:
 - Namenode
