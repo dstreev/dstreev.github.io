@@ -6,9 +6,19 @@
     <description>Recent content on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Mon, 07 Oct 2019 19:47:45 -0700</lastBuildDate>
     
 	<atom:link href="http://blog.streever.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Readme2</title>
+      <link>http://blog.streever.com/readme2/</link>
+      <pubDate>Mon, 07 Oct 2019 19:47:45 -0700</pubDate>
+      
+      <guid>http://blog.streever.com/readme2/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

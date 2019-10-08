@@ -3,11 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://blog.streever.com/categories/</loc>
+    <loc>http://blog.streever.com/</loc>
+    <lastmod>2019-10-07T19:47:45-07:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.streever.com/</loc>
+    <loc>http://blog.streever.com/readme2/</loc>
+    <lastmod>2019-10-07T19:47:45-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/</loc>
   </url>
   
   <url>
