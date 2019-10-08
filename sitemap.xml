@@ -33,55 +33,67 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/tags/ambari/</loc>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/articles/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/categories/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/tags/despair/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/hdp/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/articles/its-your-last-block/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/tags/knowledge/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/articles/dunning-kruger-effect-technology/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/os/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/tags/philosophy/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/articles/in-place-centos6-to-centos7-hdp/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/tags/tech/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/ambari/</loc>
+    <lastmod>2019-04-17T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/hdp/</loc>
+    <lastmod>2019-04-17T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/os/</loc>
+    <lastmod>2019-04-17T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/articles/in-place-centos6-to-centos7-hdp/</loc>
+    <lastmod>2019-04-17T19:47:29-07:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/tags/upgrade/</loc>
+    <lastmod>2019-04-17T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/articles/its-your-last-block/</loc>
+    <lastmod>2019-04-16T12:00:00-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/</loc>
   </url>
   
 </urlset>
