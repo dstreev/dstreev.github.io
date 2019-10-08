@@ -3,17 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://blog.streever.com/articles/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/hello/</loc>
     <lastmod>2019-10-07T19:47:29-07:00</lastmod>
   </url>
   
@@ -28,11 +18,6 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/articles/readme4/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/tags/</loc>
     <lastmod>2019-10-07T19:47:29-07:00</lastmod>
   </url>
@@ -43,17 +28,60 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/tags/wolrd/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/tags/world/</loc>
     <lastmod>2019-10-07T19:47:29-07:00</lastmod>
   </url>
   
   <url>
+    <loc>http://blog.streever.com/tags/ambari/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/articles/</loc>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/despair/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/hdp/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/articles/its-your-last-block/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/knowledge/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/articles/dunning-kruger-effect-technology/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/os/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/philosophy/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/articles/in-place-centos6-to-centos7-hdp/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/tech/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/upgrade/</loc>
   </url>
   
 </urlset>

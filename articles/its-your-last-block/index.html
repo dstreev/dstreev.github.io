@@ -6,45 +6,50 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-  <title>Readme3</title>
+  <title>It&#39;s your last block!!!</title>
   <meta name="author" content="" />
   <meta name="description"
-        content=""/>
+        content="In a few other articles, I&rsquo;ll talk about bringing hosts down to facilitate upgrades.
+
+If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails..."/>
 
 
   <meta name="generator" content="Hugo 0.58.3" />
 
   
-  <meta itemprop="name" content="Readme3"/>
+  <meta itemprop="name" content="It&#39;s your last block!!!"/>
   <meta itemprop="description"
-        content=""/>
+        content="In a few other articles, I&rsquo;ll talk about bringing hosts down to facilitate upgrades.
+
+If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails..."/>
   <meta itemprop="image"
         content=""/>
 
   
-  <meta property="og:title" content="Readme3"/>
+  <meta property="og:title" content="It&#39;s your last block!!!"/>
   <meta property="og:type"
         content="article"/>
-  <meta property="og:url" content="http://blog.streever.com/posts/readme3/"/>
+  <meta property="og:url" content="http://blog.streever.com/articles/its-your-last-block/"/>
   <meta property="og:image"
         content=""/>
   <meta property="og:description"
-        content=""/>
+        content="In a few other articles, I&rsquo;ll talk about bringing hosts down to facilitate upgrades.
+
+If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails..."/>
   <meta property="og:site_name" content="David W. Streever"/>
-  <meta property="article:published_time"
-        content="2019-10-07T19:47:29-07:00"/>
-  <meta property="article:section" content="posts"/>
-  <meta property="article:tag" content="test"/>
-  <meta property="article:tag" content="world"/>
+  <meta property="article:section" content="articles"/>
+  <meta property="article:tag" content="hdp"/>
 
   
   
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:site"
         content=""/>
-  <meta name="twitter:title" content="Readme3"/>
+  <meta name="twitter:title" content="It&#39;s your last block!!!"/>
   <meta name="twitter:description"
-        content=""/>
+        content="In a few other articles, I&rsquo;ll talk about bringing hosts down to facilitate upgrades.
+
+If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails..."/>
   <meta name="twitter:creator"
         content=""/>
   <meta name="twitter:image:src"
@@ -96,14 +101,19 @@
 
       
       <div class="container">
-        <p class="title">Readme3</p>
-        <p class="subtitle">Oct 7, 2019</p>
+        <p class="title">It&#39;s your last block!!!</p>
+        <p class="subtitle">Jan 1, 0001</p>
 
         
 
         
         <div class="content">
-          
+          <p>In a few other articles, I&rsquo;ll talk about bringing hosts down to facilitate upgrades.</p>
+
+<p>If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.</p>
+
+<p>If critical jobs can&rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.</p>
+
         </div>
 
         
@@ -113,13 +123,8 @@
 <div class="heading">Tags:</div>
 <div class="field is-grouped is-grouped-multiline">
   <div class="control">
-    <a href="/tags/test">
-      <span class="tag">Test</span>
-    </a>
-  </div>
-  <div class="control">
-    <a href="/tags/world">
-      <span class="tag">World</span>
+    <a href="/tags/hdp">
+      <span class="tag">Hdp</span>
     </a>
   </div>
 </div>
@@ -136,9 +141,21 @@
     <div class="level-left">
       <div class="level-item">
         <p class="control has-addons">
-          <a class="button" href="#" disabled>
+          <a class="button" href="http://blog.streever.com/posts/readme3/">
             <span class="icon is-small"><i class="fa fa-chevron-left"></i></span>
-            <span>Newest</span>
+            <span class="is-hidden-touch is-hidden-desktop-only">
+              Readme3
+            </span>
+            <span class="is-hidden-touch is-hidden-widescreen">
+              Readme3
+            </span>
+            <span class="is-hidden-mobile is-hidden-desktop">
+              Readme3
+            </span>
+            <span class="is-hidden-tablet">
+              Readme3
+            </span>
+            
           </a>
         </p>
       </div>
@@ -147,18 +164,18 @@
     <div class="level-right">
       <div class="level-item">
         <p class="control has-addons">
-          <a class="button" href="http://blog.streever.com/articles/its-your-last-block/">
+          <a class="button" href="http://blog.streever.com/articles/dunning-kruger-effect-technology/">
             <span class="is-hidden-touch is-hidden-desktop-only">
-              It&#39;s your last block!!!
+              Learning Tech - The Dunning-Kruger Effect
             </span>
             <span class="is-hidden-touch is-hidden-widescreen">
-              It&#39;s your last block!!!
+              Learning Tech - The Dunning-Kruger Effect
             </span>
             <span class="is-hidden-mobile is-hidden-desktop">
-              It&#39;s your last block!!!
+              Learning Tech - The Dunning-Kruger Effect
             </span>
             <span class="is-hidden-tablet">
-              It&#39;s your last block!!!
+              Learning Tech - The Dunning-Kruger...
             </span>
             
             <span class="icon is-small"><i class="fa fa-chevron-right"></i></span>
@@ -180,6 +197,18 @@
 
       
       
+<div class="container">
+  <nav class="panel">
+    <p class="panel-heading">Related</p>
+    <a class="panel-block" href="http://blog.streever.com/articles/in-place-centos6-to-centos7-hdp/">
+      <span class="icon is-small"><i class="fa fa-chevron-right"></i></span>
+      <span>&nbsp;</span>
+      <span>RHEL/CentOS 6 to 7 in-place upgrades with HDP&nbsp;
+      <div class="tag">Hdp</div>
+      </span>
+    </a>
+  </nav>
+</div>
 
     </section>
 

@@ -12,15 +12,6 @@
     
     
     <item>
-      <title>hello</title>
-      <link>http://blog.streever.com/tags/hello/</link>
-      <pubDate>Mon, 07 Oct 2019 19:47:29 -0700</pubDate>
-      
-      <guid>http://blog.streever.com/tags/hello/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>test</title>
       <link>http://blog.streever.com/tags/test/</link>
       <pubDate>Mon, 07 Oct 2019 19:47:29 -0700</pubDate>
@@ -30,20 +21,83 @@
     </item>
     
     <item>
-      <title>wolrd</title>
-      <link>http://blog.streever.com/tags/wolrd/</link>
-      <pubDate>Mon, 07 Oct 2019 19:47:29 -0700</pubDate>
-      
-      <guid>http://blog.streever.com/tags/wolrd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>world</title>
       <link>http://blog.streever.com/tags/world/</link>
       <pubDate>Mon, 07 Oct 2019 19:47:29 -0700</pubDate>
       
       <guid>http://blog.streever.com/tags/world/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ambari</title>
+      <link>http://blog.streever.com/tags/ambari/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/ambari/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>despair</title>
+      <link>http://blog.streever.com/tags/despair/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/despair/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hdp</title>
+      <link>http://blog.streever.com/tags/hdp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/hdp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>knowledge</title>
+      <link>http://blog.streever.com/tags/knowledge/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/knowledge/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>os</title>
+      <link>http://blog.streever.com/tags/os/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/os/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>philosophy</title>
+      <link>http://blog.streever.com/tags/philosophy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/philosophy/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tech</title>
+      <link>http://blog.streever.com/tags/tech/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/tech/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>upgrade</title>
+      <link>http://blog.streever.com/tags/upgrade/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/upgrade/</guid>
       <description></description>
     </item>
     
