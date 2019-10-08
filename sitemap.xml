@@ -3,42 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://blog.streever.com/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/posts/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/posts/readme3/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/test/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/world/</loc>
-    <lastmod>2019-10-07T19:47:29-07:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/articles/</loc>
     <lastmod>2019-08-10T19:47:29-07:00</lastmod>
   </url>
   
   <url>
+    <loc>http://blog.streever.com/categories/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/tags/despair/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/editorial/</loc>
     <lastmod>2019-08-10T19:47:29-07:00</lastmod>
   </url>
   
@@ -54,6 +39,11 @@
   
   <url>
     <loc>http://blog.streever.com/tags/philosophy/</loc>
+    <lastmod>2019-08-10T19:47:29-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/</loc>
     <lastmod>2019-08-10T19:47:29-07:00</lastmod>
   </url>
   
@@ -90,10 +80,6 @@
   <url>
     <loc>http://blog.streever.com/articles/its-your-last-block/</loc>
     <lastmod>2019-04-16T12:00:00-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/categories/</loc>
   </url>
   
 </urlset>
