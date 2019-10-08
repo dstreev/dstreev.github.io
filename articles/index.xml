@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>David W. Streever</title>
-    <link>http://blog.streever.com/</link>
-    <description>Recent content on David W. Streever</description>
+    <title>Articles on David W. Streever</title>
+    <link>http://blog.streever.com/articles/</link>
+    <description>Recent content in Articles on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 07 Oct 2019 19:47:29 -0700</lastBuildDate>
     
-	<atom:link href="http://blog.streever.com/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://blog.streever.com/articles/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Readme3</title>
-      <link>http://blog.streever.com/posts/readme3/</link>
-      <pubDate>Mon, 07 Oct 2019 19:47:29 -0700</pubDate>
-      
-      <guid>http://blog.streever.com/posts/readme3/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>Readme4</title>
