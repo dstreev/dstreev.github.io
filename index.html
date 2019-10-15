@@ -109,7 +109,40 @@
                 <article class="media">
   <div class="media-content">
 
-    <p class="title"><a href="http://blog.streever.com/articles/dunning-kruger-effect-technology/">Learning Tech - The Dunning-Kruger Effect</a></p>
+    <p class="title"><a href="http://blog.streever.com/2019/10/filtering-compactions-in-hive/">Filtering Compactions in Hive</a></p>
+    <p class="subtitle is-flex" style="justify-content:space-between">
+      <span>Oct 15, 2019</span>
+      <span>3 min.</span>
+    </p>
+
+    <p>Compactions can be seen with the standard SQL:
+SHOW COMPACTIONS;  But this method has a couple of problems: 1. No Filtering 2. Timestamps are hard to interpret
+Until additional functionality is available for this built in function, we can do the following.
+Add links to the Metastore DB tables and create custom views to review compaction details.
+Build Out Metadata Elements CREATE DATABASE IF NOT EXISTS custom_sys; DROP TABLE IF EXISTS `custom_sys`.</p>
+
+  </div>
+</article>
+
+                <article class="media">
+  <div class="media-content">
+
+    <p class="title"><a href="http://blog.streever.com/2019/10/running-llap-on-compute-only-nodes/">Running LLAP on Compute Only Nodes</a></p>
+    <p class="subtitle is-flex" style="justify-content:space-between">
+      <span>Oct 15, 2019</span>
+      <span>1 min.</span>
+    </p>
+
+    <p>The run LLAP and/or Hive jobs on Compute Only Nodes you need to override a Hive Configuration default setting. Otherwise, queries will fail a majority of the time.
+The hive configuration value hive.merge.nway.joins is true by default. But in Ambari 2.7.3+ (HDP 3+), it overrides the default setting and configures this to false. When this is left at the default true, intermittent failures of queries will happen on compute only nodes.</p>
+
+  </div>
+</article>
+
+                <article class="media">
+  <div class="media-content">
+
+    <p class="title"><a href="http://blog.streever.com/2018/08/learning-tech-the-dunning-kruger-effect/">Learning Tech - The Dunning-Kruger Effect</a></p>
     <p class="subtitle is-flex" style="justify-content:space-between">
       <span>Aug 10, 2018</span>
       <span>2 min.</span>
@@ -123,7 +156,7 @@
                 <article class="media">
   <div class="media-content">
 
-    <p class="title"><a href="http://blog.streever.com/articles/in-place-centos6-to-centos7-hdp/">RHEL/CentOS 6 to 7 in-place upgrades with HDP</a></p>
+    <p class="title"><a href="http://blog.streever.com/2018/04/rhel/centos-6-to-7-in-place-upgrades-with-hdp/">RHEL/CentOS 6 to 7 in-place upgrades with HDP</a></p>
     <p class="subtitle is-flex" style="justify-content:space-between">
       <span>Apr 17, 2018</span>
       <span>9 min.</span>
@@ -137,7 +170,7 @@
                 <article class="media">
   <div class="media-content">
 
-    <p class="title"><a href="http://blog.streever.com/articles/its-your-last-block/">It&#39;s your last block!!!</a></p>
+    <p class="title"><a href="http://blog.streever.com/2018/04/its-your-last-block/">It&#39;s your last block!!!</a></p>
     <p class="subtitle is-flex" style="justify-content:space-between">
       <span>Apr 16, 2018</span>
       <span>1 min.</span>
@@ -184,6 +217,14 @@
       </a>
     </li>
     <li>
+      <a href="/categories/hive">
+        <div class="tags has-addons">
+          <span class="tag">Hive</span>
+          <span class="tag is-link">2</span>
+        </div>
+      </a>
+    </li>
+    <li>
       <a href="/categories/opinion">
         <div class="tags has-addons">
           <span class="tag">Opinion</span>
@@ -206,6 +247,30 @@
       <a href="/tags/ambari">
         <div class="tags has-addons">
           <span class="tag">Ambari</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/compaction">
+        <div class="tags has-addons">
+          <span class="tag">Compaction</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/compute">
+        <div class="tags has-addons">
+          <span class="tag">Compute</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/config">
+        <div class="tags has-addons">
+          <span class="tag">Config</span>
           <span class="tag is-link">1</span>
         </div>
       </a>
@@ -235,9 +300,49 @@
       </a>
     </li>
     <li>
+      <a href="/tags/hive-admin">
+        <div class="tags has-addons">
+          <span class="tag">Hive Admin</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/hive3">
+        <div class="tags has-addons">
+          <span class="tag">Hive3</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/jdbc-federation">
+        <div class="tags has-addons">
+          <span class="tag">Jdbc Federation</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
       <a href="/tags/knowledge">
         <div class="tags has-addons">
           <span class="tag">Knowledge</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/llap">
+        <div class="tags has-addons">
+          <span class="tag">Llap</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/operations-admin">
+        <div class="tags has-addons">
+          <span class="tag">Operations Admin</span>
           <span class="tag is-link">1</span>
         </div>
       </a>
@@ -259,9 +364,33 @@
       </a>
     </li>
     <li>
+      <a href="/tags/storage">
+        <div class="tags has-addons">
+          <span class="tag">Storage</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/sys.db">
+        <div class="tags has-addons">
+          <span class="tag">Sys.db</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
       <a href="/tags/tech">
         <div class="tags has-addons">
           <span class="tag">Tech</span>
+          <span class="tag is-link">1</span>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a href="/tags/tooling">
+        <div class="tags has-addons">
+          <span class="tag">Tooling</span>
           <span class="tag is-link">1</span>
         </div>
       </a>

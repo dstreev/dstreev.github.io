@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hive3 on David W. Streever</title>
+    <link>http://blog.streever.com/tags/hive3/</link>
+    <description>Recent content in hive3 on David W. Streever</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.streever.com/tags/hive3/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Filtering Compactions in Hive</title>
+      <link>http://blog.streever.com/2019/10/filtering-compactions-in-hive/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/2019/10/filtering-compactions-in-hive/</guid>
+      <description>Compactions can be seen with the standard SQL:
+SHOW COMPACTIONS;  But this method has a couple of problems: 1. No Filtering 2. Timestamps are hard to interpret
+Until additional functionality is available for this built in function, we can do the following.
+Add links to the Metastore DB tables and create custom views to review compaction details.
+Build Out Metadata Elements CREATE DATABASE IF NOT EXISTS custom_sys; DROP TABLE IF EXISTS `custom_sys`.</description>
+    </item>
+    
+  </channel>
+</rss>

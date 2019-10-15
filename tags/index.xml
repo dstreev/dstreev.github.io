@@ -6,10 +6,109 @@
     <description>Recent content in Tags on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 10 Aug 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://blog.streever.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>compaction</title>
+      <link>http://blog.streever.com/tags/compaction/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/compaction/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>compute</title>
+      <link>http://blog.streever.com/tags/compute/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/compute/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>config</title>
+      <link>http://blog.streever.com/tags/config/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/config/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hive-admin</title>
+      <link>http://blog.streever.com/tags/hive-admin/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/hive-admin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hive3</title>
+      <link>http://blog.streever.com/tags/hive3/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/hive3/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>jdbc-federation</title>
+      <link>http://blog.streever.com/tags/jdbc-federation/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/jdbc-federation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>llap</title>
+      <link>http://blog.streever.com/tags/llap/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/llap/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>operations-admin</title>
+      <link>http://blog.streever.com/tags/operations-admin/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/operations-admin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>storage</title>
+      <link>http://blog.streever.com/tags/storage/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/storage/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sys.db</title>
+      <link>http://blog.streever.com/tags/sys.db/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/sys.db/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tooling</title>
+      <link>http://blog.streever.com/tags/tooling/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.streever.com/tags/tooling/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>despair</title>
