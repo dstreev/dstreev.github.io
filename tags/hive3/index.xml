@@ -13,10 +13,10 @@
     
     <item>
       <title>Filtering Compactions in Hive</title>
-      <link>http://blog.streever.com/2019/10/filtering-compactions-in-hive/</link>
+      <link>http://blog.streever.com/articles/filtering-compactions-in-hive/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://blog.streever.com/2019/10/filtering-compactions-in-hive/</guid>
+      <guid>http://blog.streever.com/articles/filtering-compactions-in-hive/</guid>
       <description>Compactions can be seen with the standard SQL:
 SHOW COMPACTIONS;  But this method has a couple of problems:
  No Filtering Timestamps are hard to interpret  Until additional functionality is available for this built in function, we can do the following.

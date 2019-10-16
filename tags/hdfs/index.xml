@@ -13,10 +13,10 @@
     
     <item>
       <title>It&#39;s your last block!!!</title>
-      <link>http://blog.streever.com/2018/04/its-your-last-block/</link>
+      <link>http://blog.streever.com/articles/its-your-last-block/</link>
       <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://blog.streever.com/2018/04/its-your-last-block/</guid>
+      <guid>http://blog.streever.com/articles/its-your-last-block/</guid>
       <description>With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure.</description>
     </item>
     

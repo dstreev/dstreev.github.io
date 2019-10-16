@@ -13,10 +13,10 @@
     
     <item>
       <title>RHEL/CentOS 6 to 7 in-place upgrades with HDP</title>
-      <link>http://blog.streever.com/2018/04/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
+      <link>http://blog.streever.com/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://blog.streever.com/2018/04/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
+      <guid>http://blog.streever.com/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
       <description>Without a clean &amp;lsquo;supported&amp;rsquo; process for upgrading CentOS/RHEL 6 to 7, migrating to CentOS/RHEL 7 on an existing HDP cluster is a challenge.  With a little planning this can be accomplished with minimal disruption to your running cluster.</description>
     </item>
     

@@ -97,7 +97,7 @@
           <article class="media">
   <div class="media-content">
 
-    <p class="title"><a href="http://blog.streever.com/2019/10/filtering-compactions-in-hive/">Filtering Compactions in Hive</a></p>
+    <p class="title"><a href="http://blog.streever.com/articles/filtering-compactions-in-hive/">Filtering Compactions in Hive</a></p>
     <p class="subtitle is-flex" style="justify-content:space-between">
       <span>Oct 15, 2019</span>
       <span>3 min.</span>
@@ -108,6 +108,22 @@ SHOW COMPACTIONS;  But this method has a couple of problems:
  No Filtering Timestamps are hard to interpret  Until additional functionality is available for this built in function, we can do the following.
 Add links to the Metastore DB tables and create custom views to review compaction details.
 Build Out Metadata Elements CREATE DATABASE IF NOT EXISTS custom_sys; DROP TABLE IF EXISTS `custom_sys`.</p>
+
+  </div>
+</article>
+
+          <article class="media">
+  <div class="media-content">
+
+    <p class="title"><a href="http://blog.streever.com/articles/the-power-of-hive-jdbc-federation/">The Power of Hive JDBC Federation</a></p>
+    <p class="subtitle is-flex" style="justify-content:space-between">
+      <span>Oct 15, 2019</span>
+      <span>1 min.</span>
+    </p>
+
+    <p>Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem. Apache Software Foundation has excellent docs detailing this feature referred to as the JDBCStorageHandler .
+Interesting points about this StorageHandler include:
+ Securing Passwords - Protects passwords using a &lsquo;jceks&rsquo; file stored on &lsquo;hdfs&rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive  More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive&rsquo;s sys database.</p>
 
   </div>
 </article>

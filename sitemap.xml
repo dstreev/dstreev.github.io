@@ -33,7 +33,17 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/2019/10/filtering-compactions-in-hive/</loc>
+    <loc>http://blog.streever.com/tags/enhanced/</loc>
+    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/articles/filtering-compactions-in-hive/</loc>
+    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/gaps/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
@@ -68,7 +78,7 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/2019/10/running-llap-on-compute-only-nodes/</loc>
+    <loc>http://blog.streever.com/articles/running-llap-on-compute-only-nodes/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
@@ -88,7 +98,17 @@
   </url>
   
   <url>
+    <loc>http://blog.streever.com/articles/the-power-of-hive-jdbc-federation/</loc>
+    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/tags/tooling/</loc>
+    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/wip/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
@@ -103,7 +123,7 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/2018/08/learning-tech-the-dunning-kruger-effect/</loc>
+    <loc>http://blog.streever.com/articles/learning-tech-the-dunning-kruger-effect/</loc>
     <lastmod>2018-08-10T00:00:00+00:00</lastmod>
   </url>
   
@@ -143,7 +163,7 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/2018/04/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</loc>
+    <loc>http://blog.streever.com/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</loc>
     <lastmod>2018-04-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -163,7 +183,7 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/2018/04/its-your-last-block/</loc>
+    <loc>http://blog.streever.com/articles/its-your-last-block/</loc>
     <lastmod>2018-04-16T00:00:00+00:00</lastmod>
   </url>
   
