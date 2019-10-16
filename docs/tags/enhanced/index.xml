@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>enhanced on David W. Streever</title>
+    <link>http://www.streever.com/tags/enhanced/</link>
+    <description>Recent content in enhanced on David W. Streever</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://www.streever.com/tags/enhanced/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>The Power of Hive JDBC Federation</title>
+      <link>http://www.streever.com/articles/the-power-of-hive-jdbc-federation/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.streever.com/articles/the-power-of-hive-jdbc-federation/</guid>
+      <description>Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem. Apache Software Foundation has excellent docs detailing this feature referred to as the JDBCStorageHandler .
+Interesting points about this StorageHandler include:
+ Securing Passwords - Protects passwords using a &amp;lsquo;jceks&amp;rsquo; file stored on &amp;lsquo;hdfs&amp;rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive  More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive&amp;rsquo;s sys database.</description>
+    </item>
+    
+  </channel>
+</rss>

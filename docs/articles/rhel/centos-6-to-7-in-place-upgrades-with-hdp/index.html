@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <title>RHEL/CentOS 6 to 7 in-place upgrades with HDP</title>
+  <meta name="author" content="" />
+  <meta name="description"
+        content="
+
+If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.
+
+Unfortunately,..."/>
+
+
+  <meta name="generator" content="Hugo 0.58.3" />
+
+  
+  <meta itemprop="name" content="RHEL/CentOS 6 to 7 in-place upgrades with HDP"/>
+  <meta itemprop="description"
+        content="
+
+If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.
+
+Unfortunately,..."/>
+  <meta itemprop="image"
+        content=""/>
+
+  
+  <meta property="og:title" content="RHEL/CentOS 6 to 7 in-place upgrades with HDP"/>
+  <meta property="og:type"
+        content="article"/>
+  <meta property="og:url" content="http://www.streever.com/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/"/>
+  <meta property="og:image"
+        content=""/>
+  <meta property="og:description"
+        content="
+
+If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.
+
+Unfortunately,..."/>
+  <meta property="og:site_name" content="David W. Streever"/>
+  <meta property="article:published_time"
+        content="2018-04-17T00:00:00&#43;00:00"/>
+  <meta property="article:section" content="articles"/>
+  <meta property="article:tag" content="upgrade"/>
+  <meta property="article:tag" content="os"/>
+  <meta property="article:tag" content="hdp"/>
+  <meta property="article:tag" content="ambari"/>
+
+  
+  
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:site"
+        content=""/>
+  <meta name="twitter:title" content="RHEL/CentOS 6 to 7 in-place upgrades with HDP"/>
+  <meta name="twitter:description"
+        content="
+
+If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.
+
+Unfortunately,..."/>
+  <meta name="twitter:creator"
+        content=""/>
+  <meta name="twitter:image:src"
+        content=""/>
+
+  
+
+  
+  <link rel="stylesheet" type="text/css" href="/css/capsule.min.css"/>
+  
+  
+
+  
+  </head>
+
+
+  <body style="min-height:100vh;display:flex;flex-direction:column">
+
+    <nav class="navbar has-shadow is-white"
+     role="navigation" aria-label="main navigation">
+  <div class="container">
+
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <div class="title is-4">&nbsp;David W. Streever</div>
+      </a>
+
+      
+      <label class="button navbar-burger is-white" for="navbar-burger-state">
+        <span></span>                               
+        <span></span>
+        <span></span>
+      </label>
+    </div>
+
+    
+    <input type="checkbox" id="navbar-burger-state"/>
+
+    <div class="navbar-menu">
+      <div class="navbar-end">
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+    <section class="section" style="flex:1">
+
+      
+      <div class="container">
+        <p class="title">RHEL/CentOS 6 to 7 in-place upgrades with HDP</p>
+        <p class="subtitle">Apr 17, 2018</p>
+
+        
+
+        
+        <div class="content">
+          
+
+<p>If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.</p>
+
+<p>Unfortunately, RHEL / CentOS don&rsquo;t offer an upgrade path from 6 to 7.  The only certified option is to wipe the OS and reinstall, which is a problem when it&rsquo;s part of an active cluster.</p>
+
+<p>There are 3 methods for dealing with this.
+- Decommission the node and replace it.
+- Migrate the workloads to another cluster and rebuild.
+- Hot swap the OS.</p>
+
+<h2 id="decommission-method">Decommission Method</h2>
+
+<p>Decommissioning is a process which gracefully migrates data off a data node in a controlled manner.   Thereby removing the data node from the active cluster while ensuring the integrity of the data is maintained.</p>
+
+<p>This approach is pretty conservative and general only practically for a small number of nodes.</p>
+
+<p>With replication set to 3, the default, you can only decommission two nodes at a time.  Beyond that, you risk data being unavailable for a period.  See <a href="/images/upgrades/its-your-last-block.html">It&rsquo;s your last block</a>.</p>
+
+<p>With rack awareness, it&rsquo;s possible to do this a rack at a time.  But beware, if rack awareness wasn&rsquo;t initially configured, you can experience data loss/availability issues.  Always monitor the namenode for data availability issues.</p>
+
+<p>While the safest approach, there are three major concerns.
+- Network Bandwidth - This process will force the movement of a dataset equivalent to the used hdfs storage on the device.
+- Pressure on the Namenode - Namenode resources are required to manage the movement/tracking of blocks left under replicated by the decommissioning process.
+- Time - This is a lengthy process.</p>
+
+<p>For large clusters with hundreds of nodes, it&rsquo;s unlikely you&rsquo;ll be able to keep up a pace needed to replace each node within a reasonable window.</p>
+
+<h2 id="migration">Migration</h2>
+
+<p>Depending on how much hardware you have around for this process, it&rsquo;s not a likely option.  If you happen to have an abundance of hardware around, you could migrate workloads from one cluster to another, over time.</p>
+
+<p>The difficulties with this approach:
+- Requires a duplicate set of hardware
+- SLDC processes for an application that are using/ingesting and building the data need to be altered.
+- Consumers needs to adjust so they can use the new cluster.
+- Transitions in Big Data are not &ldquo;atomic&rdquo;.  The volume ingested and changed on the source is usually too high to be synchronized atomically.  Further leading to risk.</p>
+
+<h2 id="hot-swapping-the-os">Hot swapping the OS</h2>
+
+<p>Sounds sexy, doesn&rsquo;t it?  Well, in geek-speak it kind of is.  If you&rsquo;re familiar with how Hadoop manages its filesystem, you know there are three things you need to preserve:  fsimage, edits and block pools.  When it comes down to it, if these things are safe, you can restore HDFS.</p>
+
+<p>To hot swap the OS, you need to have followed some best practices around component/data layouts on your hardware.  The first and most important part is that the data directories for the Namenodes, Journal Nodes and Data Nodes should be on physically separate devices from the OS.  These drives should NOT be part of any LVM controlled by the OS.  They should be simple JBOD devices, formatted as either ext4 or xfs drives.</p>
+
+<p>As for the remaining services on your cluster, ensure that all the persisted data elements of each service aren&rsquo;t co-located with the OS drive partition.  Which includes (but not limited to): Zeppelin Notebooks, AMS, ATS, Application Data, NFS, etc..  Check for specific OS level customizations like CRONTAB, fstab, etc. on hosts and be prepared to reinstate those after rebuilding the OS.</p>
+
+<p>To run this process against your master nodes and continue to support operations in your cluster, the master services for HDFS, YARN, HBase, Oozie, Druid, and Hive should be configured with HA.</p>
+
+<p>The cluster metadata stores for Ambari, Hive, Oozie, Ranger, and Druid should be on separately managed RDBMS host(s) and aren&rsquo;t a part of the OS upgrade process we&rsquo;ll cover here.</p>
+
+<p>If the above isn&rsquo;t true, you&rsquo;ll need to make it accurate before you can continue with this upgrade method.</p>
+
+<p>This process relies on fast and consistent OS (re)builds.  For that, I suggest that you invest some time in DevOps automation in the form of Ansible, Puppet, Chef or some other provisioning toolset.  You need to be able to rebuild and host and have it ready to be added back to the cluster in under 15 minutes.  That may be aggressive, but consider what happens when a data node is marked &lsquo;dead&rsquo;, which will occur after 10 minutes.  A lot of traffic and resources will start to be consumed, attempting to repair the missing replicas in the system left by the missing block pool that was managed by the host you&rsquo;re upgrading.  So our goal is to reduce the amount of time that the block pool on the host is out of the cluster.</p>
+
+<p>Some considerations before shutting the host down:
+- If you want to manage YARN gracefully, you can decommission yarn through Ambari.
+- We will NOT &lsquo;decommission&rsquo; the Data Node.
+- If this is a Master with an Active Component, fail it over to the other server before starting this process.  This provides you with a bit more control over the process.</p>
+
+<p>With the chosen host, go ahead and shut it down. And start the OS migration process.</p>
+
+<p><img src="/images/upgrades/host_not_connected.png" alt="" /></p>
+
+<p>As I mentioned earlier, all persisted state information needs to be on a different physical drive(s) than the OS.  The reason for this is that we&rsquo;re going to rebuild the OS partition completely.  This means formatting <strong>ONLY THE ROOT DEVICE</strong> and reinstalling the new OS on it.  As long as the persisted stores are on other devices, our data is safe.</p>
+
+<p>The process for rebuilding the OS should include all major pre-requisites for a Hadoop cluster, but not limited to this list:
+- THP (Transparent Huge Pages) disabled
+- NNTP installed and active
+- IDM integration (sssd or other)
+- JDK 8 - latest version installed
+- OS Patches applied
+- SELinux - disabled
+- Swappiness=1 for worker nodes</p>
+
+<p>Consult the Hortonworks <a href="https://docs.hortonworks.com/HDPDocuments/Ambari-2.6.1.5/bk_ambari-installation/content/prepare_the_environment.html">documentation</a> for further details.</p>
+
+<p>It is <strong>CRITICAL</strong> that the host retains the same <strong>FQDN</strong> as before the upgrade.  If this changes, we will NOT be able to use Ambari to complete the process.  The hosts &lsquo;fstab&rsquo; configuration should match what was previously configured, regarding the data drives.  Don&rsquo;t change mount points at this time, it will only complicate the process and setup.</p>
+
+<p>In addition to these, you&rsquo;ll need to install the <em>Ambari-Agent</em> on the host and configure it for the <em>Ambari-Server</em>.</p>
+
+<pre><code>sudo ambari-agent reset ${AMBARI_SERVER_HOST}
+</code></pre>
+
+<p>Now that we have the host rebuilt with the basics and an <em>Ambari-Agent</em> up and running, we should be able to see the host connected to Ambari via the Hosts Page.</p>
+
+<p><img src="/images/upgrades/host_connected.png" alt="" /></p>
+
+<p>At this point, you have a host that has been re-associated to Ambari successfully.  In the host details section, you&rsquo;ll notice how the host now identifies with version 7 of the OS.  And at this point, the host will have none of the HDP libraries installed.</p>
+
+<p><img src="/images/upgrades/host_detail_os7.png" alt="" /></p>
+
+<p>While none of the HDP libraries are installed, you&rsquo;ll notice that Ambari knows what services should be on the host.  That&rsquo;s because the host FQDN matches the previous OS version of the host and when the &lsquo;ambari-agent&rsquo; registered back with the &lsquo;ambari-server&rsquo;, the host assumed the former identity.</p>
+
+<p><img src="/images/upgrades/host_available_not_installed.png" alt="" /></p>
+
+<p>This host will also NOT have the previous system accounts for HDP, yet.  IE: hdfs, yarn, hive, etc&hellip;</p>
+
+<p>Ambari Server has a new feature, added in 2.6, that allows us to recover a host in this state.  From the &lsquo;host&rsquo; window there&rsquo;s a &lsquo;Host Action&rsquo; button in the upper right corner.</p>
+
+<p><img src="/images/upgrades/host_action_button.png" alt="" /></p>
+
+<p>Select this and &lsquo;Recover Host&rsquo;.  Ambari will reinstall and configure all the missing services on this host, as they were before.</p>
+
+<p><img src="/images/upgrades/recover_host_action.png" alt="" /></p>
+
+<p>We&rsquo;re almost there, do NOT start the services yet!!!  The remounted data directories that still contain all our data (that was the whole point of this exercise) need to be fixed.  Most likely that the POSIX UID&rsquo;s for the user and group assigned in the previous OS, do NOT match or even exist in the new OS.  So the data drive permissions will not be properly configured.  We need to fix this before starting the services.</p>
+
+<p><img src="/images/upgrades/host_data_dir_permissions_broke.png" alt="" /></p>
+
+<p>Locate each of the data directories and adjust (recursively) the ownership to match the new uid&rsquo;s.  For example:
+The NN data directory at <code>/data/0/hadoop/hdfs/namenode</code>.  We need to ensure hdfs:hadoop owns the directory.</p>
+
+<pre><code>chown -R hdfs:hadoop /data/0/hadoop/hdfs/namenode
+</code></pre>
+
+<p><img src="/images/upgrades/host_data_dir_permissions_fixed.png" alt="" /></p>
+
+<p>Make these adjustments for each of the data directories on the host including, but not limited to:
+- Namenode
+- Secondary Namenode (when applicable)
+- Journal Node
+- ZooKeeper
+- ATS
+- Yarn (local and logs)
+- Datanode (Block Pools)
+- Log Directories (if these were on separate drives and survived the OS rebuild)
+- Pid Directories (if these were on separate drives and survived the OS rebuild)</p>
+
+<p>Now that we&rsquo;ve fixed the permissions, we can <strong>restart</strong> the services on the host.</p>
+
+<h3 id="validate">Validate</h3>
+
+<p>At this point, you should validate the services are operating as expected.  The validation should be thorough to ensure the host is a healthy member of the cluster <strong>BEFORE</strong> proceeding on to the next host.</p>
+
+<h3 id="some-known-gotcha-s">Some known gotcha&rsquo;s</h3>
+
+<ul>
+<li>Not all running jobs are tolerant to failed nodes.  For example: a long running Spark task that dies because the host was removed, may not recover very well.  In which case, the job may need to be restarted.</li>
+<li>When cycling through the master services, dropping a Hive Server 2 host will cause job failures for those connected to that host.  If you consumers are using the ZooKeeper discovery protocol and you have multiple HiveServer2 instances, they&rsquo;ll be routed to a working HiveServer2.  Stagger the replacement of these HiveServer2 nodes to avoid chasing active connections down and killing them in short order.</li>
+<li>Some master services that aren&rsquo;t HA will experience downtime as they go through this process.  I suggest that the process be managed more carefully across the master nodes, opposed to the worker nodes.</li>
+<li>If you&rsquo;re running LLAP, ensure the queue has enough room to support a missing host.  LLAP daemons will attempt to restart, when a host is brought down and will need a place to go.</li>
+</ul>
+
+<h3 id="automation">Automation</h3>
+
+<p>Now that you&rsquo;ve seen how this can be done, it&rsquo;s time to automate this.  Using your companies DevOps automation tools and practices, you should be able to cycle through a host upgrade every 15-30 minutes.  You should be able to cycle through all the worker nodes in record time.</p>
+
+<p>We briefly discussed a DevOps model to automate the OS rebuild.  Another automation measure to consider is through Ambari.</p>
+
+<p>If you have several hundred nodes to do this to, you&rsquo;ll want to investigate the Ambari REST API and automate the actions we&rsquo;ve performed through the Ambari UI.</p>
+
+        </div>
+
+        
+
+        
+<br>
+<div class="heading">Categories:</div>
+<div class="field is-grouped is-grouped-multiline">
+  <div class="control">
+    <a href="/categories/hadoop">
+      <span class="tag">Hadoop</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/categories/upgrade">
+      <span class="tag">Upgrade</span>
+    </a>
+  </div>
+</div>
+<div class="heading">Tags:</div>
+<div class="field is-grouped is-grouped-multiline">
+  <div class="control">
+    <a href="/tags/upgrade">
+      <span class="tag">Upgrade</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/os">
+      <span class="tag">Os</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/hdp">
+      <span class="tag">Hdp</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/ambari">
+      <span class="tag">Ambari</span>
+    </a>
+  </div>
+</div>
+
+      </div>
+
+    </section>
+
+    <section class="section">
+      
+      <div class="container">
+  <div class="level">
+
+    <div class="level-left">
+      <div class="level-item">
+        <p class="control has-addons">
+          <a class="button" href="http://www.streever.com/articles/learning-tech-the-dunning-kruger-effect/">
+            <span class="icon is-small"><i class="fa fa-chevron-left"></i></span>
+            <span class="is-hidden-touch is-hidden-desktop-only">
+              Learning Tech - The Dunning-Kruger Effect
+            </span>
+            <span class="is-hidden-touch is-hidden-widescreen">
+              Learning Tech - The Dunning-Kruger Effect
+            </span>
+            <span class="is-hidden-mobile is-hidden-desktop">
+              Learning Tech - The Dunning-Kruger Effect
+            </span>
+            <span class="is-hidden-tablet">
+              Learning Tech - The Dunning-Kruger...
+            </span>
+            
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="level-right">
+      <div class="level-item">
+        <p class="control has-addons">
+          <a class="button" href="http://www.streever.com/articles/its-your-last-block/">
+            <span class="is-hidden-touch is-hidden-desktop-only">
+              It&#39;s your last block!!!
+            </span>
+            <span class="is-hidden-touch is-hidden-widescreen">
+              It&#39;s your last block!!!
+            </span>
+            <span class="is-hidden-mobile is-hidden-desktop">
+              It&#39;s your last block!!!
+            </span>
+            <span class="is-hidden-tablet">
+              It&#39;s your last block!!!
+            </span>
+            
+            <span class="icon is-small"><i class="fa fa-chevron-right"></i></span>
+          </a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+      <br>
+
+      
+      
+
+      <br>
+
+      
+      
+
+    </section>
+
+    <footer class="footer">
+  <div class="container">
+    <nav class="level">
+
+      <div class="level-item has-text-centered">
+        <a href="http://www.streever.com/articles/" class="heading">
+          <span class="header">Articles</span>
+        </a>
+      </div>
+
+    </nav>
+
+    <nav class="level">
+
+      <div class="level-left has-text-centered">
+        <div class="level-item">
+          <form class="control has-icon has-icon-right" method="get"
+                action="https://duckduckgo.com">
+            <input class="input" type="text" name="q" maxlength="255"
+                   placeholder="Search">
+            <input class="input" type="hidden" name="sites" value="http://www.streever.com/">
+            <span class="icon is-small"><i class="fa fa-search"></i></span>
+          </form>
+        </div>
+      </div>
+
+      <div class="level-right has-text-centered">
+        <div class="level-item">
+
+          <a class="button" href="http://www.streever.com/">
+            <span class="icon"><i class="fa fa-home"></i></span>
+          </a> &nbsp;
+
+          
+
+          <a class="button" href="http://www.streever.com/index.xml">
+            <span class="icon"><i class="fa fa-rss"></i></span>
+          </a>
+
+        </div>
+      </div>
+
+    </nav>
+  </div>
+</footer>
+
+  </body>
+
+</html>
