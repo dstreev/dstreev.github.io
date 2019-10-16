@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <title>Filtering Compactions in Hive</title>
+  <meta name="author" content="" />
+  <meta name="description"
+        content="
+
+Compactions can be seen with the standard SQL:
+
+SHOW COMPACTIONS;
+
+
+But this method has a couple of problems:
+
+
+No Filtering
+Timestamps are hard to interpret
+
+
+Until additional functionality is..."/>
+
+
+  <meta name="generator" content="Hugo 0.58.3" />
+
+  
+  <meta itemprop="name" content="Filtering Compactions in Hive"/>
+  <meta itemprop="description"
+        content="
+
+Compactions can be seen with the standard SQL:
+
+SHOW COMPACTIONS;
+
+
+But this method has a couple of problems:
+
+
+No Filtering
+Timestamps are hard to interpret
+
+
+Until additional functionality is..."/>
+  <meta itemprop="image"
+        content=""/>
+
+  
+  <meta property="og:title" content="Filtering Compactions in Hive"/>
+  <meta property="og:type"
+        content="article"/>
+  <meta property="og:url" content="http://blog.streever.com/articles/filtering-compactions-in-hive/"/>
+  <meta property="og:image"
+        content=""/>
+  <meta property="og:description"
+        content="
+
+Compactions can be seen with the standard SQL:
+
+SHOW COMPACTIONS;
+
+
+But this method has a couple of problems:
+
+
+No Filtering
+Timestamps are hard to interpret
+
+
+Until additional functionality is..."/>
+  <meta property="og:site_name" content="David W. Streever"/>
+  <meta property="article:published_time"
+        content="2019-10-15T00:00:00&#43;00:00"/>
+  <meta property="article:section" content="articles"/>
+  <meta property="article:tag" content="compaction"/>
+  <meta property="article:tag" content="jdbc-federation"/>
+  <meta property="article:tag" content="sys.db"/>
+  <meta property="article:tag" content="hive-admin"/>
+  <meta property="article:tag" content="operations-admin"/>
+
+  
+  
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:site"
+        content=""/>
+  <meta name="twitter:title" content="Filtering Compactions in Hive"/>
+  <meta name="twitter:description"
+        content="
+
+Compactions can be seen with the standard SQL:
+
+SHOW COMPACTIONS;
+
+
+But this method has a couple of problems:
+
+
+No Filtering
+Timestamps are hard to interpret
+
+
+Until additional functionality is..."/>
+  <meta name="twitter:creator"
+        content=""/>
+  <meta name="twitter:image:src"
+        content=""/>
+
+  
+
+  
+  <link rel="stylesheet" type="text/css" href="/css/capsule.min.css"/>
+  
+  
+
+  
+  </head>
+
+
+  <body style="min-height:100vh;display:flex;flex-direction:column">
+
+    <nav class="navbar has-shadow is-white"
+     role="navigation" aria-label="main navigation">
+  <div class="container">
+
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <div class="title is-4">&nbsp;David W. Streever</div>
+      </a>
+
+      
+      <label class="button navbar-burger is-white" for="navbar-burger-state">
+        <span></span>                               
+        <span></span>
+        <span></span>
+      </label>
+    </div>
+
+    
+    <input type="checkbox" id="navbar-burger-state"/>
+
+    <div class="navbar-menu">
+      <div class="navbar-end">
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+    <section class="section" style="flex:1">
+
+      
+      <div class="container">
+        <p class="title">Filtering Compactions in Hive</p>
+        <p class="subtitle">Oct 15, 2019</p>
+
+        
+
+        
+        <div class="content">
+          
+
+<p>Compactions can be seen with the standard SQL:</p>
+
+<pre><code class="language-sql">SHOW COMPACTIONS;
+</code></pre>
+
+<p>But this method has a couple of problems:</p>
+
+<ol>
+<li>No Filtering</li>
+<li>Timestamps are hard to interpret</li>
+</ol>
+
+<p>Until additional functionality is available for this built in function, we can do the following.</p>
+
+<p>Add links to the Metastore DB tables and create custom views to review compaction details.</p>
+
+<h2 id="build-out-metadata-elements">Build Out Metadata Elements</h2>
+
+<pre><code class="language-sql">CREATE DATABASE IF NOT EXISTS custom_sys;
+
+DROP TABLE IF EXISTS `custom_sys`.`completed_compactions`;
+DROP TABLE IF EXISTS `custom_sys`.`compaction_queue`;
+
+CREATE EXTERNAL TABLE `custom_sys`.`completed_compactions`(
+	CC_ID bigint COMMENT 'from deserializer',
+	CC_DATABASE string COMMENT 'from deserializer',
+	CC_TABLE string COMMENT 'from deserializer',
+	CC_PARTITION string COMMENT 'from deserializer',
+	CC_STATE string COMMENT 'from deserializer',
+	CC_TYPE string COMMENT 'from deserializer',
+	CC_TBLPROPERTIES string COMMENT 'from deserializer',
+	CC_WORKER_ID string COMMENT 'from deserializer',
+	CC_START bigint COMMENT 'from deserializer',
+	CC_END bigint COMMENT 'from deserializer',
+	CC_RUN_AS string COMMENT 'from deserializer',
+	CC_HIGHEST_WRITE_ID bigint COMMENT 'from deserializer',
+	CC_META_INFO string COMMENT 'from deserializer',
+	CC_HADOOP_JOB_ID string COMMENT 'from deserializer'
+)
+ ROW FORMAT SERDE                                   
+   'org.apache.hive.storage.jdbc.JdbcSerDe'         
+ STORED BY                                          
+   'org.apache.hive.storage.jdbc.JdbcStorageHandler'  
+ WITH SERDEPROPERTIES (                             
+   'serialization.format'='1')                      
+ TBLPROPERTIES (                                    
+   'bucketing_version'='2',                         
+   'hive.sql.database.type'='METASTORE',            
+   'hive.sql.query'='SELECT CC_ID, CC_DATABASE, CC_TABLE, CC_PARTITION, CC_STATE, CC_TYPE, CC_TBLPROPERTIES, CC_WORKER_ID, CC_START, CC_END, CC_RUN_AS, CC_HIGHEST_WRITE_ID, CC_META_INFO, CC_HADOOP_JOB_ID FROM COMPLETED_COMPACTIONS');
+
+CREATE EXTERNAL TABLE `custom_sys`.`compaction_queue`(
+	CQ_ID bigint COMMENT 'from deserializer',
+	CQ_DATABASE string COMMENT 'from deserializer',
+	CQ_TABLE string COMMENT 'from deserializer',
+	CQ_PARTITION string COMMENT 'from deserializer',
+	CQ_STATE string COMMENT 'from deserializer',
+	CQ_TYPE string COMMENT 'from deserializer',
+	CQ_TBLPROPERTIES string COMMENT 'from deserializer',
+	CQ_WORKER_ID string COMMENT 'from deserializer',
+	CQ_START bigint COMMENT 'from deserializer',
+	CQ_RUN_AS string COMMENT 'from deserializer',
+	CQ_HIGHEST_WRITE_ID bigint COMMENT 'from deserializer',
+	CQ_META_INFO string COMMENT 'from deserializer',
+	CQ_HADOOP_JOB_ID string COMMENT 'from deserializer'
+)
+ ROW FORMAT SERDE                                   
+   'org.apache.hive.storage.jdbc.JdbcSerDe'         
+ STORED BY                                          
+   'org.apache.hive.storage.jdbc.JdbcStorageHandler'  
+ WITH SERDEPROPERTIES (                             
+   'serialization.format'='1')                      
+ TBLPROPERTIES (                                    
+   'bucketing_version'='2',                         
+   'hive.sql.database.type'='METASTORE',            
+   'hive.sql.query'='SELECT CQ_ID, CQ_DATABASE, CQ_TABLE, CQ_PARTITION, CQ_STATE, CQ_TYPE, CQ_TBLPROPERTIES, CQ_WORKER_ID, CQ_START, CQ_RUN_AS, CQ_HIGHEST_WRITE_ID, CQ_META_INFO, CQ_HADOOP_JOB_ID FROM COMPACTION_QUEUE');
+
+DROP VIEW IF EXISTS `custom_sys`.`compactions`;
+
+-- TODO: Handle / Show Aborted Transactions (maybe) I think txn data may be transient...
+CREATE VIEW IF NOT EXISTS `custom_sys`.`compactions` AS
+SELECT CC_ID AS id,
+       CC_DATABASE AS `database`,
+       CC_TABLE AS `table`,
+       CC_PARTITION AS `partition`,
+       CASE CC_STATE
+           WHEN 's' THEN 'SUCCEEDED'
+           WHEN 'a' THEN 'ATTEMPTED'
+           WHEN 'f' THEN 'FAILED'
+       END AS STATE,
+       CASE CC_TYPE
+           WHEN 'a' THEN 'MAJOR'
+           WHEN 'i' THEN 'MINOR'
+       END AS TYPE,
+       CC_TBLPROPERTIES AS tblproperties,
+       CC_WORKER_ID AS worker_id,
+       to_utc_timestamp(CC_START,'UTC') AS `start`,
+       to_utc_timestamp(CC_END, 'UTC') AS `end`,
+       CC_RUN_AS AS run_as,
+       CC_HIGHEST_WRITE_ID AS highest_write_id,
+       CC_META_INFO AS meta_info,
+       CC_HADOOP_JOB_ID AS hadoop_job_id
+FROM `custom_sys`.`completed_compactions`
+UNION ALL
+SELECT CQ_ID AS id,
+       CQ_DATABASE AS `database`,
+       CQ_TABLE AS `table`,
+       CQ_PARTITION AS `partition`,
+       CASE CQ_STATE
+           WHEN 'i' THEN 'INITIATED'
+           WHEN 'w' THEN 'WORKING'
+           WHEN 'r' THEN 'READY_FOR_CLEANING'
+       END AS `state`,
+       CASE CQ_TYPE
+           WHEN 'a' THEN 'MAJOR'
+           WHEN 'i' THEN 'MINOR'
+       END AS `type`,
+       CQ_TBLPROPERTIES AS tblproperties,
+       CQ_WORKER_ID AS worker_id,
+       to_utc_timestamp(CQ_START, 'UTC') AS `start`,
+       NULL AS `end`,
+               CQ_RUN_AS AS run_as,
+               CQ_HIGHEST_WRITE_ID AS highest_write_id,
+               CQ_META_INFO AS meta_info,
+               CQ_HADOOP_JOB_ID AS hadoop_job_id
+FROM `custom_sys`.`compaction_queue`;
+
+</code></pre>
+
+<h3 id="see-the-last-10-compaction-events">See the last 10 compaction events</h3>
+
+<pre><code class="language-sql">select 
+	`database`, `table`, `partition`, `state`, `type`, `start`, `end`, hadoop_job_id 
+FROM
+	compactions 
+ORDER BY `start` DESC 
+LIMIT 10;
+</code></pre>
+
+<h3 id="show-the-last-10-failed-compaction-event">Show the last 10 failed compaction event</h3>
+
+<pre><code class="language-sql">-- `state` options are 'SUCCEEDED', 'ATTEMPTED', 'FAILED', 'INITIATED', 'WORKING', and 'READY_FOR_CLEANING'
+-- `type` options are 'MAJOR' and 'MINOR'
+select 
+`database`, `table`, `partition`, `state`, `type`, `start`, `end` 
+FROM
+	compactions 
+WHERE `state` = 'FAILED' 
+ORDER BY `start` DESC 
+LIMIT 10;
+</code></pre>
+
+<p>#hive #compaction #major #minor #hive admin# #tooling</p>
+
+        </div>
+
+        
+
+        
+<br>
+<div class="heading">Categories:</div>
+<div class="field is-grouped is-grouped-multiline">
+  <div class="control">
+    <a href="/categories/hive">
+      <span class="tag">Hive</span>
+    </a>
+  </div>
+</div>
+<div class="heading">Tags:</div>
+<div class="field is-grouped is-grouped-multiline">
+  <div class="control">
+    <a href="/tags/compaction">
+      <span class="tag">Compaction</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/jdbc-federation">
+      <span class="tag">Jdbc Federation</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/sys.db">
+      <span class="tag">Sys.db</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/hive-admin">
+      <span class="tag">Hive Admin</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/operations-admin">
+      <span class="tag">Operations Admin</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/hive3">
+      <span class="tag">Hive3</span>
+    </a>
+  </div>
+  <div class="control">
+    <a href="/tags/tooling">
+      <span class="tag">Tooling</span>
+    </a>
+  </div>
+</div>
+
+      </div>
+
+    </section>
+
+    <section class="section">
+      
+      <div class="container">
+  <div class="level">
+
+    <div class="level-left">
+      <div class="level-item">
+        <p class="control has-addons">
+          <a class="button" href="#" disabled>
+            <span class="icon is-small"><i class="fa fa-chevron-left"></i></span>
+            <span>Newest</span>
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="level-right">
+      <div class="level-item">
+        <p class="control has-addons">
+          <a class="button" href="http://blog.streever.com/articles/running-llap-on-compute-only-nodes/">
+            <span class="is-hidden-touch is-hidden-desktop-only">
+              Running LLAP on Compute Only Nodes
+            </span>
+            <span class="is-hidden-touch is-hidden-widescreen">
+              Running LLAP on Compute Only Nodes
+            </span>
+            <span class="is-hidden-mobile is-hidden-desktop">
+              Running LLAP on Compute Only Nodes
+            </span>
+            <span class="is-hidden-tablet">
+              Running LLAP on Compute Only Nodes
+            </span>
+            
+            <span class="icon is-small"><i class="fa fa-chevron-right"></i></span>
+          </a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+      <br>
+
+      
+      
+
+      <br>
+
+      
+      
+<div class="container">
+  <nav class="panel">
+    <p class="panel-heading">Related</p>
+    <a class="panel-block" href="http://blog.streever.com/articles/the-power-of-hive-jdbc-federation/">
+      <span class="icon is-small"><i class="fa fa-chevron-right"></i></span>
+      <span>&nbsp;</span>
+      <span>The Power of Hive JDBC Federation&nbsp;
+      <div class="tag">Jdbc Federation</div>
+      <div class="tag">Tooling</div>
+      </span>
+    </a>
+  </nav>
+</div>
+
+    </section>
+
+    <footer class="footer">
+  <div class="container">
+    <nav class="level">
+
+      <div class="level-item has-text-centered">
+        <a href="http://blog.streever.com/articles/" class="heading">
+          <span class="header">Articles</span>
+        </a>
+      </div>
+
+    </nav>
+
+    <nav class="level">
+
+      <div class="level-left has-text-centered">
+        <div class="level-item">
+          <form class="control has-icon has-icon-right" method="get"
+                action="https://duckduckgo.com">
+            <input class="input" type="text" name="q" maxlength="255"
+                   placeholder="Search">
+            <input class="input" type="hidden" name="sites" value="http://blog.streever.com">
+            <span class="icon is-small"><i class="fa fa-search"></i></span>
+          </form>
+        </div>
+      </div>
+
+      <div class="level-right has-text-centered">
+        <div class="level-item">
+
+          <a class="button" href="http://blog.streever.com">
+            <span class="icon"><i class="fa fa-home"></i></span>
+          </a> &nbsp;
+
+          
+
+          <a class="button" href="http://blog.streever.com/index.xml">
+            <span class="icon"><i class="fa fa-rss"></i></span>
+          </a>
+
+        </div>
+      </div>
+
+    </nav>
+  </div>
+</footer>
+
+  </body>
+
+</html>
