@@ -3,187 +3,187 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://www.streever.com/blog/articles/</loc>
+    <loc>/articles/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/categories/</loc>
+    <loc>/categories/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/compaction/</loc>
+    <loc>/tags/compaction/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/compute/</loc>
+    <loc>/tags/compute/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/config/</loc>
+    <loc>/tags/config/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/</loc>
+    <loc>/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/enhanced/</loc>
+    <loc>/tags/enhanced/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/articles/filtering-compactions-in-hive/</loc>
+    <loc>/articles/filtering-compactions-in-hive/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/gaps/</loc>
+    <loc>/tags/gaps/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/categories/hive/</loc>
+    <loc>/categories/hive/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/hive-admin/</loc>
+    <loc>/tags/hive-admin/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/hive3/</loc>
+    <loc>/tags/hive3/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/jdbc-federation/</loc>
+    <loc>/tags/jdbc-federation/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/llap/</loc>
+    <loc>/tags/llap/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/operations-admin/</loc>
+    <loc>/tags/operations-admin/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/articles/running-llap-on-compute-only-nodes/</loc>
+    <loc>/articles/running-llap-on-compute-only-nodes/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/storage/</loc>
+    <loc>/tags/storage/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/sys.db/</loc>
+    <loc>/tags/sys.db/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/articles/the-power-of-hive-jdbc-federation/</loc>
+    <loc>/articles/the-power-of-hive-jdbc-federation/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/tooling/</loc>
+    <loc>/tags/tooling/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/wip/</loc>
+    <loc>/tags/wip/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/despair/</loc>
+    <loc>/tags/despair/</loc>
     <lastmod>2018-08-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/knowledge/</loc>
+    <loc>/tags/knowledge/</loc>
     <lastmod>2018-08-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/articles/learning-tech-the-dunning-kruger-effect/</loc>
+    <loc>/articles/learning-tech-the-dunning-kruger-effect/</loc>
     <lastmod>2018-08-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/categories/opinion/</loc>
+    <loc>/categories/opinion/</loc>
     <lastmod>2018-08-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/philosophy/</loc>
+    <loc>/tags/philosophy/</loc>
     <lastmod>2018-08-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/tech/</loc>
+    <loc>/tags/tech/</loc>
     <lastmod>2018-08-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/ambari/</loc>
+    <loc>/tags/ambari/</loc>
     <lastmod>2018-04-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/categories/hadoop/</loc>
+    <loc>/categories/hadoop/</loc>
     <lastmod>2018-04-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/hdp/</loc>
+    <loc>/tags/hdp/</loc>
     <lastmod>2018-04-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/os/</loc>
+    <loc>/tags/os/</loc>
     <lastmod>2018-04-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</loc>
+    <loc>/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</loc>
     <lastmod>2018-04-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/upgrade/</loc>
+    <loc>/tags/upgrade/</loc>
     <lastmod>2018-04-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/categories/upgrade/</loc>
+    <loc>/categories/upgrade/</loc>
     <lastmod>2018-04-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/tags/hdfs/</loc>
+    <loc>/tags/hdfs/</loc>
     <lastmod>2018-04-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.streever.com/blog/articles/its-your-last-block/</loc>
+    <loc>/articles/its-your-last-block/</loc>
     <lastmod>2018-04-16T00:00:00+00:00</lastmod>
   </url>
   

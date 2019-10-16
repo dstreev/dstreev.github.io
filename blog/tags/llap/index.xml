@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>llap on David W. Streever</title>
-    <link>http://www.streever.com/blog/tags/llap/</link>
+    <link>/tags/llap/</link>
     <description>Recent content in llap on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://www.streever.com/blog/tags/llap/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/llap/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Running LLAP on Compute Only Nodes</title>
-      <link>http://www.streever.com/blog/articles/running-llap-on-compute-only-nodes/</link>
+      <link>/articles/running-llap-on-compute-only-nodes/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/running-llap-on-compute-only-nodes/</guid>
+      <guid>/articles/running-llap-on-compute-only-nodes/</guid>
       <description>To run LLAP and/or Hive jobs on Compute Only Nodes you need to override a Hive Configuration default setting. Otherwise, queries will fail a majority of the time.
 The hive configuration value hive.merge.nway.joins is true by default. But in Ambari 2.7.3+ (HDP 3+), it overrides the default setting and configures this to false. When this is left at the default true, intermittent failures of queries will happen on compute only nodes.</description>
     </item>

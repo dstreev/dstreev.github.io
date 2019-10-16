@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>hadoop on David W. Streever</title>
-    <link>http://www.streever.com/blog/categories/hadoop/</link>
+    <link>/categories/hadoop/</link>
     <description>Recent content in hadoop on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 17 Apr 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://www.streever.com/blog/categories/hadoop/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/hadoop/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>RHEL/CentOS 6 to 7 in-place upgrades with HDP</title>
-      <link>http://www.streever.com/blog/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
+      <link>/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
+      <guid>/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
       <description>Without a clean &amp;lsquo;supported&amp;rsquo; process for upgrading CentOS/RHEL 6 to 7, migrating to CentOS/RHEL 7 on an existing HDP cluster is a challenge.  With a little planning this can be accomplished with minimal disruption to your running cluster.</description>
     </item>
     
     <item>
       <title>It&#39;s your last block!!!</title>
-      <link>http://www.streever.com/blog/articles/its-your-last-block/</link>
+      <link>/articles/its-your-last-block/</link>
       <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/its-your-last-block/</guid>
+      <guid>/articles/its-your-last-block/</guid>
       <description>With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure.</description>
     </item>
     

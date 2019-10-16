@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>hdfs on David W. Streever</title>
-    <link>http://www.streever.com/blog/tags/hdfs/</link>
+    <link>/tags/hdfs/</link>
     <description>Recent content in hdfs on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 16 Apr 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://www.streever.com/blog/tags/hdfs/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/hdfs/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>It&#39;s your last block!!!</title>
-      <link>http://www.streever.com/blog/articles/its-your-last-block/</link>
+      <link>/articles/its-your-last-block/</link>
       <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/its-your-last-block/</guid>
+      <guid>/articles/its-your-last-block/</guid>
       <description>With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure.</description>
     </item>
     

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Articles on David W. Streever</title>
-    <link>http://www.streever.com/blog/articles/</link>
+    <link>/articles/</link>
     <description>Recent content in Articles on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="http://www.streever.com/blog/articles/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/articles/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Filtering Compactions in Hive</title>
-      <link>http://www.streever.com/blog/articles/filtering-compactions-in-hive/</link>
+      <link>/articles/filtering-compactions-in-hive/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/filtering-compactions-in-hive/</guid>
+      <guid>/articles/filtering-compactions-in-hive/</guid>
       <description>Compactions can be seen with the standard SQL:
 SHOW COMPACTIONS;  But this method has a couple of problems:
  No Filtering Timestamps are hard to interpret  Until additional functionality is available for this built in function, we can do the following.
@@ -26,20 +26,20 @@ Build Out Metadata Elements CREATE DATABASE IF NOT EXISTS custom_sys; DROP TABLE
     
     <item>
       <title>Running LLAP on Compute Only Nodes</title>
-      <link>http://www.streever.com/blog/articles/running-llap-on-compute-only-nodes/</link>
+      <link>/articles/running-llap-on-compute-only-nodes/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/running-llap-on-compute-only-nodes/</guid>
+      <guid>/articles/running-llap-on-compute-only-nodes/</guid>
       <description>To run LLAP and/or Hive jobs on Compute Only Nodes you need to override a Hive Configuration default setting. Otherwise, queries will fail a majority of the time.
 The hive configuration value hive.merge.nway.joins is true by default. But in Ambari 2.7.3+ (HDP 3+), it overrides the default setting and configures this to false. When this is left at the default true, intermittent failures of queries will happen on compute only nodes.</description>
     </item>
     
     <item>
       <title>The Power of Hive JDBC Federation</title>
-      <link>http://www.streever.com/blog/articles/the-power-of-hive-jdbc-federation/</link>
+      <link>/articles/the-power-of-hive-jdbc-federation/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/the-power-of-hive-jdbc-federation/</guid>
+      <guid>/articles/the-power-of-hive-jdbc-federation/</guid>
       <description>Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem. Apache Software Foundation has excellent docs detailing this feature referred to as the JDBCStorageHandler .
 Interesting points about this StorageHandler include:
  Securing Passwords - Protects passwords using a &amp;lsquo;jceks&amp;rsquo; file stored on &amp;lsquo;hdfs&amp;rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive  More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive&amp;rsquo;s sys database.</description>
@@ -47,28 +47,28 @@ Interesting points about this StorageHandler include:
     
     <item>
       <title>Learning Tech - The Dunning-Kruger Effect</title>
-      <link>http://www.streever.com/blog/articles/learning-tech-the-dunning-kruger-effect/</link>
+      <link>/articles/learning-tech-the-dunning-kruger-effect/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/learning-tech-the-dunning-kruger-effect/</guid>
+      <guid>/articles/learning-tech-the-dunning-kruger-effect/</guid>
       <description>If you&amp;rsquo;ve been around tech for any amount of time, you&amp;rsquo;ve experienced this.  Gleeful understanding and empowerment, followed by despair and self loathing as you get you hands dirty.</description>
     </item>
     
     <item>
       <title>RHEL/CentOS 6 to 7 in-place upgrades with HDP</title>
-      <link>http://www.streever.com/blog/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
+      <link>/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
+      <guid>/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
       <description>Without a clean &amp;lsquo;supported&amp;rsquo; process for upgrading CentOS/RHEL 6 to 7, migrating to CentOS/RHEL 7 on an existing HDP cluster is a challenge.  With a little planning this can be accomplished with minimal disruption to your running cluster.</description>
     </item>
     
     <item>
       <title>It&#39;s your last block!!!</title>
-      <link>http://www.streever.com/blog/articles/its-your-last-block/</link>
+      <link>/articles/its-your-last-block/</link>
       <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://www.streever.com/blog/articles/its-your-last-block/</guid>
+      <guid>/articles/its-your-last-block/</guid>
       <description>With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure.</description>
     </item>
     
