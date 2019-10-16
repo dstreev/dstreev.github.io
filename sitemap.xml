@@ -18,16 +18,6 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/tags/compute/</loc>
-    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/config/</loc>
-    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
@@ -68,22 +58,7 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/tags/llap/</loc>
-    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/tags/operations-admin/</loc>
-    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/articles/running-llap-on-compute-only-nodes/</loc>
-    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/storage/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   

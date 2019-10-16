@@ -25,16 +25,6 @@ Build Out Metadata Elements CREATE DATABASE IF NOT EXISTS custom_sys; DROP TABLE
     </item>
     
     <item>
-      <title>Running LLAP on Compute Only Nodes</title>
-      <link>http://blog.streever.com/articles/running-llap-on-compute-only-nodes/</link>
-      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blog.streever.com/articles/running-llap-on-compute-only-nodes/</guid>
-      <description>To run LLAP and/or Hive jobs on Compute Only Nodes you need to override a Hive Configuration default setting. Otherwise, queries will fail a majority of the time.
-The hive configuration value hive.merge.nway.joins is true by default. But in Ambari 2.7.3+ (HDP 3+), it overrides the default setting and configures this to false. When this is left at the default true, intermittent failures of queries will happen on compute only nodes.</description>
-    </item>
-    
-    <item>
       <title>The Power of Hive JDBC Federation</title>
       <link>http://blog.streever.com/articles/the-power-of-hive-jdbc-federation/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
