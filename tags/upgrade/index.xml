@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>upgrade on David W. Streever</title>
-    <link>/tags/upgrade/</link>
+    <link>http://blog.streever.com/tags/upgrade/</link>
     <description>Recent content in upgrade on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 17 Apr 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/upgrade/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://blog.streever.com/tags/upgrade/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>RHEL/CentOS 6 to 7 in-place upgrades with HDP</title>
-      <link>/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
+      <link>http://blog.streever.com/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
+      <guid>http://blog.streever.com/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
       <description>Without a clean &amp;lsquo;supported&amp;rsquo; process for upgrading CentOS/RHEL 6 to 7, migrating to CentOS/RHEL 7 on an existing HDP cluster is a challenge.  With a little planning this can be accomplished with minimal disruption to your running cluster.</description>
     </item>
     

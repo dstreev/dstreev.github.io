@@ -2,48 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on David W. Streever</title>
-    <link>/categories/</link>
+    <link>http://blog.streever.com/categories/</link>
     <description>Recent content in Categories on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://blog.streever.com/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>hive</title>
-      <link>/categories/hive/</link>
+      <link>http://blog.streever.com/categories/hive/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/categories/hive/</guid>
+      <guid>http://blog.streever.com/categories/hive/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Opinion</title>
-      <link>/categories/opinion/</link>
+      <link>http://blog.streever.com/categories/opinion/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/categories/opinion/</guid>
+      <guid>http://blog.streever.com/categories/opinion/</guid>
       <description></description>
     </item>
     
     <item>
       <title>hadoop</title>
-      <link>/categories/hadoop/</link>
+      <link>http://blog.streever.com/categories/hadoop/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/categories/hadoop/</guid>
+      <guid>http://blog.streever.com/categories/hadoop/</guid>
       <description></description>
     </item>
     
     <item>
       <title>upgrade</title>
-      <link>/categories/upgrade/</link>
+      <link>http://blog.streever.com/categories/upgrade/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/categories/upgrade/</guid>
+      <guid>http://blog.streever.com/categories/upgrade/</guid>
       <description></description>
     </item>
     

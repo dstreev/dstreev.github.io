@@ -2,219 +2,219 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on David W. Streever</title>
-    <link>/tags/</link>
+    <link>http://blog.streever.com/tags/</link>
     <description>Recent content in Tags on David W. Streever</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://blog.streever.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>compaction</title>
-      <link>/tags/compaction/</link>
+      <link>http://blog.streever.com/tags/compaction/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/compaction/</guid>
+      <guid>http://blog.streever.com/tags/compaction/</guid>
       <description></description>
     </item>
     
     <item>
       <title>compute</title>
-      <link>/tags/compute/</link>
+      <link>http://blog.streever.com/tags/compute/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/compute/</guid>
+      <guid>http://blog.streever.com/tags/compute/</guid>
       <description></description>
     </item>
     
     <item>
       <title>config</title>
-      <link>/tags/config/</link>
+      <link>http://blog.streever.com/tags/config/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/config/</guid>
+      <guid>http://blog.streever.com/tags/config/</guid>
       <description></description>
     </item>
     
     <item>
       <title>enhanced</title>
-      <link>/tags/enhanced/</link>
+      <link>http://blog.streever.com/tags/enhanced/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/enhanced/</guid>
+      <guid>http://blog.streever.com/tags/enhanced/</guid>
       <description></description>
     </item>
     
     <item>
       <title>gaps</title>
-      <link>/tags/gaps/</link>
+      <link>http://blog.streever.com/tags/gaps/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/gaps/</guid>
+      <guid>http://blog.streever.com/tags/gaps/</guid>
       <description></description>
     </item>
     
     <item>
       <title>hive-admin</title>
-      <link>/tags/hive-admin/</link>
+      <link>http://blog.streever.com/tags/hive-admin/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/hive-admin/</guid>
+      <guid>http://blog.streever.com/tags/hive-admin/</guid>
       <description></description>
     </item>
     
     <item>
       <title>hive3</title>
-      <link>/tags/hive3/</link>
+      <link>http://blog.streever.com/tags/hive3/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/hive3/</guid>
+      <guid>http://blog.streever.com/tags/hive3/</guid>
       <description></description>
     </item>
     
     <item>
       <title>jdbc-federation</title>
-      <link>/tags/jdbc-federation/</link>
+      <link>http://blog.streever.com/tags/jdbc-federation/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/jdbc-federation/</guid>
+      <guid>http://blog.streever.com/tags/jdbc-federation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>llap</title>
-      <link>/tags/llap/</link>
+      <link>http://blog.streever.com/tags/llap/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/llap/</guid>
+      <guid>http://blog.streever.com/tags/llap/</guid>
       <description></description>
     </item>
     
     <item>
       <title>operations-admin</title>
-      <link>/tags/operations-admin/</link>
+      <link>http://blog.streever.com/tags/operations-admin/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/operations-admin/</guid>
+      <guid>http://blog.streever.com/tags/operations-admin/</guid>
       <description></description>
     </item>
     
     <item>
       <title>storage</title>
-      <link>/tags/storage/</link>
+      <link>http://blog.streever.com/tags/storage/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/storage/</guid>
+      <guid>http://blog.streever.com/tags/storage/</guid>
       <description></description>
     </item>
     
     <item>
       <title>sys.db</title>
-      <link>/tags/sys.db/</link>
+      <link>http://blog.streever.com/tags/sys.db/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/sys.db/</guid>
+      <guid>http://blog.streever.com/tags/sys.db/</guid>
       <description></description>
     </item>
     
     <item>
       <title>tooling</title>
-      <link>/tags/tooling/</link>
+      <link>http://blog.streever.com/tags/tooling/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/tooling/</guid>
+      <guid>http://blog.streever.com/tags/tooling/</guid>
       <description></description>
     </item>
     
     <item>
       <title>wip</title>
-      <link>/tags/wip/</link>
+      <link>http://blog.streever.com/tags/wip/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/wip/</guid>
+      <guid>http://blog.streever.com/tags/wip/</guid>
       <description></description>
     </item>
     
     <item>
       <title>despair</title>
-      <link>/tags/despair/</link>
+      <link>http://blog.streever.com/tags/despair/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/despair/</guid>
+      <guid>http://blog.streever.com/tags/despair/</guid>
       <description></description>
     </item>
     
     <item>
       <title>knowledge</title>
-      <link>/tags/knowledge/</link>
+      <link>http://blog.streever.com/tags/knowledge/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/knowledge/</guid>
+      <guid>http://blog.streever.com/tags/knowledge/</guid>
       <description></description>
     </item>
     
     <item>
       <title>philosophy</title>
-      <link>/tags/philosophy/</link>
+      <link>http://blog.streever.com/tags/philosophy/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/philosophy/</guid>
+      <guid>http://blog.streever.com/tags/philosophy/</guid>
       <description></description>
     </item>
     
     <item>
       <title>tech</title>
-      <link>/tags/tech/</link>
+      <link>http://blog.streever.com/tags/tech/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/tech/</guid>
+      <guid>http://blog.streever.com/tags/tech/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ambari</title>
-      <link>/tags/ambari/</link>
+      <link>http://blog.streever.com/tags/ambari/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/ambari/</guid>
+      <guid>http://blog.streever.com/tags/ambari/</guid>
       <description></description>
     </item>
     
     <item>
       <title>hdp</title>
-      <link>/tags/hdp/</link>
+      <link>http://blog.streever.com/tags/hdp/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/hdp/</guid>
+      <guid>http://blog.streever.com/tags/hdp/</guid>
       <description></description>
     </item>
     
     <item>
       <title>os</title>
-      <link>/tags/os/</link>
+      <link>http://blog.streever.com/tags/os/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/os/</guid>
+      <guid>http://blog.streever.com/tags/os/</guid>
       <description></description>
     </item>
     
     <item>
       <title>upgrade</title>
-      <link>/tags/upgrade/</link>
+      <link>http://blog.streever.com/tags/upgrade/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/upgrade/</guid>
+      <guid>http://blog.streever.com/tags/upgrade/</guid>
       <description></description>
     </item>
     
     <item>
       <title>hdfs</title>
-      <link>/tags/hdfs/</link>
+      <link>http://blog.streever.com/tags/hdfs/</link>
       <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/hdfs/</guid>
+      <guid>http://blog.streever.com/tags/hdfs/</guid>
       <description></description>
     </item>
     
