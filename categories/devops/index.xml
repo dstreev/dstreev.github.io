@@ -13,7 +13,7 @@
     </image>
     
     <item>
-      <title>Filtering Compactions in Hive</title>
+      <title>Filter Hive Compactions</title>
       <link>http://blog.streever.com/post/2019/filter-hive-compactions/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/post/2019/filter-hive-compactions/</guid>
@@ -376,6 +376,19 @@ hadoopcli # It will be in the global path for most standard configurations
 
 &lt;li&gt;&lt;p&gt;If you think of an enhancement, please log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34; target=&#34;_blank&#34;&gt;on my project issues page&lt;/a&gt; as well.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>It&#39;s Your Last Block!</title>
+      <link>http://blog.streever.com/post/2018/its-your-last-block/</link>
+      <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/post/2018/its-your-last-block/</guid>
+      <description>&lt;p&gt;In a few other articles, I&amp;rsquo;ll talk about bringing hosts down to facilitate upgrades.&lt;/p&gt;
+
+&lt;p&gt;If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&amp;rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.&lt;/p&gt;
+
+&lt;p&gt;If critical jobs can&amp;rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.&lt;/p&gt;
 </description>
     </item>
     
