@@ -1,23 +1,194 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>hdfs on David W. Streever</title>
+    <title>hdfs | David W. Streever</title>
     <link>http://blog.streever.com/tags/hdfs/</link>
-    <description>Recent content in hdfs on David W. Streever</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Mon, 16 Apr 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="http://blog.streever.com/tags/hdfs/index.xml" rel="self" type="application/rss+xml" />
-    
+      <atom:link href="http://blog.streever.com/tags/hdfs/index.xml" rel="self" type="application/rss+xml" />
+    <description>hdfs</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>http://blog.streever.com/img/icon-192.png</url>
+      <title>hdfs</title>
+      <link>http://blog.streever.com/tags/hdfs/</link>
+    </image>
     
     <item>
-      <title>It&#39;s your last block!!!</title>
-      <link>http://blog.streever.com/articles/its-your-last-block/</link>
+      <title>Hadoop CLI</title>
+      <link>http://blog.streever.com/project/hadoop-cli/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/project/hadoop-cli/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Hadoop CLI Walk-Through</title>
+      <link>http://blog.streever.com/slides/hadoop-cli/</link>
+      <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/slides/hadoop-cli/</guid>
+      <description>
+
+&lt;h2 id=&#34;the-hadoop-cli&#34;&gt;The Hadoop CLI&lt;/h2&gt;
+
+&lt;p&gt;A quick tour of the installation and basic usage.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;slide-controls&#34;&gt;Slide Controls&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Next: &lt;code&gt;Right Arrow&lt;/code&gt; or &lt;code&gt;Space&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Previous: &lt;code&gt;Left Arrow&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Start: &lt;code&gt;Home&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Finish: &lt;code&gt;End&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Overview: &lt;code&gt;Esc&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Speaker notes: &lt;code&gt;S&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Fullscreen: &lt;code&gt;F&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Zoom: &lt;code&gt;Alt(Option) + Click&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;what-is-the-hadoop-cli&#34;&gt;What is the Hadoop-CLI?&lt;/h2&gt;
+
+&lt;p&gt;It is the missing CLI for HDFS.&lt;/p&gt;
+
+&lt;p&gt;Launch a session and benefit from an interactive CLI experience (like your local filesyste) against HDFS.&lt;/p&gt;
+
+&lt;p&gt;It does &amp;lsquo;tab&amp;rsquo; completion, has location &amp;lsquo;context&amp;rsquo;, supports &amp;lsquo;most&amp;rsquo; hdfs commands, and has a few &amp;lsquo;nice surprises&amp;rsquo;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;where-to-find-it&#34;&gt;Where to Find it&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/dstreev/hadoop-cli&#34; target=&#34;_blank&#34;&gt;On Github&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/dstreev/hadoop-cli/releases&#34; target=&#34;_blank&#34;&gt;Pre-built Releases&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;installation&#34;&gt;Installation&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Download the latest &lt;code&gt;tar.gz&lt;/code&gt; from &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/releases&#34; target=&#34;_blank&#34;&gt;Releases&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;See the &amp;lsquo;Assets&amp;rsquo; associated with a release and downland.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Run the installation as &lt;code&gt;root&lt;/code&gt; or &lt;code&gt;sudo&lt;/code&gt; to allow it to create and install global links.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;wget &amp;lt;release-link-from-asset-section&amp;gt;
+tar xvfz hadoop.cli-&amp;lt;version&amp;gt;-3.1.tar.gz
+cd hadoop-cli-3.1
+sudo ./setup.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;That&amp;rsquo;s it.  I&amp;rsquo;m making an assumption you have &lt;code&gt;java 8&lt;/code&gt; on the host.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;start-up&#34;&gt;Start-up&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cd # to return to your home directory
+hadoopcli # It will be in the global path for most standard configurations
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;hadoopcli-startup.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;let-s-try-a-simple-command&#34;&gt;Let&amp;rsquo;s try a simple command&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;ls
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Notice how way didn&amp;rsquo;t specify a full path (or any path) for &lt;code&gt;ls&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;step_01.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;and-with-a-relative-reference&#34;&gt;And with a &amp;lsquo;relative&amp;rsquo; reference&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;du -h data
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The path for &lt;code&gt;du -h&lt;/code&gt; is relative (no preceeding &amp;lsquo;/&amp;rsquo;)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;step_02.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;context-aware&#34;&gt;Context Aware&lt;/h2&gt;
+
+&lt;p&gt;Both HDFS and the Local Filesystem are accessible.  HDFS is considered the primary, meaning that standard commands will be applied to it.&lt;/p&gt;
+
+&lt;p&gt;Context is tracked for each file system, so commands without a preceeding &amp;lsquo;/&amp;rsquo; will append to the current location.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;need-help&#34;&gt;Need Help&lt;/h2&gt;
+
+&lt;p&gt;Get a complete command reference with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;help
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Get command help with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;help &amp;lt;command&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;environment-details&#34;&gt;Environment Details&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;This is a valid HDFS client, using Hadoop-HDFS libraries.  All permissions are applied to the user as if they were using &lt;code&gt;hdfs dfs -&amp;lt;cmd&amp;gt; ...&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;By default, the application will look for configurations in &lt;code&gt;/etc/hadoop/conf&lt;/code&gt;.  It requires &lt;code&gt;hdfs-site.xml&lt;/code&gt; and &lt;code&gt;core-site.xml&lt;/code&gt; from your cluster.&lt;/li&gt;
+&lt;li&gt;Security is applied the same way as if using &lt;code&gt;hdfs dfs&lt;/code&gt;.  Via &amp;lsquo;os username&amp;rsquo; or &amp;lsquo;kerberos&amp;rsquo;.  Get a Kerberos ticket &lt;em&gt;before&lt;/em&gt; starting the cli.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;environment-details-cont&#34;&gt;Environment Details (cont.)&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Support for alternative configs(location) via commandline parameter&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoopcli --config &amp;lt;alt-location&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;feedback&#34;&gt;Feedback&lt;/h2&gt;
+
+&lt;h3 id=&#34;i-m-always-looking-for-feedback-to-make-it-better&#34;&gt;I&amp;rsquo;m always looking for feedback to make it better.&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;If you find an issue, log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34; target=&#34;_blank&#34;&gt;on my project issues page&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;If you think of an enhancement, please log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34; target=&#34;_blank&#34;&gt;on my project issues page&lt;/a&gt; as well.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>It&#39;s Your Last Block!</title>
+      <link>http://blog.streever.com/post/2018/its-your-last-block/</link>
       <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://blog.streever.com/articles/its-your-last-block/</guid>
-      <description>With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure.</description>
+      <guid>http://blog.streever.com/post/2018/its-your-last-block/</guid>
+      <description>&lt;p&gt;In a few other articles, I&amp;rsquo;ll talk about bringing hosts down to facilitate upgrades.&lt;/p&gt;
+
+&lt;p&gt;If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&amp;rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.&lt;/p&gt;
+
+&lt;p&gt;If critical jobs can&amp;rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.&lt;/p&gt;
+</description>
     </item>
     
   </channel>

@@ -1,38 +1,374 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>tooling on David W. Streever</title>
+    <title>tooling | David W. Streever</title>
     <link>http://blog.streever.com/tags/tooling/</link>
-    <description>Recent content in tooling on David W. Streever</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="http://blog.streever.com/tags/tooling/index.xml" rel="self" type="application/rss+xml" />
-    
+      <atom:link href="http://blog.streever.com/tags/tooling/index.xml" rel="self" type="application/rss+xml" />
+    <description>tooling</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>http://blog.streever.com/img/icon-192.png</url>
+      <title>tooling</title>
+      <link>http://blog.streever.com/tags/tooling/</link>
+    </image>
     
     <item>
       <title>Filtering Compactions in Hive</title>
-      <link>http://blog.streever.com/articles/filtering-compactions-in-hive/</link>
+      <link>http://blog.streever.com/post/2019/filter-hive-compactions/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blog.streever.com/articles/filtering-compactions-in-hive/</guid>
-      <description>Compactions can be seen with the standard SQL:
-SHOW COMPACTIONS;  But this method has a couple of problems:
- No Filtering Timestamps are hard to interpret  Until additional functionality is available for this built in function, we can do the following.
-Add links to the Metastore DB tables and create custom views to review compaction details.
-Build Out Metadata Elements CREATE DATABASE IF NOT EXISTS custom_sys; DROP TABLE IF EXISTS `custom_sys`.</description>
+      <guid>http://blog.streever.com/post/2019/filter-hive-compactions/</guid>
+      <description>
+
+&lt;p&gt;From Beeline or a standard JDBC client connected to Hive, compactions can be seen with the standard SQL:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SHOW COMPACTIONS;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But this method has a couple of problems:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;No Filtering&lt;/li&gt;
+&lt;li&gt;Timestamps are hard to interpret&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Until additional functionality is available for this built in function, we can do the following.&lt;/p&gt;
+
+&lt;p&gt;Add links to the Metastore DB tables and create custom views to review compaction details.  See &lt;a href=&#34;http://blog.streever.com/post/the-power-of-hive-jdbc-federation&#34;&gt;The Power of Hive JDBC Federation&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;build-out-metadata-elements&#34;&gt;Build Out Metadata Elements&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;CREATE DATABASE IF NOT EXISTS custom_sys;
+
+DROP TABLE IF EXISTS `custom_sys`.`completed_compactions`;
+DROP TABLE IF EXISTS `custom_sys`.`compaction_queue`;
+
+CREATE EXTERNAL TABLE `custom_sys`.`completed_compactions`(
+	CC_ID bigint COMMENT &#39;from deserializer&#39;,
+	CC_DATABASE string COMMENT &#39;from deserializer&#39;,
+	CC_TABLE string COMMENT &#39;from deserializer&#39;,
+	CC_PARTITION string COMMENT &#39;from deserializer&#39;,
+	CC_STATE string COMMENT &#39;from deserializer&#39;,
+	CC_TYPE string COMMENT &#39;from deserializer&#39;,
+	CC_TBLPROPERTIES string COMMENT &#39;from deserializer&#39;,
+	CC_WORKER_ID string COMMENT &#39;from deserializer&#39;,
+	CC_START bigint COMMENT &#39;from deserializer&#39;,
+	CC_END bigint COMMENT &#39;from deserializer&#39;,
+	CC_RUN_AS string COMMENT &#39;from deserializer&#39;,
+	CC_HIGHEST_WRITE_ID bigint COMMENT &#39;from deserializer&#39;,
+	CC_META_INFO string COMMENT &#39;from deserializer&#39;,
+	CC_HADOOP_JOB_ID string COMMENT &#39;from deserializer&#39;
+)
+ ROW FORMAT SERDE                                   
+   &#39;org.apache.hive.storage.jdbc.JdbcSerDe&#39;         
+ STORED BY                                          
+   &#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&#39;  
+ WITH SERDEPROPERTIES (                             
+   &#39;serialization.format&#39;=&#39;1&#39;)                      
+ TBLPROPERTIES (                                    
+   &#39;bucketing_version&#39;=&#39;2&#39;,                         
+   &#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;,            
+   &#39;hive.sql.query&#39;=&#39;SELECT CC_ID, CC_DATABASE, CC_TABLE, CC_PARTITION, CC_STATE, CC_TYPE, CC_TBLPROPERTIES, CC_WORKER_ID, CC_START, CC_END, CC_RUN_AS, CC_HIGHEST_WRITE_ID, CC_META_INFO, CC_HADOOP_JOB_ID FROM COMPLETED_COMPACTIONS&#39;);
+
+CREATE EXTERNAL TABLE `custom_sys`.`compaction_queue`(
+	CQ_ID bigint COMMENT &#39;from deserializer&#39;,
+	CQ_DATABASE string COMMENT &#39;from deserializer&#39;,
+	CQ_TABLE string COMMENT &#39;from deserializer&#39;,
+	CQ_PARTITION string COMMENT &#39;from deserializer&#39;,
+	CQ_STATE string COMMENT &#39;from deserializer&#39;,
+	CQ_TYPE string COMMENT &#39;from deserializer&#39;,
+	CQ_TBLPROPERTIES string COMMENT &#39;from deserializer&#39;,
+	CQ_WORKER_ID string COMMENT &#39;from deserializer&#39;,
+	CQ_START bigint COMMENT &#39;from deserializer&#39;,
+	CQ_RUN_AS string COMMENT &#39;from deserializer&#39;,
+	CQ_HIGHEST_WRITE_ID bigint COMMENT &#39;from deserializer&#39;,
+	CQ_META_INFO string COMMENT &#39;from deserializer&#39;,
+	CQ_HADOOP_JOB_ID string COMMENT &#39;from deserializer&#39;
+)
+ ROW FORMAT SERDE                                   
+   &#39;org.apache.hive.storage.jdbc.JdbcSerDe&#39;         
+ STORED BY                                          
+   &#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&#39;  
+ WITH SERDEPROPERTIES (                             
+   &#39;serialization.format&#39;=&#39;1&#39;)                      
+ TBLPROPERTIES (                                    
+   &#39;bucketing_version&#39;=&#39;2&#39;,                         
+   &#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;,            
+   &#39;hive.sql.query&#39;=&#39;SELECT CQ_ID, CQ_DATABASE, CQ_TABLE, CQ_PARTITION, CQ_STATE, CQ_TYPE, CQ_TBLPROPERTIES, CQ_WORKER_ID, CQ_START, CQ_RUN_AS, CQ_HIGHEST_WRITE_ID, CQ_META_INFO, CQ_HADOOP_JOB_ID FROM COMPACTION_QUEUE&#39;);
+
+DROP VIEW IF EXISTS `custom_sys`.`compactions`;
+
+-- TODO: Handle / Show Aborted Transactions (maybe) I think txn data may be transient...
+CREATE VIEW IF NOT EXISTS `custom_sys`.`compactions` AS
+SELECT CC_ID AS id,
+       CC_DATABASE AS `database`,
+       CC_TABLE AS `table`,
+       CC_PARTITION AS `partition`,
+       CASE CC_STATE
+           WHEN &#39;s&#39; THEN &#39;SUCCEEDED&#39;
+           WHEN &#39;a&#39; THEN &#39;ATTEMPTED&#39;
+           WHEN &#39;f&#39; THEN &#39;FAILED&#39;
+       END AS STATE,
+       CASE CC_TYPE
+           WHEN &#39;a&#39; THEN &#39;MAJOR&#39;
+           WHEN &#39;i&#39; THEN &#39;MINOR&#39;
+       END AS TYPE,
+       CC_TBLPROPERTIES AS tblproperties,
+       CC_WORKER_ID AS worker_id,
+       to_utc_timestamp(CC_START,&#39;UTC&#39;) AS `start`,
+       to_utc_timestamp(CC_END, &#39;UTC&#39;) AS `end`,
+       CC_RUN_AS AS run_as,
+       CC_HIGHEST_WRITE_ID AS highest_write_id,
+       CC_META_INFO AS meta_info,
+       CC_HADOOP_JOB_ID AS hadoop_job_id
+FROM `custom_sys`.`completed_compactions`
+UNION ALL
+SELECT CQ_ID AS id,
+       CQ_DATABASE AS `database`,
+       CQ_TABLE AS `table`,
+       CQ_PARTITION AS `partition`,
+       CASE CQ_STATE
+           WHEN &#39;i&#39; THEN &#39;INITIATED&#39;
+           WHEN &#39;w&#39; THEN &#39;WORKING&#39;
+           WHEN &#39;r&#39; THEN &#39;READY_FOR_CLEANING&#39;
+       END AS `state`,
+       CASE CQ_TYPE
+           WHEN &#39;a&#39; THEN &#39;MAJOR&#39;
+           WHEN &#39;i&#39; THEN &#39;MINOR&#39;
+       END AS `type`,
+       CQ_TBLPROPERTIES AS tblproperties,
+       CQ_WORKER_ID AS worker_id,
+       to_utc_timestamp(CQ_START, &#39;UTC&#39;) AS `start`,
+       NULL AS `end`,
+               CQ_RUN_AS AS run_as,
+               CQ_HIGHEST_WRITE_ID AS highest_write_id,
+               CQ_META_INFO AS meta_info,
+               CQ_HADOOP_JOB_ID AS hadoop_job_id
+FROM `custom_sys`.`compaction_queue`;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;see-the-last-10-compaction-events&#34;&gt;See the last 10 compaction events&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select 
+	`database`, `table`, `partition`, `state`, `type`, `start`, `end`, hadoop_job_id 
+FROM
+	compactions 
+ORDER BY `start` DESC 
+LIMIT 10;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;show-the-last-10-failed-compaction-event&#34;&gt;Show the last 10 failed compaction event&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;-- `state` options are &#39;SUCCEEDED&#39;, &#39;ATTEMPTED&#39;, &#39;FAILED&#39;, &#39;INITIATED&#39;, &#39;WORKING&#39;, and &#39;READY_FOR_CLEANING&#39;
+-- `type` options are &#39;MAJOR&#39; and &#39;MINOR&#39;
+select 
+`database`, `table`, `partition`, `state`, `type`, `start`, `end` 
+FROM
+	compactions 
+WHERE `state` = &#39;FAILED&#39; 
+ORDER BY `start` DESC 
+LIMIT 10;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>HDP3 Upgrade Planning</title>
+      <link>http://blog.streever.com/project/hdp3-upgrade-planning/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/project/hdp3-upgrade-planning/</guid>
+      <description></description>
     </item>
     
     <item>
       <title>The Power of Hive JDBC Federation</title>
-      <link>http://blog.streever.com/articles/the-power-of-hive-jdbc-federation/</link>
+      <link>http://blog.streever.com/post/2019/jdbc-federation/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blog.streever.com/articles/the-power-of-hive-jdbc-federation/</guid>
-      <description>Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem. Apache Software Foundation has excellent docs detailing this feature referred to as the JDBCStorageHandler .
-Interesting points about this StorageHandler include:
- Securing Passwords - Protects passwords using a &amp;lsquo;jceks&amp;rsquo; file stored on &amp;lsquo;hdfs&amp;rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive  More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive&amp;rsquo;s sys database.</description>
+      <guid>http://blog.streever.com/post/2019/jdbc-federation/</guid>
+      <description>
+
+&lt;p&gt;Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem.   Apache Software Foundation has excellent docs detailing this feature referred to as the &lt;a href=&#34;https://cwiki.apache.org/confluence/display/Hive/JdbcStorageHandler&#34; target=&#34;_blank&#34;&gt;JDBCStorageHandler&lt;/a&gt; .&lt;/p&gt;
+
+&lt;p&gt;Interesting points about this StorageHandler include:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Securing Passwords - &lt;strong&gt;Protects  passwords using a &amp;lsquo;jceks&amp;rsquo; file stored on &amp;lsquo;hdfs&amp;rsquo;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Partitioning - &lt;strong&gt;Could be used as an alternate to SQOOP for importing data to Hive&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;more-hive-metadata&#34;&gt;More Hive Metadata!&lt;/h2&gt;
+
+&lt;p&gt;Hive Metadata, previously only available via &lt;code&gt;WebHCat&lt;/code&gt; which has been removed, can be retrieved through hive&amp;rsquo;s &lt;code&gt;sys&lt;/code&gt; database.   And the &lt;code&gt;sys&lt;/code&gt; db is actually using the JDBCStorageHandler with a special tblproperty &lt;code&gt;&#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;&lt;/code&gt; used with the storage handler and &lt;code&gt;&#39;hive.sql.query&#39;=&#39;SELECT ... FROM ...&#39;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve used this technique to expose tables that support &lt;code&gt;COMPACTION&lt;/code&gt;, &lt;code&gt;LOCKS&lt;/code&gt;, and &lt;code&gt;TRANSACTIONS&lt;/code&gt; in order to fill some gaps with the current admin functions.   See the examples below for details.&lt;/p&gt;
+
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;A word of caution here.  All the &amp;lsquo;extras&amp;rsquo; your create against the metastore DB can/may break with the next release.  This isn&amp;rsquo;t a supported method of accessing metadata.&lt;/p&gt;
+
+&lt;p&gt;Don&amp;rsquo;t add &lt;em&gt;new&lt;/em&gt; tables to the current &lt;code&gt;sys.db&lt;/code&gt;.  That&amp;rsquo;s bad form and could cause issue for the platform during the next upgrade cycle, especially if there are naming conflicts.  But it somewhere else!!&lt;/p&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hadoop CLI Walk-Through</title>
+      <link>http://blog.streever.com/slides/hadoop-cli/</link>
+      <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/slides/hadoop-cli/</guid>
+      <description>
+
+&lt;h2 id=&#34;the-hadoop-cli&#34;&gt;The Hadoop CLI&lt;/h2&gt;
+
+&lt;p&gt;A quick tour of the installation and basic usage.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;slide-controls&#34;&gt;Slide Controls&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Next: &lt;code&gt;Right Arrow&lt;/code&gt; or &lt;code&gt;Space&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Previous: &lt;code&gt;Left Arrow&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Start: &lt;code&gt;Home&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Finish: &lt;code&gt;End&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Overview: &lt;code&gt;Esc&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Speaker notes: &lt;code&gt;S&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Fullscreen: &lt;code&gt;F&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Zoom: &lt;code&gt;Alt(Option) + Click&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;what-is-the-hadoop-cli&#34;&gt;What is the Hadoop-CLI?&lt;/h2&gt;
+
+&lt;p&gt;It is the missing CLI for HDFS.&lt;/p&gt;
+
+&lt;p&gt;Launch a session and benefit from an interactive CLI experience (like your local filesyste) against HDFS.&lt;/p&gt;
+
+&lt;p&gt;It does &amp;lsquo;tab&amp;rsquo; completion, has location &amp;lsquo;context&amp;rsquo;, supports &amp;lsquo;most&amp;rsquo; hdfs commands, and has a few &amp;lsquo;nice surprises&amp;rsquo;.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;where-to-find-it&#34;&gt;Where to Find it&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/dstreev/hadoop-cli&#34; target=&#34;_blank&#34;&gt;On Github&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/dstreev/hadoop-cli/releases&#34; target=&#34;_blank&#34;&gt;Pre-built Releases&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;installation&#34;&gt;Installation&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Download the latest &lt;code&gt;tar.gz&lt;/code&gt; from &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/releases&#34; target=&#34;_blank&#34;&gt;Releases&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;See the &amp;lsquo;Assets&amp;rsquo; associated with a release and downland.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Run the installation as &lt;code&gt;root&lt;/code&gt; or &lt;code&gt;sudo&lt;/code&gt; to allow it to create and install global links.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;wget &amp;lt;release-link-from-asset-section&amp;gt;
+tar xvfz hadoop.cli-&amp;lt;version&amp;gt;-3.1.tar.gz
+cd hadoop-cli-3.1
+sudo ./setup.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;That&amp;rsquo;s it.  I&amp;rsquo;m making an assumption you have &lt;code&gt;java 8&lt;/code&gt; on the host.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;start-up&#34;&gt;Start-up&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cd # to return to your home directory
+hadoopcli # It will be in the global path for most standard configurations
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;hadoopcli-startup.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;let-s-try-a-simple-command&#34;&gt;Let&amp;rsquo;s try a simple command&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;ls
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Notice how way didn&amp;rsquo;t specify a full path (or any path) for &lt;code&gt;ls&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;step_01.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;and-with-a-relative-reference&#34;&gt;And with a &amp;lsquo;relative&amp;rsquo; reference&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;du -h data
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The path for &lt;code&gt;du -h&lt;/code&gt; is relative (no preceeding &amp;lsquo;/&amp;rsquo;)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;step_02.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;context-aware&#34;&gt;Context Aware&lt;/h2&gt;
+
+&lt;p&gt;Both HDFS and the Local Filesystem are accessible.  HDFS is considered the primary, meaning that standard commands will be applied to it.&lt;/p&gt;
+
+&lt;p&gt;Context is tracked for each file system, so commands without a preceeding &amp;lsquo;/&amp;rsquo; will append to the current location.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;need-help&#34;&gt;Need Help&lt;/h2&gt;
+
+&lt;p&gt;Get a complete command reference with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;help
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Get command help with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;help &amp;lt;command&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;environment-details&#34;&gt;Environment Details&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;This is a valid HDFS client, using Hadoop-HDFS libraries.  All permissions are applied to the user as if they were using &lt;code&gt;hdfs dfs -&amp;lt;cmd&amp;gt; ...&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;By default, the application will look for configurations in &lt;code&gt;/etc/hadoop/conf&lt;/code&gt;.  It requires &lt;code&gt;hdfs-site.xml&lt;/code&gt; and &lt;code&gt;core-site.xml&lt;/code&gt; from your cluster.&lt;/li&gt;
+&lt;li&gt;Security is applied the same way as if using &lt;code&gt;hdfs dfs&lt;/code&gt;.  Via &amp;lsquo;os username&amp;rsquo; or &amp;lsquo;kerberos&amp;rsquo;.  Get a Kerberos ticket &lt;em&gt;before&lt;/em&gt; starting the cli.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;environment-details-cont&#34;&gt;Environment Details (cont.)&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Support for alternative configs(location) via commandline parameter&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoopcli --config &amp;lt;alt-location&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;feedback&#34;&gt;Feedback&lt;/h2&gt;
+
+&lt;h3 id=&#34;i-m-always-looking-for-feedback-to-make-it-better&#34;&gt;I&amp;rsquo;m always looking for feedback to make it better.&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;If you find an issue, log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34; target=&#34;_blank&#34;&gt;on my project issues page&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;If you think of an enhancement, please log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34; target=&#34;_blank&#34;&gt;on my project issues page&lt;/a&gt; as well.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
     </item>
     
   </channel>

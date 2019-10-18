@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Opinion on David W. Streever</title>
+    <title>opinion | David W. Streever</title>
     <link>http://blog.streever.com/categories/opinion/</link>
-    <description>Recent content in Opinion on David W. Streever</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Fri, 10 Aug 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="http://blog.streever.com/categories/opinion/index.xml" rel="self" type="application/rss+xml" />
-    
+      <atom:link href="http://blog.streever.com/categories/opinion/index.xml" rel="self" type="application/rss+xml" />
+    <description>opinion</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Fri, 10 Aug 2018 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>http://blog.streever.com/img/icon-192.png</url>
+      <title>opinion</title>
+      <link>http://blog.streever.com/categories/opinion/</link>
+    </image>
     
     <item>
       <title>Learning Tech - The Dunning-Kruger Effect</title>
-      <link>http://blog.streever.com/articles/learning-tech-the-dunning-kruger-effect/</link>
+      <link>http://blog.streever.com/post/2018/dunning-kruger-effect-technology/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://blog.streever.com/articles/learning-tech-the-dunning-kruger-effect/</guid>
-      <description>If you&amp;rsquo;ve been around tech for any amount of time, you&amp;rsquo;ve experienced this.  Gleeful understanding and empowerment, followed by despair and self loathing as you get you hands dirty.</description>
+      <guid>http://blog.streever.com/post/2018/dunning-kruger-effect-technology/</guid>
+      <description>&lt;p&gt;It happens to everyone, regardless of how long you&amp;rsquo;ve been around.  No matter your experience level, there is no escaping the &amp;lsquo;Dunning-Kruger Effect&amp;rsquo;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://understandinginnovation.files.wordpress.com/2015/06/dunning-kruger-0011.jpg&#34; alt=&#34;Dunning-Kruger-Effect&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Learning a new technology can be rewarding, but you have to push through the &amp;lsquo;valley of despair&amp;rsquo; first.  I&amp;rsquo;ve been around a while and a few times a year, I have to go through this.  And the process is painful.  Not only for me, but those around me as well.  They could just rename the effect, &amp;ldquo;The Grumpy Effect&amp;rdquo;.&lt;/p&gt;
+
+&lt;p&gt;In the beginning, there&amp;rsquo;s a sense of understanding.  You feel enlighten by the concepts and totally start to understand the benefits of the new venture, but this is short lived.  The next step is actually putting this new knowledge to work.  Now you need to roll up your sleeves and actually do it.  That&amp;rsquo;s when the confidence you&amp;rsquo;ve just built up, start to crash down.  At the height of this confidence, you&amp;rsquo;re king of the world.  And soon there after, your less than the dirt on the bottom of your shoe.&lt;/p&gt;
+
+&lt;p&gt;As you wade through the valley, everything appears foreign and distant.  The most simple concept seems to elude your every attempt at understanding.  You&amp;rsquo;ll reread a passage numerous times without so much as a hint at it&amp;rsquo;s meaning or relevance.&lt;/p&gt;
+
+&lt;p&gt;And then it happens, the swamp starts to drain, the fog lifts and the pieces just start to fall into place.  It can take hours, days or maybe months but it will happen.  That is, if you can handle the &amp;lsquo;valley&amp;rsquo;.&lt;/p&gt;
+
+&lt;p&gt;After 30 years in this business, I found the number 1 asset is &amp;lsquo;persistence&amp;rsquo;.  You&amp;rsquo;ll never succeed if you give up!  PRESS ON!!!&lt;/p&gt;
+</description>
     </item>
     
   </channel>

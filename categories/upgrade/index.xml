@@ -1,23 +1,181 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>upgrade on David W. Streever</title>
+    <title>upgrade | David W. Streever</title>
     <link>http://blog.streever.com/categories/upgrade/</link>
-    <description>Recent content in upgrade on David W. Streever</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 17 Apr 2018 00:00:00 +0000</lastBuildDate>
+      <atom:link href="http://blog.streever.com/categories/upgrade/index.xml" rel="self" type="application/rss+xml" />
+    <description>upgrade</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>http://blog.streever.com/img/icon-192.png</url>
+      <title>upgrade</title>
+      <link>http://blog.streever.com/categories/upgrade/</link>
+    </image>
     
-	<atom:link href="http://blog.streever.com/categories/upgrade/index.xml" rel="self" type="application/rss+xml" />
-    
+    <item>
+      <title>HDP3 Upgrade Planning</title>
+      <link>http://blog.streever.com/project/hdp3-upgrade-planning/</link>
+      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/project/hdp3-upgrade-planning/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>RHEL/CentOS 6 to 7 in-place upgrades with HDP</title>
-      <link>http://blog.streever.com/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</link>
+      <link>http://blog.streever.com/post/2018/in-place-centos6-to-centos7-hdp/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://blog.streever.com/articles/rhel/centos-6-to-7-in-place-upgrades-with-hdp/</guid>
-      <description>Without a clean &amp;lsquo;supported&amp;rsquo; process for upgrading CentOS/RHEL 6 to 7, migrating to CentOS/RHEL 7 on an existing HDP cluster is a challenge.  With a little planning this can be accomplished with minimal disruption to your running cluster.</description>
+      <guid>http://blog.streever.com/post/2018/in-place-centos6-to-centos7-hdp/</guid>
+      <description>
+
+&lt;p&gt;If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&amp;rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, RHEL / CentOS don&amp;rsquo;t offer an upgrade path from 6 to 7.  The only certified option is to wipe the OS and reinstall, which is a problem when it&amp;rsquo;s part of an active cluster.&lt;/p&gt;
+
+&lt;p&gt;There are 3 methods for dealing with this.
+- Decommission the node and replace it.
+- Migrate the workloads to another cluster and rebuild.
+- Hot swap the OS.&lt;/p&gt;
+
+&lt;h2 id=&#34;decommission-method&#34;&gt;Decommission Method&lt;/h2&gt;
+
+&lt;p&gt;Decommissioning is a process which gracefully migrates data off a data node in a controlled manner.   Thereby removing the data node from the active cluster while ensuring the integrity of the data is maintained.&lt;/p&gt;
+
+&lt;p&gt;This approach is pretty conservative and general only practically for a small number of nodes.&lt;/p&gt;
+
+&lt;p&gt;With replication set to 3, the default, you can only decommission two nodes at a time.  Beyond that, you risk data being unavailable for a period.  See &lt;a href=&#34;http://blog.streever.com/images/upgrades/its-your-last-block.html&#34;&gt;It&amp;rsquo;s your last block&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;With rack awareness, it&amp;rsquo;s possible to do this a rack at a time.  But beware, if rack awareness wasn&amp;rsquo;t initially configured, you can experience data loss/availability issues.  Always monitor the namenode for data availability issues.&lt;/p&gt;
+
+&lt;p&gt;While the safest approach, there are three major concerns.
+- Network Bandwidth - This process will force the movement of a dataset equivalent to the used hdfs storage on the device.
+- Pressure on the Namenode - Namenode resources are required to manage the movement/tracking of blocks left under replicated by the decommissioning process.
+- Time - This is a lengthy process.&lt;/p&gt;
+
+&lt;p&gt;For large clusters with hundreds of nodes, it&amp;rsquo;s unlikely you&amp;rsquo;ll be able to keep up a pace needed to replace each node within a reasonable window.&lt;/p&gt;
+
+&lt;h2 id=&#34;migration&#34;&gt;Migration&lt;/h2&gt;
+
+&lt;p&gt;Depending on how much hardware you have around for this process, it&amp;rsquo;s not a likely option.  If you happen to have an abundance of hardware around, you could migrate workloads from one cluster to another, over time.&lt;/p&gt;
+
+&lt;p&gt;The difficulties with this approach:
+- Requires a duplicate set of hardware
+- SLDC processes for an application that are using/ingesting and building the data need to be altered.
+- Consumers needs to adjust so they can use the new cluster.
+- Transitions in Big Data are not &amp;ldquo;atomic&amp;rdquo;.  The volume ingested and changed on the source is usually too high to be synchronized atomically.  Further leading to risk.&lt;/p&gt;
+
+&lt;h2 id=&#34;hot-swapping-the-os&#34;&gt;Hot swapping the OS&lt;/h2&gt;
+
+&lt;p&gt;Sounds sexy, doesn&amp;rsquo;t it?  Well, in geek-speak it kind of is.  If you&amp;rsquo;re familiar with how Hadoop manages its filesystem, you know there are three things you need to preserve:  fsimage, edits and block pools.  When it comes down to it, if these things are safe, you can restore HDFS.&lt;/p&gt;
+
+&lt;p&gt;To hot swap the OS, you need to have followed some best practices around component/data layouts on your hardware.  The first and most important part is that the data directories for the Namenodes, Journal Nodes and Data Nodes should be on physically separate devices from the OS.  These drives should NOT be part of any LVM controlled by the OS.  They should be simple JBOD devices, formatted as either ext4 or xfs drives.&lt;/p&gt;
+
+&lt;p&gt;As for the remaining services on your cluster, ensure that all the persisted data elements of each service aren&amp;rsquo;t co-located with the OS drive partition.  Which includes (but not limited to): Zeppelin Notebooks, AMS, ATS, Application Data, NFS, etc..  Check for specific OS level customizations like CRONTAB, fstab, etc. on hosts and be prepared to reinstate those after rebuilding the OS.&lt;/p&gt;
+
+&lt;p&gt;To run this process against your master nodes and continue to support operations in your cluster, the master services for HDFS, YARN, HBase, Oozie, Druid, and Hive should be configured with HA.&lt;/p&gt;
+
+&lt;p&gt;The cluster metadata stores for Ambari, Hive, Oozie, Ranger, and Druid should be on separately managed RDBMS host(s) and aren&amp;rsquo;t a part of the OS upgrade process we&amp;rsquo;ll cover here.&lt;/p&gt;
+
+&lt;p&gt;If the above isn&amp;rsquo;t true, you&amp;rsquo;ll need to make it accurate before you can continue with this upgrade method.&lt;/p&gt;
+
+&lt;p&gt;This process relies on fast and consistent OS (re)builds.  For that, I suggest that you invest some time in DevOps automation in the form of Ansible, Puppet, Chef or some other provisioning toolset.  You need to be able to rebuild and host and have it ready to be added back to the cluster in under 15 minutes.  That may be aggressive, but consider what happens when a data node is marked &amp;lsquo;dead&amp;rsquo;, which will occur after 10 minutes.  A lot of traffic and resources will start to be consumed, attempting to repair the missing replicas in the system left by the missing block pool that was managed by the host you&amp;rsquo;re upgrading.  So our goal is to reduce the amount of time that the block pool on the host is out of the cluster.&lt;/p&gt;
+
+&lt;p&gt;Some considerations before shutting the host down:
+- If you want to manage YARN gracefully, you can decommission yarn through Ambari.
+- We will NOT &amp;lsquo;decommission&amp;rsquo; the Data Node.
+- If this is a Master with an Active Component, fail it over to the other server before starting this process.  This provides you with a bit more control over the process.&lt;/p&gt;
+
+&lt;p&gt;With the chosen host, go ahead and shut it down. And start the OS migration process.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_not_connected.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As I mentioned earlier, all persisted state information needs to be on a different physical drive(s) than the OS.  The reason for this is that we&amp;rsquo;re going to rebuild the OS partition completely.  This means formatting &lt;strong&gt;ONLY THE ROOT DEVICE&lt;/strong&gt; and reinstalling the new OS on it.  As long as the persisted stores are on other devices, our data is safe.&lt;/p&gt;
+
+&lt;p&gt;The process for rebuilding the OS should include all major pre-requisites for a Hadoop cluster, but not limited to this list:
+- THP (Transparent Huge Pages) disabled
+- NNTP installed and active
+- IDM integration (sssd or other)
+- JDK 8 - latest version installed
+- OS Patches applied
+- SELinux - disabled
+- Swappiness=1 for worker nodes&lt;/p&gt;
+
+&lt;p&gt;Consult the Hortonworks &lt;a href=&#34;https://docs.hortonworks.com/HDPDocuments/Ambari-2.6.1.5/bk_ambari-installation/content/prepare_the_environment.html&#34; target=&#34;_blank&#34;&gt;documentation&lt;/a&gt; for further details.&lt;/p&gt;
+
+&lt;p&gt;It is &lt;strong&gt;CRITICAL&lt;/strong&gt; that the host retains the same &lt;strong&gt;FQDN&lt;/strong&gt; as before the upgrade.  If this changes, we will NOT be able to use Ambari to complete the process.  The hosts &amp;lsquo;fstab&amp;rsquo; configuration should match what was previously configured, regarding the data drives.  Don&amp;rsquo;t change mount points at this time, it will only complicate the process and setup.&lt;/p&gt;
+
+&lt;p&gt;In addition to these, you&amp;rsquo;ll need to install the &lt;em&gt;Ambari-Agent&lt;/em&gt; on the host and configure it for the &lt;em&gt;Ambari-Server&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo ambari-agent reset ${AMBARI_SERVER_HOST}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we have the host rebuilt with the basics and an &lt;em&gt;Ambari-Agent&lt;/em&gt; up and running, we should be able to see the host connected to Ambari via the Hosts Page.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_connected.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;At this point, you have a host that has been re-associated to Ambari successfully.  In the host details section, you&amp;rsquo;ll notice how the host now identifies with version 7 of the OS.  And at this point, the host will have none of the HDP libraries installed.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_detail_os7.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;While none of the HDP libraries are installed, you&amp;rsquo;ll notice that Ambari knows what services should be on the host.  That&amp;rsquo;s because the host FQDN matches the previous OS version of the host and when the &amp;lsquo;ambari-agent&amp;rsquo; registered back with the &amp;lsquo;ambari-server&amp;rsquo;, the host assumed the former identity.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_available_not_installed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This host will also NOT have the previous system accounts for HDP, yet.  IE: hdfs, yarn, hive, etc&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;Ambari Server has a new feature, added in 2.6, that allows us to recover a host in this state.  From the &amp;lsquo;host&amp;rsquo; window there&amp;rsquo;s a &amp;lsquo;Host Action&amp;rsquo; button in the upper right corner.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_action_button.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Select this and &amp;lsquo;Recover Host&amp;rsquo;.  Ambari will reinstall and configure all the missing services on this host, as they were before.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/recover_host_action.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;re almost there, do NOT start the services yet!!!  The remounted data directories that still contain all our data (that was the whole point of this exercise) need to be fixed.  Most likely that the POSIX UID&amp;rsquo;s for the user and group assigned in the previous OS, do NOT match or even exist in the new OS.  So the data drive permissions will not be properly configured.  We need to fix this before starting the services.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_data_dir_permissions_broke.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Locate each of the data directories and adjust (recursively) the ownership to match the new uid&amp;rsquo;s.  For example:
+The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;.  We need to ensure hdfs:hadoop owns the directory.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;chown -R hdfs:hadoop /data/0/hadoop/hdfs/namenode
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_data_dir_permissions_fixed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Make these adjustments for each of the data directories on the host including, but not limited to:
+- Namenode
+- Secondary Namenode (when applicable)
+- Journal Node
+- ZooKeeper
+- ATS
+- Yarn (local and logs)
+- Datanode (Block Pools)
+- Log Directories (if these were on separate drives and survived the OS rebuild)
+- Pid Directories (if these were on separate drives and survived the OS rebuild)&lt;/p&gt;
+
+&lt;p&gt;Now that we&amp;rsquo;ve fixed the permissions, we can &lt;strong&gt;restart&lt;/strong&gt; the services on the host.&lt;/p&gt;
+
+&lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
+
+&lt;p&gt;At this point, you should validate the services are operating as expected.  The validation should be thorough to ensure the host is a healthy member of the cluster &lt;strong&gt;BEFORE&lt;/strong&gt; proceeding on to the next host.&lt;/p&gt;
+
+&lt;h3 id=&#34;some-known-gotcha-s&#34;&gt;Some known gotcha&amp;rsquo;s&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Not all running jobs are tolerant to failed nodes.  For example: a long running Spark task that dies because the host was removed, may not recover very well.  In which case, the job may need to be restarted.&lt;/li&gt;
+&lt;li&gt;When cycling through the master services, dropping a Hive Server 2 host will cause job failures for those connected to that host.  If you consumers are using the ZooKeeper discovery protocol and you have multiple HiveServer2 instances, they&amp;rsquo;ll be routed to a working HiveServer2.  Stagger the replacement of these HiveServer2 nodes to avoid chasing active connections down and killing them in short order.&lt;/li&gt;
+&lt;li&gt;Some master services that aren&amp;rsquo;t HA will experience downtime as they go through this process.  I suggest that the process be managed more carefully across the master nodes, opposed to the worker nodes.&lt;/li&gt;
+&lt;li&gt;If you&amp;rsquo;re running LLAP, ensure the queue has enough room to support a missing host.  LLAP daemons will attempt to restart, when a host is brought down and will need a place to go.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;automation&#34;&gt;Automation&lt;/h3&gt;
+
+&lt;p&gt;Now that you&amp;rsquo;ve seen how this can be done, it&amp;rsquo;s time to automate this.  Using your companies DevOps automation tools and practices, you should be able to cycle through a host upgrade every 15-30 minutes.  You should be able to cycle through all the worker nodes in record time.&lt;/p&gt;
+
+&lt;p&gt;We briefly discussed a DevOps model to automate the OS rebuild.  Another automation measure to consider is through Ambari.&lt;/p&gt;
+
+&lt;p&gt;If you have several hundred nodes to do this to, you&amp;rsquo;ll want to investigate the Ambari REST API and automate the actions we&amp;rsquo;ve performed through the Ambari UI.&lt;/p&gt;
+</description>
     </item>
     
   </channel>
