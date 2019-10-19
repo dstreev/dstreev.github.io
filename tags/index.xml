@@ -5,7 +5,7 @@
     <link>http://blog.streever.com/tags/</link>
       <atom:link href="http://blog.streever.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <description>Tags</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://blog.streever.com/img/icon-192.png</url>
       <title>Tags</title>
@@ -13,18 +13,42 @@
     </image>
     
     <item>
-      <title>calculator</title>
-      <link>http://blog.streever.com/tags/calculator/</link>
-      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/calculator/</guid>
+      <title>cli</title>
+      <link>http://blog.streever.com/tags/cli/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/cli/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>cli</title>
-      <link>http://blog.streever.com/tags/cli/</link>
+      <title>hadoop-cli</title>
+      <link>http://blog.streever.com/tags/hadoop-cli/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/hadoop-cli/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hdfs</title>
+      <link>http://blog.streever.com/tags/hdfs/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/hdfs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tooling</title>
+      <link>http://blog.streever.com/tags/tooling/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/tooling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>calculator</title>
+      <link>http://blog.streever.com/tags/calculator/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/cli/</guid>
+      <guid>http://blog.streever.com/tags/calculator/</guid>
       <description></description>
     </item>
     
@@ -57,14 +81,6 @@
       <link>http://blog.streever.com/tags/hadoop/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/tags/hadoop/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hdfs</title>
-      <link>http://blog.streever.com/tags/hdfs/</link>
-      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/hdfs/</guid>
       <description></description>
     </item>
     
@@ -121,14 +137,6 @@
       <link>http://blog.streever.com/tags/sys.db/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/tags/sys.db/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>tooling</title>
-      <link>http://blog.streever.com/tags/tooling/</link>
-      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/tooling/</guid>
       <description></description>
     </item>
     
