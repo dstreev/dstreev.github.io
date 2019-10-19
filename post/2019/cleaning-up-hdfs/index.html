@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure.">
+  <meta name="description" content="Sometimes hadoop processes leave artifacts on &#39;hdfs&#39; that need to be cleaned up.  Whether they&#39;re there intentionally or not, cleaning them up is time consuming through the `hdfs dfs` commandline.  Try the &#39;hadoopcli&#39; with its `lsp` function and pipelining.">
 
   
-  <link rel="alternate" hreflang="en-us" href="http://blog.streever.com/post/2018/its-your-last-block/">
+  <link rel="alternate" hreflang="en-us" href="http://blog.streever.com/post/2019/cleaning-up-hdfs/">
 
   
 
@@ -101,7 +101,7 @@
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="http://blog.streever.com/post/2018/its-your-last-block/">
+  <link rel="canonical" href="http://blog.streever.com/post/2019/cleaning-up-hdfs/">
 
   
   
@@ -117,15 +117,13 @@
   <meta property="twitter:creator" content="@DavidStreever">
   
   <meta property="og:site_name" content="David W. Streever">
-  <meta property="og:url" content="http://blog.streever.com/post/2018/its-your-last-block/">
-  <meta property="og:title" content="It&#39;s Your Last Block! | David W. Streever">
-  <meta property="og:description" content="With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure."><meta property="og:image" content="http://blog.streever.com/img/icon-192.png">
+  <meta property="og:url" content="http://blog.streever.com/post/2019/cleaning-up-hdfs/">
+  <meta property="og:title" content="Hadoop CLI for HDFS Directory Cleanup | David W. Streever">
+  <meta property="og:description" content="Sometimes hadoop processes leave artifacts on &#39;hdfs&#39; that need to be cleaned up.  Whether they&#39;re there intentionally or not, cleaning them up is time consuming through the `hdfs dfs` commandline.  Try the &#39;hadoopcli&#39; with its `lsp` function and pipelining."><meta property="og:image" content="http://blog.streever.com/img/icon-192.png">
   <meta property="twitter:image" content="http://blog.streever.com/img/icon-192.png"><meta property="og:locale" content="en-us">
   
     
-      <meta property="article:published_time" content="2018-04-16T00:00:00&#43;00:00">
     
-    <meta property="article:modified_time" content="2018-04-16T00:00:00&#43;00:00">
   
 
   
@@ -151,12 +149,12 @@
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "http://blog.streever.com/post/2018/its-your-last-block/"
+    "@id": "http://blog.streever.com/post/2019/cleaning-up-hdfs/"
   },
-  "headline": "It's Your Last Block!",
+  "headline": "Hadoop CLI for HDFS Directory Cleanup",
   
-  "datePublished": "2018-04-16T00:00:00Z",
-  "dateModified": "2018-04-16T00:00:00Z",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
   
   "author": {
     "@type": "Person",
@@ -171,7 +169,7 @@
       "url": "http://blog.streever.com/img/icon-512.png"
     }
   },
-  "description": "With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure."
+  "description": "Sometimes hadoop processes leave artifacts on 'hdfs' that need to be cleaned up.  Whether they're there intentionally or not, cleaning them up is time consuming through the `hdfs dfs` commandline.  Try the 'hadoopcli' with its `lsp` function and pipelining."
 }
 </script>
 
@@ -189,7 +187,7 @@
 
 
 
-  <title>It&#39;s Your Last Block! | David W. Streever</title>
+  <title>Hadoop CLI for HDFS Directory Cleanup | David W. Streever</title>
 
 </head>
 
@@ -471,7 +469,7 @@
   
   
 <div class="article-container pt-3">
-  <h1>It&#39;s Your Last Block!</h1>
+  <h1>Hadoop CLI for HDFS Directory Cleanup</h1>
 
   
 
@@ -503,7 +501,7 @@
     
       
     
-    Apr 16, 2018
+    Jan 1, 0001
   </span>
   
 
@@ -512,7 +510,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 min read
+    2 min read
   </span>
   
 
@@ -524,7 +522,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/devops/">devops</a></span>
+    <i class="fas fa-folder mr-1"></i><a href="/categories/devops/">devops</a>, <a href="/categories/navigation/">navigation</a></span>
   
 
 </div>
@@ -543,6 +541,49 @@
 
 
 
+<div class="btn-links mb-3">
+  
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  
+  <a class="btn btn-outline-primary my-1 mr-1" href="/project/hadoop-cli/">
+    Project
+  </a>
+  
+
+
+
+
+  
+  <a class="btn btn-outline-primary my-1 mr-1" href="/slides/hadoop-cli/" target="_blank">
+    Slides
+  </a>
+  
+
+
+
+
+
+
+</div>
+
 
   
 </div>
@@ -552,11 +593,64 @@
   <div class="article-container">
 
     <div class="article-style">
-      <p>In a few other articles, I&rsquo;ll talk about bringing hosts down to facilitate upgrades.</p>
+      
 
-<p>If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.</p>
+<p>Refer to the &lsquo;project&rsquo; and &lsquo;slides&rsquo; above for details on &lsquo;Hadoop CLI&rsquo;.  See the &lsquo;related&rsquo; posts at the end of this post for other information.</p>
 
-<p>If critical jobs can&rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.</p>
+<p>With pipelining in &lsquo;hadoopcli&rsquo; we can combine search functions with cleanup functions.  So what use to take hours to prep and setup, can be accomplished in seconds.</p>
+
+<h3 id="recommendation">Recommendation</h3>
+
+<p>These operations are &lsquo;destructive&rsquo;, so take precautions.</p>
+
+<ul>
+<li>Test the pipeline results before call a destructive operation.</li>
+<li>Create an &lsquo;hdfs snapshot&rsquo; of the target base directory in case something doesn&rsquo;t go as planned. See <a href="/terms">Terms</a>.</li>
+</ul>
+
+<h3 id="sample-use-case">Sample Use case</h3>
+
+<p>Cleaning up hive directories left behind by some hive bugs in &lsquo;stat&rsquo; collection or <code>insert overwrite</code> operations.</p>
+
+<p>In the &lsquo;hadoopcli&rsquo; application:</p>
+
+<pre><code># Let's test the command.
+REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
+hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
+/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db/catalog_sales/.hive-staging_hive_2019-03-07_11-43-26_995_5066067470456199362-32
+/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db/catalog_sales/.hive-staging_hive_2019-03-07_12-26-53_012_3155309838210900907-4
+
+# Now we see the results, let's action on it with a pipe to rm -r -f
+REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/
+tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
+hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path | rm -r -f
+
+# That would've deleted the directories listed above.
+# Now let's try it again, without the pipe and validate the directories are gone.
+REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
+hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
+
+
+</code></pre>
+
+<p>A few notes about this.<br />
+- Since the &lsquo;.hive-staging.*&rsquo; directories are prefixed with a &lsquo;.&rsquo; they&rsquo;re considered <em>invisible</em>.  So use the <code>-i</code> option to find them.
+- Use the <code>-R</code> to support recursion into the directory tree.
+- Output just the &lsquo;path&rsquo; with the <code>-f</code> option because the whole output line is what will be passed into the <code>rm -r -f</code> command.
+- Use the <code>-do</code> &lsquo;directory-only&rsquo; option to output just directories.</p>
+
+<p>If you want to do a little more investigation before <code>rm</code>, Try piping to <code>count -h</code> for a count and size of Directories and Files.</p>
+
+<h3 id="other-use-cases">Other Use Cases</h3>
+
+<ul>
+<li>Cleaning up Job History</li>
+<li>Cleaning up Spark History</li>
+</ul>
+
+<h2 id="last-note">Last Note</h2>
+
+<p>Doing things in mass is great for productivity.  But equally as dangerous when things go wrong.  Protect yourself!!</p>
 
     </div>
 
@@ -568,7 +662,13 @@
 
 <div class="article-tags">
   
+  <a class="badge badge-light" href="/tags/hadoop-cli/">hadoop-cli</a>
+  
   <a class="badge badge-light" href="/tags/hdfs/">hdfs</a>
+  
+  <a class="badge badge-light" href="/tags/cleanup/">cleanup</a>
+  
+  <a class="badge badge-light" href="/tags/pipeline/">pipeline</a>
   
 </div>
 
@@ -585,7 +685,7 @@
       
       
       <li>
-        <a href="https://twitter.com/intent/tweet?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;text=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-twitter">
+        <a href="https://twitter.com/intent/tweet?url=http://blog.streever.com/post/2019/cleaning-up-hdfs/&amp;text=Hadoop%20CLI%20for%20HDFS%20Directory%20Cleanup" target="_blank" rel="noopener" class="share-btn-twitter">
           <i class="fab fa-twitter"></i>
         </a>
       </li>
@@ -598,7 +698,7 @@
       
       
       <li>
-        <a href="https://www.facebook.com/sharer.php?u=http://blog.streever.com/post/2018/its-your-last-block/&amp;t=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-facebook">
+        <a href="https://www.facebook.com/sharer.php?u=http://blog.streever.com/post/2019/cleaning-up-hdfs/&amp;t=Hadoop%20CLI%20for%20HDFS%20Directory%20Cleanup" target="_blank" rel="noopener" class="share-btn-facebook">
           <i class="fab fa-facebook"></i>
         </a>
       </li>
@@ -611,7 +711,7 @@
       
       
       <li>
-        <a href="mailto:?subject=It&amp;#39;s%20Your%20Last%20Block!&amp;body=http://blog.streever.com/post/2018/its-your-last-block/" target="_blank" rel="noopener" class="share-btn-email">
+        <a href="mailto:?subject=Hadoop%20CLI%20for%20HDFS%20Directory%20Cleanup&amp;body=http://blog.streever.com/post/2019/cleaning-up-hdfs/" target="_blank" rel="noopener" class="share-btn-email">
           <i class="fas fa-envelope"></i>
         </a>
       </li>
@@ -624,7 +724,7 @@
       
       
       <li>
-        <a href="https://www.linkedin.com/shareArticle?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;title=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-linkedin">
+        <a href="https://www.linkedin.com/shareArticle?url=http://blog.streever.com/post/2019/cleaning-up-hdfs/&amp;title=Hadoop%20CLI%20for%20HDFS%20Directory%20Cleanup" target="_blank" rel="noopener" class="share-btn-linkedin">
           <i class="fab fa-linkedin-in"></i>
         </a>
       </li>
@@ -637,7 +737,7 @@
       
       
       <li>
-        <a href="https://web.whatsapp.com/send?text=It&amp;#39;s%20Your%20Last%20Block!%20http://blog.streever.com/post/2018/its-your-last-block/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+        <a href="https://web.whatsapp.com/send?text=Hadoop%20CLI%20for%20HDFS%20Directory%20Cleanup%20http://blog.streever.com/post/2019/cleaning-up-hdfs/" target="_blank" rel="noopener" class="share-btn-whatsapp">
           <i class="fab fa-whatsapp"></i>
         </a>
       </li>
@@ -650,7 +750,7 @@
       
       
       <li>
-        <a href="https://service.weibo.com/share/share.php?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;title=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-weibo">
+        <a href="https://service.weibo.com/share/share.php?url=http://blog.streever.com/post/2019/cleaning-up-hdfs/&amp;title=Hadoop%20CLI%20for%20HDFS%20Directory%20Cleanup" target="_blank" rel="noopener" class="share-btn-weibo">
           <i class="fab fa-weibo"></i>
         </a>
       </li>
@@ -798,7 +898,15 @@
     <h3>Related</h3>
     <ul>
       
-      <li><a href="/post/2019/cleaning-up-hdfs/">Hadoop CLI for HDFS Directory Cleanup</a></li>
+      <li><a href="/post/hadoop-cli/lsp/">Hadoop CLI &#39;lsp&#39; Function</a></li>
+      
+      <li><a href="/post/hadoop-cli/intro/">Hadoop CLI - Intro</a></li>
+      
+      <li><a href="/project/hadoop-cli/">Hadoop CLI</a></li>
+      
+      <li><a href="/slides/hadoop-cli/">Hadoop CLI Walk-Through</a></li>
+      
+      <li><a href="/post/2018/its-your-last-block/">It&#39;s Your Last Block!</a></li>
       
     </ul>
   </div>

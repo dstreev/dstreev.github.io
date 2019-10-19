@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure.">
+  <meta name="description" content="Vice President - Engineering">
 
   
-  <link rel="alternate" hreflang="en-us" href="http://blog.streever.com/post/2018/its-your-last-block/">
+  <link rel="alternate" hreflang="en-us" href="http://blog.streever.com/tags/pipeline/">
 
   
 
@@ -96,12 +96,14 @@
 
 
   
+  <link rel="alternate" href="/tags/pipeline/index.xml" type="application/rss+xml" title="David W. Streever">
+  
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="http://blog.streever.com/post/2018/its-your-last-block/">
+  <link rel="canonical" href="http://blog.streever.com/tags/pipeline/">
 
   
   
@@ -117,67 +119,17 @@
   <meta property="twitter:creator" content="@DavidStreever">
   
   <meta property="og:site_name" content="David W. Streever">
-  <meta property="og:url" content="http://blog.streever.com/post/2018/its-your-last-block/">
-  <meta property="og:title" content="It&#39;s Your Last Block! | David W. Streever">
-  <meta property="og:description" content="With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure."><meta property="og:image" content="http://blog.streever.com/img/icon-192.png">
+  <meta property="og:url" content="http://blog.streever.com/tags/pipeline/">
+  <meta property="og:title" content="pipeline | David W. Streever">
+  <meta property="og:description" content="Vice President - Engineering"><meta property="og:image" content="http://blog.streever.com/img/icon-192.png">
   <meta property="twitter:image" content="http://blog.streever.com/img/icon-192.png"><meta property="og:locale" content="en-us">
   
     
-      <meta property="article:published_time" content="2018-04-16T00:00:00&#43;00:00">
-    
-    <meta property="article:modified_time" content="2018-04-16T00:00:00&#43;00:00">
   
 
   
 
 
-    
-
-
-
-
-
-
-  
-
-
-
-
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "http://blog.streever.com/post/2018/its-your-last-block/"
-  },
-  "headline": "It's Your Last Block!",
-  
-  "datePublished": "2018-04-16T00:00:00Z",
-  "dateModified": "2018-04-16T00:00:00Z",
-  
-  "author": {
-    "@type": "Person",
-    "name": "David W. Streever"
-  },
-  
-  "publisher": {
-    "@type": "Organization",
-    "name": "David W. Streever",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "http://blog.streever.com/img/icon-512.png"
-    }
-  },
-  "description": "With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure."
-}
-</script>
-
-  
-
-  
 
 
   
@@ -189,7 +141,7 @@
 
 
 
-  <title>It&#39;s Your Last Block! | David W. Streever</title>
+  <title>pipeline | David W. Streever</title>
 
 </head>
 
@@ -450,8 +402,6 @@
 </nav>
 
 
-  <article class="article">
-
   
 
 
@@ -469,345 +419,37 @@
 
   
   
-  
-<div class="article-container pt-3">
-  <h1>It&#39;s Your Last Block!</h1>
-
-  
-
   
     
-
-
-<div class="article-metadata">
+  
+<div class="universal-wrapper pt-3">
+  <h1>pipeline</h1>
 
   
+
   
+</div>
+
+
+
+<div class="universal-wrapper">
+  
+
   
   
   <div>
-    
-
-
-
-  
-  <span><a href="/authors/dstreev/">David W. Streever</a></span>
-
-  </div>
-  
-  
-
-  
-  <span class="article-date">
-    
-    
-      
-    
-    Apr 16, 2018
-  </span>
-  
-
-  
-
-  
-  <span class="middot-divider"></span>
-  <span class="article-reading-time">
-    1 min read
-  </span>
-  
-
-  
-  
-  
-
-  
-  
-  <span class="middot-divider"></span>
-  <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/devops/">devops</a></span>
-  
-
-</div>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-</div>
-
-
-
-  <div class="article-container">
-
+    <h2><a href="/post/2019/cleaning-up-hdfs/">Hadoop CLI for HDFS Directory Cleanup</a></h2>
     <div class="article-style">
-      <p>In a few other articles, I&rsquo;ll talk about bringing hosts down to facilitate upgrades.</p>
-
-<p>If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.</p>
-
-<p>If critical jobs can&rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.</p>
-
-    </div>
-
-    
-
-
-
-
-
-<div class="article-tags">
-  
-  <a class="badge badge-light" href="/tags/hdfs/">hdfs</a>
-  
-</div>
-
-
-
-<div class="share-box" aria-hidden="true">
-  <ul class="share">
-    
       
+      Sometimes hadoop processes leave artifacts on 'hdfs' that need to be cleaned up.  Whether they're there intentionally or not, cleaning them up is time consuming through the `hdfs dfs` commandline.  Try the 'hadoopcli' with its `lsp` function and …
       
-      
-        
-      
-      
-      
-      <li>
-        <a href="https://twitter.com/intent/tweet?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;text=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-twitter">
-          <i class="fab fa-twitter"></i>
-        </a>
-      </li>
-    
-      
-      
-      
-        
-      
-      
-      
-      <li>
-        <a href="https://www.facebook.com/sharer.php?u=http://blog.streever.com/post/2018/its-your-last-block/&amp;t=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-facebook">
-          <i class="fab fa-facebook"></i>
-        </a>
-      </li>
-    
-      
-      
-      
-        
-      
-      
-      
-      <li>
-        <a href="mailto:?subject=It&amp;#39;s%20Your%20Last%20Block!&amp;body=http://blog.streever.com/post/2018/its-your-last-block/" target="_blank" rel="noopener" class="share-btn-email">
-          <i class="fas fa-envelope"></i>
-        </a>
-      </li>
-    
-      
-      
-      
-        
-      
-      
-      
-      <li>
-        <a href="https://www.linkedin.com/shareArticle?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;title=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-linkedin">
-          <i class="fab fa-linkedin-in"></i>
-        </a>
-      </li>
-    
-      
-      
-      
-        
-      
-      
-      
-      <li>
-        <a href="https://web.whatsapp.com/send?text=It&amp;#39;s%20Your%20Last%20Block!%20http://blog.streever.com/post/2018/its-your-last-block/" target="_blank" rel="noopener" class="share-btn-whatsapp">
-          <i class="fab fa-whatsapp"></i>
-        </a>
-      </li>
-    
-      
-      
-      
-        
-      
-      
-      
-      <li>
-        <a href="https://service.weibo.com/share/share.php?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;title=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-weibo">
-          <i class="fab fa-weibo"></i>
-        </a>
-      </li>
-    
-  </ul>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-    
-  
-  
-
-
-
-
-
-
-  
-  
-  
-    
-  
-  
-  <div class="media author-card content-widget-hr">
-    
-      
-      <img class="portrait mr-3" src="/authors/dstreev/avatar_hu613bb9c0f9e03d55c3be14aa85424198_675434_250x250_fill_lanczos_center_2.png" alt="Avatar">
-    
-
-    <div class="media-body">
-      <h5 class="card-title"><a href="http://blog.streever.com/">David W. Streever</a></h5>
-      <h6 class="card-subtitle">Vice President - Engineering</h6>
-      <p class="card-text">Platform Enablement - Tiger Team</p>
-      <ul class="network-icon" aria-hidden="true">
-  
-    
-    
-    
-      
-    
-    
-    
-    
-    
-    <li>
-      <a href="mailto:david@streever.com" >
-        <i class="fas fa-envelope"></i>
-      </a>
-    </li>
-  
-    
-    
-    
-      
-    
-    
-    
-    
-    
-      
-    
-    <li>
-      <a href="https://www.linkedin.com/in/davidstreever/" target="_blank" rel="noopener">
-        <i class="fab fa-linkedin"></i>
-      </a>
-    </li>
-  
-    
-    
-    
-      
-    
-    
-    
-    
-    
-      
-    
-    <li>
-      <a href="https://twitter.com/DavidStreever" target="_blank" rel="noopener">
-        <i class="fab fa-twitter"></i>
-      </a>
-    </li>
-  
-    
-    
-    
-      
-    
-    
-    
-    
-    
-      
-    
-    <li>
-      <a href="https://github.com/dstreev" target="_blank" rel="noopener">
-        <i class="fab fa-github"></i>
-      </a>
-    </li>
-  
-    
-    
-    
-    
-    
-    
-    
-      
-    
-    <li>
-      <a href="/files/2019-08-David%20Streever.pdf" >
-        <i class="ai ai-cv"></i>
-      </a>
-    </li>
-  
-</ul>
-
     </div>
   </div>
-
-
-
-
-
-
-
-
-
-  
-  
-  <div class="article-widget content-widget-hr">
-    <h3>Related</h3>
-    <ul>
-      
-      <li><a href="/post/2019/cleaning-up-hdfs/">Hadoop CLI for HDFS Directory Cleanup</a></li>
-      
-    </ul>
-  </div>
   
 
+  
 
-
-  </div>
-</article>
+</div>
 
       
 

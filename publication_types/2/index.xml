@@ -25,7 +25,7 @@
 - Ratio of File Size to Block
 - Datanode information for the files blocks (Host and Block Id)&lt;/p&gt;
 
-&lt;p&gt;&lt;code&gt;lsp&lt;/code&gt; can be used to search hdfs, similar to the &lt;code&gt;find&lt;/code&gt; linux program.  Although the syntax is a bit different.  The options &lt;code&gt;-F&lt;/code&gt;,&lt;code&gt;-Fe&lt;/code&gt;, and &lt;code&gt;-i&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;lsp&lt;/code&gt; can be used to search hdfs, similar to the &lt;code&gt;find&lt;/code&gt; linux program.  Although the syntax is a bit different.  Use options &lt;code&gt;-F&lt;/code&gt;,&lt;code&gt;-Fe&lt;/code&gt;, and &lt;code&gt;-i&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;lsp&lt;/code&gt; can be used to output a formatted row for files and directories using the &lt;code&gt;-f&lt;/code&gt; option.  When the &lt;code&gt;datanode_info&lt;/code&gt; option is specified, the output will contain details for each replicated block of a file.&lt;/p&gt;
 
@@ -332,6 +332,72 @@ The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;. 
 &lt;p&gt;If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&amp;rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.&lt;/p&gt;
 
 &lt;p&gt;If critical jobs can&amp;rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hadoop CLI for HDFS Directory Cleanup</title>
+      <link>http://blog.streever.com/post/2019/cleaning-up-hdfs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/post/2019/cleaning-up-hdfs/</guid>
+      <description>
+
+&lt;p&gt;Refer to the &amp;lsquo;project&amp;rsquo; and &amp;lsquo;slides&amp;rsquo; above for details on &amp;lsquo;Hadoop CLI&amp;rsquo;.  See the &amp;lsquo;related&amp;rsquo; posts at the end of this post for other information.&lt;/p&gt;
+
+&lt;p&gt;With pipelining in &amp;lsquo;hadoopcli&amp;rsquo; we can combine search functions with cleanup functions.  So what use to take hours to prep and setup, can be accomplished in seconds.&lt;/p&gt;
+
+&lt;h3 id=&#34;recommendation&#34;&gt;Recommendation&lt;/h3&gt;
+
+&lt;p&gt;These operations are &amp;lsquo;destructive&amp;rsquo;, so take precautions.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Test the pipeline results before call a destructive operation.&lt;/li&gt;
+&lt;li&gt;Create an &amp;lsquo;hdfs snapshot&amp;rsquo; of the target base directory in case something doesn&amp;rsquo;t go as planned. See &lt;a href=&#34;http://blog.streever.com/terms&#34;&gt;Terms&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;sample-use-case&#34;&gt;Sample Use case&lt;/h3&gt;
+
+&lt;p&gt;Cleaning up hive directories left behind by some hive bugs in &amp;lsquo;stat&amp;rsquo; collection or &lt;code&gt;insert overwrite&lt;/code&gt; operations.&lt;/p&gt;
+
+&lt;p&gt;In the &amp;lsquo;hadoopcli&amp;rsquo; application:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Let&#39;s test the command.
+REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
+hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
+/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db/catalog_sales/.hive-staging_hive_2019-03-07_11-43-26_995_5066067470456199362-32
+/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db/catalog_sales/.hive-staging_hive_2019-03-07_12-26-53_012_3155309838210900907-4
+
+# Now we see the results, let&#39;s action on it with a pipe to rm -r -f
+REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/
+tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
+hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path | rm -r -f
+
+# That would&#39;ve deleted the directories listed above.
+# Now let&#39;s try it again, without the pipe and validate the directories are gone.
+REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
+hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
+
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A few notes about this.&lt;br /&gt;
+- Since the &amp;lsquo;.hive-staging.*&amp;rsquo; directories are prefixed with a &amp;lsquo;.&amp;rsquo; they&amp;rsquo;re considered &lt;em&gt;invisible&lt;/em&gt;.  So use the &lt;code&gt;-i&lt;/code&gt; option to find them.
+- Use the &lt;code&gt;-R&lt;/code&gt; to support recursion into the directory tree.
+- Output just the &amp;lsquo;path&amp;rsquo; with the &lt;code&gt;-f&lt;/code&gt; option because the whole output line is what will be passed into the &lt;code&gt;rm -r -f&lt;/code&gt; command.
+- Use the &lt;code&gt;-do&lt;/code&gt; &amp;lsquo;directory-only&amp;rsquo; option to output just directories.&lt;/p&gt;
+
+&lt;p&gt;If you want to do a little more investigation before &lt;code&gt;rm&lt;/code&gt;, Try piping to &lt;code&gt;count -h&lt;/code&gt; for a count and size of Directories and Files.&lt;/p&gt;
+
+&lt;h3 id=&#34;other-use-cases&#34;&gt;Other Use Cases&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Cleaning up Job History&lt;/li&gt;
+&lt;li&gt;Cleaning up Spark History&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;last-note&#34;&gt;Last Note&lt;/h2&gt;
+
+&lt;p&gt;Doing things in mass is great for productivity.  But equally as dangerous when things go wrong.  Protect yourself!!&lt;/p&gt;
 </description>
     </item>
     
