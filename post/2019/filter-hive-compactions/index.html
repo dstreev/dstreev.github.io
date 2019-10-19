@@ -572,6 +572,15 @@
 
 <h2 id="build-out-metadata-elements">Build Out Metadata Elements</h2>
 
+<div class="alert alert-note">
+  <div>
+    <p>A word of caution here.  All the &lsquo;extras&rsquo; you create against the metastore DB can/may break with the next release.  This isn&rsquo;t a supported method of accessing metadata.</p>
+
+<p>Don&rsquo;t add <em>new</em> tables to the current <code>sys.db</code>.  That&rsquo;s bad form and could cause issues for the platform during the next upgrade cycle, especially if there are naming conflicts.  Put it somewhere else!!</p>
+
+  </div>
+</div>
+
 <pre><code class="language-sql">CREATE DATABASE IF NOT EXISTS custom_sys;
 
 DROP TABLE IF EXISTS `custom_sys`.`completed_compactions`;
