@@ -4,21 +4,86 @@
   
   <url>
     <loc>http://blog.streever.com/authors/dstreev/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/publication_types/2/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/ansible/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/authors/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/devops/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/filter/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/post/hadoop-cli/lsp/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/hadoop-cli/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/hdfs/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/lsp/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/navigation/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/post/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/publication_types/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/search/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/</loc>
+    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/ansible/</loc>
     <lastmod>2019-10-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -28,22 +93,7 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/categories/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/tags/cli/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/categories/devops/</loc>
     <lastmod>2019-10-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -58,42 +108,12 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/tags/hadoop-cli/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/hdfs/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/project/hwx-ansible/</loc>
     <lastmod>2019-10-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.streever.com/categories/navigation/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/post/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/project/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/publication_types/</loc>
-    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/</loc>
     <lastmod>2019-10-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -288,27 +308,11 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/tags/filter/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/post/hadoop-cli/lsp/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/lsp/</loc>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/publication/</loc>
   </url>
   
   <url>
     <loc>http://blog.streever.com/talk/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/categories/search/</loc>
   </url>
   
 </urlset>

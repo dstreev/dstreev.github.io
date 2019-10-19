@@ -5,7 +5,7 @@
     <link>http://blog.streever.com/categories/</link>
       <atom:link href="http://blog.streever.com/categories/index.xml" rel="self" type="application/rss+xml" />
     <description>Categories</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Fri, 18 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://blog.streever.com/img/icon-192.png</url>
       <title>Categories</title>
@@ -15,7 +15,7 @@
     <item>
       <title>devops</title>
       <link>http://blog.streever.com/categories/devops/</link>
-      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/categories/devops/</guid>
       <description></description>
     </item>
@@ -23,8 +23,16 @@
     <item>
       <title>navigation</title>
       <link>http://blog.streever.com/categories/navigation/</link>
-      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/categories/navigation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>search</title>
+      <link>http://blog.streever.com/categories/search/</link>
+      <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/categories/search/</guid>
       <description></description>
     </item>
     
@@ -65,14 +73,6 @@
       <link>http://blog.streever.com/categories/opinion/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/categories/opinion/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>search</title>
-      <link>http://blog.streever.com/categories/search/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/search/</guid>
       <description></description>
     </item>
     

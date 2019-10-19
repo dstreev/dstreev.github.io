@@ -5,7 +5,7 @@
     <link>http://blog.streever.com/tags/filter/</link>
       <atom:link href="http://blog.streever.com/tags/filter/index.xml" rel="self" type="application/rss+xml" />
     <description>filter</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Fri, 18 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://blog.streever.com/img/icon-192.png</url>
       <title>filter</title>
@@ -15,7 +15,7 @@
     <item>
       <title>Hadoop CLI &#39;lsp&#39; Function</title>
       <link>http://blog.streever.com/post/hadoop-cli/lsp/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/post/hadoop-cli/lsp/</guid>
       <description>
 

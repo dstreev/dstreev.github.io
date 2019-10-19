@@ -5,12 +5,44 @@
     <link>http://blog.streever.com/tags/</link>
       <atom:link href="http://blog.streever.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <description>Tags</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Fri, 18 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://blog.streever.com/img/icon-192.png</url>
       <title>Tags</title>
       <link>http://blog.streever.com/tags/</link>
     </image>
+    
+    <item>
+      <title>filter</title>
+      <link>http://blog.streever.com/tags/filter/</link>
+      <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/filter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hadoop-cli</title>
+      <link>http://blog.streever.com/tags/hadoop-cli/</link>
+      <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/hadoop-cli/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hdfs</title>
+      <link>http://blog.streever.com/tags/hdfs/</link>
+      <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/hdfs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>lsp</title>
+      <link>http://blog.streever.com/tags/lsp/</link>
+      <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/lsp/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>ansible</title>
@@ -41,22 +73,6 @@
       <link>http://blog.streever.com/tags/hadoop/</link>
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/tags/hadoop/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hadoop-cli</title>
-      <link>http://blog.streever.com/tags/hadoop-cli/</link>
-      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/hadoop-cli/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hdfs</title>
-      <link>http://blog.streever.com/tags/hdfs/</link>
-      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/hdfs/</guid>
       <description></description>
     </item>
     
@@ -225,22 +241,6 @@
       <link>http://blog.streever.com/tags/rhel/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/tags/rhel/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>filter</title>
-      <link>http://blog.streever.com/tags/filter/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/filter/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>lsp</title>
-      <link>http://blog.streever.com/tags/lsp/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/lsp/</guid>
       <description></description>
     </item>
     
