@@ -13,7 +13,17 @@
   </url>
   
   <url>
+    <loc>http://blog.streever.com/tags/ansible/</loc>
+    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/authors/</loc>
+    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/automation/</loc>
     <lastmod>2019-10-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -38,6 +48,11 @@
   </url>
   
   <url>
+    <loc>http://blog.streever.com/tags/hadoop/</loc>
+    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/post/hadoop-cli/intro/</loc>
     <lastmod>2019-10-17T00:00:00+00:00</lastmod>
   </url>
@@ -53,12 +68,22 @@
   </url>
   
   <url>
+    <loc>http://blog.streever.com/project/hwx-ansible/</loc>
+    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/categories/navigation/</loc>
     <lastmod>2019-10-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/post/</loc>
+    <lastmod>2019-10-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/project/</loc>
     <lastmod>2019-10-17T00:00:00+00:00</lastmod>
   </url>
   
@@ -113,11 +138,6 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/tags/hadoop/</loc>
-    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/project/hadoop-cli/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
@@ -164,11 +184,6 @@
   
   <url>
     <loc>http://blog.streever.com/categories/planning/</loc>
-    <lastmod>2019-10-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/project/</loc>
     <lastmod>2019-10-15T00:00:00+00:00</lastmod>
   </url>
   

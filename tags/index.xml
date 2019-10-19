@@ -13,10 +13,34 @@
     </image>
     
     <item>
+      <title>ansible</title>
+      <link>http://blog.streever.com/tags/ansible/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/ansible/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>automation</title>
+      <link>http://blog.streever.com/tags/automation/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/automation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>cli</title>
       <link>http://blog.streever.com/tags/cli/</link>
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/tags/cli/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hadoop</title>
+      <link>http://blog.streever.com/tags/hadoop/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/hadoop/</guid>
       <description></description>
     </item>
     
@@ -73,14 +97,6 @@
       <link>http://blog.streever.com/tags/gaps/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/tags/gaps/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hadoop</title>
-      <link>http://blog.streever.com/tags/hadoop/</link>
-      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/hadoop/</guid>
       <description></description>
     </item>
     
