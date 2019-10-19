@@ -4,32 +4,77 @@
   
   <url>
     <loc>http://blog.streever.com/authors/dstreev/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/publication_types/2/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/authors/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/categories/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/cleanup/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://blog.streever.com/categories/devops/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/post/2019/cleaning-up-hdfs/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/hadoop-cli/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/hdfs/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/navigation/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/pipeline/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/post/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/publication_types/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/</loc>
+    <lastmod>2019-10-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -43,42 +88,12 @@
   </url>
   
   <url>
-    <loc>http://blog.streever.com/tags/hadoop-cli/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/hdfs/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/tags/lsp/</loc>
     <lastmod>2019-10-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.streever.com/categories/navigation/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/post/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/publication_types/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://blog.streever.com/categories/search/</loc>
-    <lastmod>2019-10-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/</loc>
     <lastmod>2019-10-18T00:00:00+00:00</lastmod>
   </url>
   
@@ -305,18 +320,6 @@
   <url>
     <loc>http://blog.streever.com/post/hadoop-cli/scripting/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/cleanup/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/post/2019/cleaning-up-hdfs/</loc>
-  </url>
-  
-  <url>
-    <loc>http://blog.streever.com/tags/pipeline/</loc>
   </url>
   
   <url>
