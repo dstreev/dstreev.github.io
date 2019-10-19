@@ -288,11 +288,27 @@
   </url>
   
   <url>
+    <loc>http://blog.streever.com/tags/filter/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/post/hadoop-cli/lsp/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/tags/lsp/</loc>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/publication/</loc>
   </url>
   
   <url>
     <loc>http://blog.streever.com/talk/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.streever.com/categories/search/</loc>
   </url>
   
 </urlset>

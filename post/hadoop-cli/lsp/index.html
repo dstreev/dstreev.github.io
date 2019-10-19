@@ -28,10 +28,11 @@
   
     
   
-  <meta name="description" content="With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure.">
+  <meta name="description" content="Like &lsquo;ls&rsquo;, you can fetch many details about a file. But with this, you can also add information about the file that includes: - Block Size - Access Time - Ratio of File Size to Block - Datanode information for the files blocks (Host and Block Id)
+lsp can be used to search hdfs, similar to the find linux program. Although the syntax is a bit different. The options -F,-Fe, and -i.">
 
   
-  <link rel="alternate" hreflang="en-us" href="http://blog.streever.com/post/2018/its-your-last-block/">
+  <link rel="alternate" hreflang="en-us" href="http://blog.streever.com/post/hadoop-cli/lsp/">
 
   
 
@@ -101,7 +102,7 @@
   <link rel="icon" type="image/png" href="/img/icon-32.png">
   <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
 
-  <link rel="canonical" href="http://blog.streever.com/post/2018/its-your-last-block/">
+  <link rel="canonical" href="http://blog.streever.com/post/hadoop-cli/lsp/">
 
   
   
@@ -117,15 +118,14 @@
   <meta property="twitter:creator" content="@DavidStreever">
   
   <meta property="og:site_name" content="David W. Streever">
-  <meta property="og:url" content="http://blog.streever.com/post/2018/its-your-last-block/">
-  <meta property="og:title" content="It&#39;s Your Last Block! | David W. Streever">
-  <meta property="og:description" content="With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure."><meta property="og:image" content="http://blog.streever.com/img/icon-192.png">
+  <meta property="og:url" content="http://blog.streever.com/post/hadoop-cli/lsp/">
+  <meta property="og:title" content="Hadoop CLI &#39;lsp&#39; Function | David W. Streever">
+  <meta property="og:description" content="Like &lsquo;ls&rsquo;, you can fetch many details about a file. But with this, you can also add information about the file that includes: - Block Size - Access Time - Ratio of File Size to Block - Datanode information for the files blocks (Host and Block Id)
+lsp can be used to search hdfs, similar to the find linux program. Although the syntax is a bit different. The options -F,-Fe, and -i."><meta property="og:image" content="http://blog.streever.com/img/icon-192.png">
   <meta property="twitter:image" content="http://blog.streever.com/img/icon-192.png"><meta property="og:locale" content="en-us">
   
     
-      <meta property="article:published_time" content="2018-04-16T00:00:00&#43;00:00">
     
-    <meta property="article:modified_time" content="2018-04-16T00:00:00&#43;00:00">
   
 
   
@@ -151,12 +151,12 @@
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "http://blog.streever.com/post/2018/its-your-last-block/"
+    "@id": "http://blog.streever.com/post/hadoop-cli/lsp/"
   },
-  "headline": "It's Your Last Block!",
+  "headline": "Hadoop CLI 'lsp' Function",
   
-  "datePublished": "2018-04-16T00:00:00Z",
-  "dateModified": "2018-04-16T00:00:00Z",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
   
   "author": {
     "@type": "Person",
@@ -171,7 +171,7 @@
       "url": "http://blog.streever.com/img/icon-512.png"
     }
   },
-  "description": "With 3 replicas when you remove 2 from service, data availability can be affected if you have a drive failure."
+  "description": "Like \u0026lsquo;ls\u0026rsquo;, you can fetch many details about a file. But with this, you can also add information about the file that includes: - Block Size - Access Time - Ratio of File Size to Block - Datanode information for the files blocks (Host and Block Id)\nlsp can be used to search hdfs, similar to the find linux program. Although the syntax is a bit different. The options -F,-Fe, and -i."
 }
 </script>
 
@@ -189,7 +189,7 @@
 
 
 
-  <title>It&#39;s Your Last Block! | David W. Streever</title>
+  <title>Hadoop CLI &#39;lsp&#39; Function | David W. Streever</title>
 
 </head>
 
@@ -471,7 +471,7 @@
   
   
 <div class="article-container pt-3">
-  <h1>It&#39;s Your Last Block!</h1>
+  <h1>Hadoop CLI &#39;lsp&#39; Function</h1>
 
   
 
@@ -503,7 +503,7 @@
     
       
     
-    Apr 16, 2018
+    Jan 1, 0001
   </span>
   
 
@@ -512,7 +512,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    1 min read
+    3 min read
   </span>
   
 
@@ -524,7 +524,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-categories">
-    <i class="fas fa-folder mr-1"></i><a href="/categories/devops/">devops</a></span>
+    <i class="fas fa-folder mr-1"></i><a href="/categories/devops/">devops</a>, <a href="/categories/navigation/">navigation</a>, <a href="/categories/search/">search</a></span>
   
 
 </div>
@@ -543,6 +543,45 @@
 
 
 
+<div class="btn-links mb-3">
+  
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  
+  <a class="btn btn-outline-primary my-1 mr-1" href="/project/hadoop-cli/">
+    Project
+  </a>
+  
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
 
   
 </div>
@@ -552,11 +591,127 @@
   <div class="article-container">
 
     <div class="article-style">
-      <p>In a few other articles, I&rsquo;ll talk about bringing hosts down to facilitate upgrades.</p>
+      
 
-<p>If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.</p>
+<p>Like &lsquo;ls&rsquo;, you can fetch many details about a file.  But with this, you can also add information about the file that includes:
+- Block Size
+- Access Time
+- Ratio of File Size to Block
+- Datanode information for the files blocks (Host and Block Id)</p>
 
-<p>If critical jobs can&rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.</p>
+<p><code>lsp</code> can be used to search hdfs, similar to the <code>find</code> linux program.  Although the syntax is a bit different.  The options <code>-F</code>,<code>-Fe</code>, and <code>-i</code>.</p>
+
+<p><code>lsp</code> can be used to output a formatted row for files and directories using the <code>-f</code> option.  When the <code>datanode_info</code> option is specified, the output will contain details for each replicated block of a file.</p>
+
+<h2 id="options">Options</h2>
+
+<pre><code>usage: lsp [OPTION ...] [ARGS ...]
+Options:
+ -c,--comment &lt;comment&gt;                  Add comment to output
+ -d,--maxDepth &lt;maxDepth&gt;                Depth of Recursion (default 5),
+                                         use '-1' for unlimited
+ -do,--dir-only                          Show Directories Only
+ -f,--format &lt;output-format&gt;             Comma separated list of one or
+                                         more:
+                                         permissions_long,replication,user
+                                         ,group,size,block_size,ratio,mod,
+                                         access,path,file,datanode_info
+                                         (default all of the above)
+ -F,--filter &lt;filter&gt;                    Regex Filter of Content. Can be
+                                         'Quoted'
+ -Fe,--filter-element &lt;filter element&gt;   Filter on 'element'.  One of
+                                         '--format'
+ -i,--invisible                          Process Invisible
+                                         Files/Directories
+ -n,--newline &lt;newline&gt;                  New Line
+ -o,--output &lt;output directory&gt;          Output Directory (HDFS) (default
+                                         System.out)
+ -R,--recursive                          Process Path Recursively
+ -r,--relative                           Show Relative Path Output
+ -s,--separator &lt;separator&gt;              Field Separator
+ -sp,--show-parent                       For Test, show parent
+ -t,--test                               Test for existence
+ -v,--invert                             Invert Regex Filter of Content
+</code></pre>
+
+<h2 id="actions">Actions</h2>
+
+<h3 id="recursion">Recursion</h3>
+
+<p>Use the <code>-R</code> to recurse through directories.  Use the <code>-d</code> option to specify the depth of the recursion.  The default is 5.  Use -1 for no-limit, but be careful because this could iterate through the whole filesystem.  And that&rsquo;s not productive on &lsquo;large&rsquo; filesystem.</p>
+
+<pre><code>lsp -R
+</code></pre>
+
+<p>Control the depth of the recursion.</p>
+
+<pre><code>lsp -R -d 2
+</code></pre>
+
+<h3 id="filtering-and-output">Filtering and Output</h3>
+
+<p>Find files matching a certain pattern, recursively from path context. The <code>-F</code> option takes a &lsquo;regex&rsquo; expression.  By default, the &lsquo;path&rsquo; <code>-f</code> option is searched.  If you&rsquo;d like to search another element use <code>-Fe</code> and specify one of the valid <code>-f</code> options.</p>
+
+<pre><code>lsp -R -F .*trans.*
+</code></pre>
+
+<p>The output will include the standard output <code>-f</code>, which maybe quite verbose.</p>
+
+<p>Limit the result output like:</p>
+
+<pre><code>lsp -R -F .*trans.* -f path
+</code></pre>
+
+<p>Try using the <code>-do</code> option to list ONLY directories.</p>
+
+<pre><code>lsp -R -F .*trans.* -f path -do
+</code></pre>
+
+<h3 id="using-comments">Using Comments</h3>
+
+<p>The <code>-c</code> option will prepend any output with the comment.  It&rsquo;s a great way to drive scripts from the results.</p>
+
+<pre><code>lsp -R -c 'count -h' -F .*trans.* -f path -do
+</code></pre>
+
+<h3 id="how-about-an-inverted-search">How about an Inverted Search</h3>
+
+<p>There are times you want to find files that do <em>NOT</em> match a pattern. Use the <code>-v</code> option to reverse match on the filter.</p>
+
+<pre><code>lsp -F *.trans.* -v
+</code></pre>
+
+<h3 id="default-output">Default Output</h3>
+
+<p>When not argument is specified, it will use the current directory.</p>
+
+<p>Examples:</p>
+
+<pre><code># Using the default format, output a listing to the files in `/user/dstreev/perf` to `/tmp/test.out`
+lsp -o /tmp/test.out /user/dstreev/perf
+</code></pre>
+
+<p>Output with the default format of:</p>
+
+<pre><code>permissions_long,replication,user,group,size,block_size,ratio,mod,access,path,datanode_info
+</code></pre>
+
+<pre><code>   rw-------,3,dstreev,hdfs,429496700,134217728,3.200,2015-10-24 12:26:39.689,2015-10-24 12:23:27.406,/user/dstreev/perf/teragen_27/part-m-00004,10.0.0.166,d2.hdp.local,blk_1073747900
+   rw-------,3,dstreev,hdfs,429496700,134217728,3.200,2015-10-24 12:26:39.689,2015-10-24 12:23:27.406,/user/dstreev/perf/teragen_27/part-m-00004,10.0.0.167,d3.hdp.local,blk_1073747900
+   rw-------,3,dstreev,hdfs,33,134217728,2.459E-7,2015-10-24 12:27:09.134,2015-10-24 12:27:06.560,/user/dstreev/perf/terasort_27/_partition.lst,10.0.0.166,d2.hdp.local,blk_1073747909
+   rw-------,3,dstreev,hdfs,33,134217728,2.459E-7,2015-10-24 12:27:09.134,2015-10-24 12:27:06.560,/user/dstreev/perf/terasort_27/_partition.lst,10.0.0.167,d3.hdp.local,blk_1073747909
+   rw-------,1,dstreev,hdfs,543201700,134217728,4.047,2015-10-24 12:29:28.706,2015-10-24 12:29:20.882,/user/dstreev/perf/terasort_27/part-r-00002,10.0.0.167,d3.hdp.local,blk_1073747920
+   rw-------,1,dstreev,hdfs,543201700,134217728,4.047,2015-10-24 12:29:28.706,2015-10-24 12:29:20.882,/user/dstreev/perf/terasort_27/part-r-00002,10.0.0.167,d3.hdp.local,blk_1073747921
+</code></pre>
+
+<p>With the file in HDFS, you can build a <a href="./src/main/hive/lsp.ddl">hive table</a> on top of it to do some analysis.  One of the reasons I created this was to be able to review a directory used by some process and get a baring on the file construction and distribution across the cluster.</p>
+
+<h4 id="use-cases">Use Cases</h4>
+
+<ul>
+<li>The ratio can be used to identify files that are below the block size (small files).</li>
+<li>With the Datanode information, you can determine if a dataset is hot-spotted on a cluster.  All you need is a full list of hosts to join the results with.</li>
+</ul>
 
     </div>
 
@@ -568,7 +723,13 @@
 
 <div class="article-tags">
   
+  <a class="badge badge-light" href="/tags/hadoop-cli/">hadoop-cli</a>
+  
+  <a class="badge badge-light" href="/tags/lsp/">lsp</a>
+  
   <a class="badge badge-light" href="/tags/hdfs/">hdfs</a>
+  
+  <a class="badge badge-light" href="/tags/filter/">filter</a>
   
 </div>
 
@@ -585,7 +746,7 @@
       
       
       <li>
-        <a href="https://twitter.com/intent/tweet?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;text=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-twitter">
+        <a href="https://twitter.com/intent/tweet?url=http://blog.streever.com/post/hadoop-cli/lsp/&amp;text=Hadoop%20CLI%20&amp;#39;lsp&amp;#39;%20Function" target="_blank" rel="noopener" class="share-btn-twitter">
           <i class="fab fa-twitter"></i>
         </a>
       </li>
@@ -598,7 +759,7 @@
       
       
       <li>
-        <a href="https://www.facebook.com/sharer.php?u=http://blog.streever.com/post/2018/its-your-last-block/&amp;t=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-facebook">
+        <a href="https://www.facebook.com/sharer.php?u=http://blog.streever.com/post/hadoop-cli/lsp/&amp;t=Hadoop%20CLI%20&amp;#39;lsp&amp;#39;%20Function" target="_blank" rel="noopener" class="share-btn-facebook">
           <i class="fab fa-facebook"></i>
         </a>
       </li>
@@ -611,7 +772,7 @@
       
       
       <li>
-        <a href="mailto:?subject=It&amp;#39;s%20Your%20Last%20Block!&amp;body=http://blog.streever.com/post/2018/its-your-last-block/" target="_blank" rel="noopener" class="share-btn-email">
+        <a href="mailto:?subject=Hadoop%20CLI%20&amp;#39;lsp&amp;#39;%20Function&amp;body=http://blog.streever.com/post/hadoop-cli/lsp/" target="_blank" rel="noopener" class="share-btn-email">
           <i class="fas fa-envelope"></i>
         </a>
       </li>
@@ -624,7 +785,7 @@
       
       
       <li>
-        <a href="https://www.linkedin.com/shareArticle?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;title=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-linkedin">
+        <a href="https://www.linkedin.com/shareArticle?url=http://blog.streever.com/post/hadoop-cli/lsp/&amp;title=Hadoop%20CLI%20&amp;#39;lsp&amp;#39;%20Function" target="_blank" rel="noopener" class="share-btn-linkedin">
           <i class="fab fa-linkedin-in"></i>
         </a>
       </li>
@@ -637,7 +798,7 @@
       
       
       <li>
-        <a href="https://web.whatsapp.com/send?text=It&amp;#39;s%20Your%20Last%20Block!%20http://blog.streever.com/post/2018/its-your-last-block/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+        <a href="https://web.whatsapp.com/send?text=Hadoop%20CLI%20&amp;#39;lsp&amp;#39;%20Function%20http://blog.streever.com/post/hadoop-cli/lsp/" target="_blank" rel="noopener" class="share-btn-whatsapp">
           <i class="fab fa-whatsapp"></i>
         </a>
       </li>
@@ -650,7 +811,7 @@
       
       
       <li>
-        <a href="https://service.weibo.com/share/share.php?url=http://blog.streever.com/post/2018/its-your-last-block/&amp;title=It&amp;#39;s%20Your%20Last%20Block!" target="_blank" rel="noopener" class="share-btn-weibo">
+        <a href="https://service.weibo.com/share/share.php?url=http://blog.streever.com/post/hadoop-cli/lsp/&amp;title=Hadoop%20CLI%20&amp;#39;lsp&amp;#39;%20Function" target="_blank" rel="noopener" class="share-btn-weibo">
           <i class="fab fa-weibo"></i>
         </a>
       </li>
@@ -798,7 +959,13 @@
     <h3>Related</h3>
     <ul>
       
-      <li><a href="/post/hadoop-cli/lsp/">Hadoop CLI &#39;lsp&#39; Function</a></li>
+      <li><a href="/post/hadoop-cli/intro/">Hadoop CLI - Intro</a></li>
+      
+      <li><a href="/project/hadoop-cli/">Hadoop CLI</a></li>
+      
+      <li><a href="/slides/hadoop-cli/">Hadoop CLI Walk-Through</a></li>
+      
+      <li><a href="/post/2018/its-your-last-block/">It&#39;s Your Last Block!</a></li>
       
     </ul>
   </div>
