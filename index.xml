@@ -196,7 +196,7 @@ lsp -o /tmp/test.out /user/dstreev/perf
    rw-------,1,dstreev,hdfs,543201700,134217728,4.047,2015-10-24 12:29:28.706,2015-10-24 12:29:20.882,/user/dstreev/perf/terasort_27/part-r-00002,10.0.0.167,d3.hdp.local,blk_1073747921
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;With the file in HDFS, you can build a &lt;a href=&#34;./src/main/hive/lsp.ddl&#34;&gt;hive table&lt;/a&gt; on top of it to do some analysis.  One of the reasons I created this was to be able to review a directory used by some process and get a baring on the file construction and distribution across the cluster.&lt;/p&gt;
+&lt;p&gt;With the file in HDFS, you can build a &lt;a href=&#34;lsp.ddl&#34; target=&#34;_blank&#34;&gt;hive table&lt;/a&gt; on top of it to do some analysis.  One of the reasons I created this was to be able to review a directory used by some process and get a baring on the file construction and distribution across the cluster.&lt;/p&gt;
 
 &lt;h4 id=&#34;use-cases&#34;&gt;Use Cases&lt;/h4&gt;
 
