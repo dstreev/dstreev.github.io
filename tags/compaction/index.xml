@@ -152,7 +152,7 @@ FROM `custom_sys`.`compaction_queue`;
 &lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select 
 	`database`, `table`, `partition`, `state`, `type`, `start`, `end`, hadoop_job_id 
 FROM
-	compactions 
+	`custom_sys`.`compactions` 
 ORDER BY `start` DESC 
 LIMIT 10;
 &lt;/code&gt;&lt;/pre&gt;
@@ -164,7 +164,7 @@ LIMIT 10;
 select 
 `database`, `table`, `partition`, `state`, `type`, `start`, `end` 
 FROM
-	compactions 
+	`custom_sys`.`compactions` 
 WHERE `state` = &#39;FAILED&#39; 
 ORDER BY `start` DESC 
 LIMIT 10;

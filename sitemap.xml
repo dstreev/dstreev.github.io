@@ -283,6 +283,11 @@
   </url>
   
   <url>
+    <loc>http://blog.streever.com/post/hadoop-cli/scripting/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.streever.com/publication/</loc>
   </url>
   

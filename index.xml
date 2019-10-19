@@ -183,7 +183,7 @@ FROM `custom_sys`.`compaction_queue`;
 &lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select 
 	`database`, `table`, `partition`, `state`, `type`, `start`, `end`, hadoop_job_id 
 FROM
-	compactions 
+	`custom_sys`.`compactions` 
 ORDER BY `start` DESC 
 LIMIT 10;
 &lt;/code&gt;&lt;/pre&gt;
@@ -195,7 +195,7 @@ LIMIT 10;
 select 
 `database`, `table`, `partition`, `state`, `type`, `start`, `end` 
 FROM
-	compactions 
+	`custom_sys`.`compactions` 
 WHERE `state` = &#39;FAILED&#39; 
 ORDER BY `start` DESC 
 LIMIT 10;
@@ -253,7 +253,7 @@ LIMIT 10;
   &lt;div&gt;
     &lt;p&gt;A word of caution here.  All the &amp;lsquo;extras&amp;rsquo; your create against the metastore DB can/may break with the next release.  This isn&amp;rsquo;t a supported method of accessing metadata.&lt;/p&gt;
 
-&lt;p&gt;Don&amp;rsquo;t add &lt;em&gt;new&lt;/em&gt; tables to the current &lt;code&gt;sys.db&lt;/code&gt;.  That&amp;rsquo;s bad form and could cause issue for the platform during the next upgrade cycle, especially if there are naming conflicts.  But it somewhere else!!&lt;/p&gt;
+&lt;p&gt;Don&amp;rsquo;t add &lt;em&gt;new&lt;/em&gt; tables to the current &lt;code&gt;sys.db&lt;/code&gt;.  That&amp;rsquo;s bad form and could cause issue for the platform during the next upgrade cycle, especially if there are naming conflicts.  Put it somewhere else!!&lt;/p&gt;
 
   &lt;/div&gt;
 &lt;/div&gt;
@@ -645,6 +645,14 @@ The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;. 
 
 &lt;p&gt;If critical jobs can&amp;rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.&lt;/p&gt;
 </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>http://blog.streever.com/post/hadoop-cli/scripting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/post/hadoop-cli/scripting/</guid>
+      <description></description>
     </item>
     
   </channel>
