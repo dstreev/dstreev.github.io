@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.5.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="David W. Streever">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Sometimes, it would be great to run a query in &#39;containers&#39; instead of &#39;llap&#39; when attached to HS2i (HiveServer2 Interactive) which controls access to LLAP.  This is beneficial when running ETL/ELT jobs. Here are some options.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://blog.streever.com/post/2019/drafts/container_mode_in_llap/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#795548">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="anonymous">
+    
+
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cutive+Mono%7CLora:400,700%7CRoboto:400,700&display=swap">
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.min.1150f1aec16d683b6bedf7341c950819.css">
+
+  
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon-32.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="http://blog.streever.com/post/2019/drafts/container_mode_in_llap/">
+
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="twitter:site" content="@DavidStreever">
+  <meta property="twitter:creator" content="@DavidStreever">
+  
+  <meta property="og:site_name" content="David W. Streever">
+  <meta property="og:url" content="http://blog.streever.com/post/2019/drafts/container_mode_in_llap/">
+  <meta property="og:title" content="&#39;Right Pathing&#39; Alternate Workloads while using HiveServer2 Interactive (LLAP) | David W. Streever">
+  <meta property="og:description" content="Sometimes, it would be great to run a query in &#39;containers&#39; instead of &#39;llap&#39; when attached to HS2i (HiveServer2 Interactive) which controls access to LLAP.  This is beneficial when running ETL/ELT jobs. Here are some options."><meta property="og:image" content="http://blog.streever.com/img/icon-192.png">
+  <meta property="twitter:image" content="http://blog.streever.com/img/icon-192.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2019-10-24T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2019-10-24T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://blog.streever.com/post/2019/drafts/container_mode_in_llap/"
+  },
+  "headline": "'Right Pathing' Alternate Workloads while using HiveServer2 Interactive (LLAP)",
+  
+  "datePublished": "2019-10-24T00:00:00Z",
+  "dateModified": "2019-10-24T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "David W. Streever"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "David W. Streever",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://blog.streever.com/img/icon-512.png"
+    }
+  },
+  "description": "Sometimes, it would be great to run a query in 'containers' instead of 'llap' when attached to HS2i (HiveServer2 Interactive) which controls access to LLAP.  This is beneficial when running ETL/ELT jobs. Here are some options."
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>&#39;Right Pathing&#39; Alternate Workloads while using HiveServer2 Interactive (LLAP) | David W. Streever</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0 compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/">David W. Streever</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav mr-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Featured</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#categories"><span>Categories</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#tags"><span>Tags</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>About</span></a>
+        </li>
+
+        
+        
+
+      
+      </ul>
+      <ul class="navbar-nav ml-auto">
+      
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+        </li>
+        
+
+        
+
+        
+        <li class="nav-item">
+          <a class="nav-link js-dark-toggle" href="#"><i class="fas fa-moon" aria-hidden="true"></i></a>
+        </li>
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>&#39;Right Pathing&#39; Alternate Workloads while using HiveServer2 Interactive (LLAP)</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+
+
+  
+  <span><a href="/authors/dstreev/">David W. Streever</a></span>
+
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Oct 24, 2019
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    7 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/categories/analytics/">analytics</a>, <a href="/categories/devops/">devops</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="btn-links mb-3">
+  
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  
+  <a class="btn btn-outline-primary my-1 mr-1" href="/project/hive-llap-calculator/">
+    Project
+  </a>
+  
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+<blockquote>
+<p>A few assumptions:  HDP 3.1.4 and Ambari have been used to work through these scenarios.  If you&rsquo;re running different versions, additional tweaks may be required.</p>
+</blockquote>
+
+<p>Hive LLAP is a great way to speed up analytical queries.  The caching layer and immediate task allocation model provides performance that is competitive and often faster than other traditional EDW solutions.</p>
+
+<p>LLAP&rsquo;s caching layer uses an LFRU (Less Frequently Recently Used) eviction model to manage it&rsquo;s caching layer.  The caching layer is shared across user sessions in LLAP, which means data cached by one user/session is available to another user/session.  The caching model is a significant advantage over session-scoped caches you&rsquo;ll get with other big data query engines.</p>
+
+<p>From a practical standpoint, LLAP is best suited for BI, discovery, and dashboard-type queries.  These queries share common datasets and need to respond quickly because there is usually a user waiting on the other end.</p>
+
+<p>While perfectly capable, using LLAP for ETL/ELT isn&rsquo;t the best use of this elevated resource.  Moving massive amounts of data through LLAP doing ELT/ELT work has a few effects:</p>
+
+<ul>
+<li>Fills cache with datasets that aren&rsquo;t benefiting anyone downstream.</li>
+<li>Forces eviction of cached elements that &lsquo;are&rsquo; benefiting other users.</li>
+<li>Consumes resources used by a community with stricter SLA&rsquo;s, when the ETL/ELT community has different SLA standards.</li>
+</ul>
+
+<h2 id="problem">Problem</h2>
+
+<p>So what can you do when your attached to HS2i and want to run an ETL/ELT job, which is a long-running job that doesn&rsquo;t require the resources of LLAP, or you want to be a courteous user and leave some of those LLAP resources for someone else?  It would be perfectly fine to run your query in the traditional HS2 environment, but you can&rsquo;t/don&rsquo;t want to connect to another environment just to run the query.</p>
+
+<h2 id="solution">Solution</h2>
+
+<p>Well, HS2i can launch jobs into containers instead of the default &lsquo;llap&rsquo; environment.  Therefore, saving LLAP resources and &lsquo;right pathing&rsquo; your workload.</p>
+
+<p>HS2i can be configurated to allow sessions to override the &lsquo;execution mode&rsquo; of a query.  <em>When a session is created, and a query is run, the execution mode can not be changed.  Another session must be created.</em></p>
+
+<pre><code>hive.execution.mode
+</code></pre>
+
+<p>This setting is found in several places (in Ambari) and is used by a &lsquo;session&rsquo; to determine where a query will be executed.  Options are:</p>
+
+<ul>
+<li>container</li>
+<li>llap</li>
+</ul>
+
+<p>As with all settings we&rsquo;ll mention in this article, make sure you are reviewing/setting the values that are appropriate for the environment your in.  For example: In Ambari and LLAP, see the &lsquo;hive-interactive-*&rsquo; sections.</p>
+
+<p>The <code>hive.execution.mode</code> setting is set and defaults to the appropriate mode for the environment.  Meaning, &lsquo;container&rsquo; is set for the &lsquo;HS2&rsquo; environment, and &lsquo;llap&rsquo; is set for the &lsquo;HS2i&rsquo; environment.  We do NOT want to make this change at the environment level.  <em>We will only change this at the session level.</em></p>
+
+<h2 id="some-caveats">Some Caveats</h2>
+
+<p><strong><em>With</em></strong> Workload Management Enabled</p>
+
+<blockquote>
+<p>You can <em>NOT</em> request an alternate YARN queue to run.  All &lsquo;container&rsquo; execution mode queries will run in the &lsquo;Workload&rsquo; queue defined by <code>hive.server2.tez.interactive.queue</code>.</p>
+</blockquote>
+
+<p><strong><em>Without</em></strong> Workload Management Enabled</p>
+
+<blockquote>
+<p>You <em>CAN</em> request an alternate YARN queue to run &lsquo;container&rsquo; mode requests in.</p>
+</blockquote>
+
+<h2 id="controls">Controls</h2>
+
+<h3 id="session-level-settings">Session Level Settings</h3>
+
+<p>After adjusting a few environment settings to allow an &lsquo;alternate&rsquo; execution mode, the execution path is controlled by the session.  Users wanting to use the &lsquo;alternate&rsquo; path will declare the alternate path before launching the job.  If nothing is specified, jobs will run in LLAP.  As I mentioned before, once a query has been run in a session, the execution mode for that session can <strong>NOT</strong> be changed.  Doing so will result in an error.  A new session is required, if they wish the change the <code>execution mode</code>.</p>
+
+<h3 id="environment-level-settings-defaults">Environment Level Settings (Defaults)</h3>
+
+<p>Note the sections for each of these settings.  Ambari has the same settings in many areas to control different deployments of Hive Server2.</p>
+
+<h5 id="llap-daemon-and-concurrency-settings-default">LLAP Daemon and Concurrency Settings (Default)</h5>
+
+<p><img src="./queue_n_concurrency.png" alt="LLAP Daemon and Concurrency Settings" /></p>
+
+<p>What&rsquo;s interesting is that the default configuration runs the LLAP daemons AND the concurrency AM in the same queue.  But this isn&rsquo;t necessary, as we&rsquo;ll see later.</p>
+
+<h6 id="llap-execution-restrictions-default">LLAP Execution Restrictions (Default)</h6>
+
+<p><img src="./hs2i_restricted.png" alt="LLAP Execution Restrictions" /></p>
+
+<p>We&rsquo;ll change this restriction to allow users to set the <code>hive.exection.mode</code> later in the options section.</p>
+
+<h6 id="llap-interactive-queue">LLAP Interactive Queue</h6>
+
+<p><img src="./llap_interactive_queue.png" alt="LLAP Interactive Queue" /></p>
+
+<p>The &lsquo;interactive&rsquo; setting needs to be set to enable <strong>Workload Management</strong>.  The Workload Management AM will run in the defined queue.  These AM&rsquo;s represent each concurrent query (capability) for LLAP.  That concurrency is defined by the aggregate of the <code>parallelism</code> configured for Workload Management. See this <a href="https://github.com/dstreev/big-data-apps/blob/master/apps/llap_workload/r1_plan_create.sql" target="_blank">example script</a> as a guide for starting Workload Management. It is not controlled via the concurrency settings we&rsquo;ve seen before (<code>hive.server2.tez.sessions.per.default.queue</code>).</p>
+
+<h3 id="environment-level-setting-changes">Environment Level Setting Changes</h3>
+
+<ul>
+<li>Remove the <code>hive.execution.mode</code> value from &ldquo;Restricted session configs&rdquo; (<code>hive.server2.tez.sessions.restricted.configs</code>)</li>
+</ul>
+
+<p><img src="./exec_mode_restriction_removed.png" alt="Removed" /></p>
+
+<ul>
+<li><p>Allow Custom Queues by changing <code>ignore</code> to <code>true</code></p>
+
+<pre><code>hive.server2.tez.sessions.custom.queue.allowed=true
+</code></pre></li>
+</ul>
+
+<p><img src="./allow_custom_queue.png" alt="Custom Allowed" /></p>
+
+<h5 id="optional-environment-setting-tweaks-queues">Optional Environment Setting Tweaks (Queues)</h5>
+
+<p>These settings have more to do with where you want parts of the system to run (which queues).</p>
+
+<blockquote>
+<p><code>hive.server2.tez.default.queues</code> controls where the Concurrency AM&rsquo;s will run when Workload Management is <em>NOT</em> enabled.</p>
+
+<p><code>hive.llap.daemon.queue.name</code> controls where the LLAP environment will run.</p>
+
+<p><code>hive.server2.tez.interactive.queue</code> controls where the Workload Management AM&rsquo;s will run, when Workload Management is activated.</p>
+</blockquote>
+
+<h2 id="options">Options</h2>
+
+<p>The behavior changes a bit, depending on whether you&rsquo;re using Workload Management or not.  My suggestion is to <em>NOT</em> enable Workload Management at first to see what lands in which queue.  Once you activate Workload Management, you will <em>NOT</em> be able to launch jobs in <code>container</code> mode outside the queue setup in <code>hive.server2.tez.interactive.queue</code> .</p>
+
+<h5 id="option-1-without-workload-management">Option #1 - Without Workload Management</h5>
+
+<p>Scenario: <em>Run LLAP and Concurrency AM&rsquo;s in the same queue</em>.  Allow users to specify an alternate queue to run <code>container</code> mode jobs.</p>
+
+<p>When jobs are launched in <code>container</code> execution mode, YARN will allocate task resources alongside the AM controlling the &lsquo;DAG.&rsquo;  So where ever you launch the AM for the job, that queue will need resources to run the job.</p>
+
+<p><strong>Environment</strong></p>
+
+<pre><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+hive.server2.tez.sessions.custom.queue.allowed=true
+</code></pre>
+
+<p>Unset (To disable Workload Management)</p>
+
+<pre><code>hive.server2.tez.interactive.queue
+</code></pre>
+
+<p><strong>Session Level</strong></p>
+
+<p>Set via Hive/Beeline Init, Script, or JDBC connection string.</p>
+
+<pre><code>set hive.execution.mode=container
+set tez.queue.name=&lt;target_queue&gt;
+</code></pre>
+
+<p>Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that application in YARN will grow additional containers to run the job.</p>
+
+<h5 id="option-2-without-workload-management">Option #2 - Without Workload Management</h5>
+
+<p>Scenario: <em>Run LLAP and Concurrency AM&rsquo;s in different queues</em>.  Allow users to specify an alternate queue to run <code>container</code> mode jobs.</p>
+
+<p>When jobs are launched in <code>container</code> execution mode, YARN will allocate task resources alongside the AM controlling the &lsquo;DAG.&rsquo;  So where ever you launch the AM for the job, that queue will need resources to run the job.</p>
+
+<p><strong>Environment</strong></p>
+
+<pre><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+hive.server2.tez.sessions.custom.queue.allowed=true
+hive.server2.tez.default.queues=llap_tez_am
+hive.llap.daemon.queue.name=llap
+</code></pre>
+
+<p>Unset (To disable Workload Management)</p>
+
+<pre><code>hive.server2.tez.interactive.queue
+</code></pre>
+
+<p><strong>Session Level</strong></p>
+
+<p>Set via Hive/Beeline Init, Script, or JDBC connection string.</p>
+
+<pre><code>set hive.execution.mode=container
+set tez.queue.name=&lt;target_queue&gt;
+</code></pre>
+
+<p>Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that AM in YARN will grow additional containers to run the job.</p>
+
+<h5 id="option-3-with-workload-management">Option #3 - With Workload Management</h5>
+
+<p>Scenario: LLAP and Workload Management AM in different queues.  Users will <em>NOT</em> be able to specify an alternate queue.  The Workload Management AM will grow to fulfill the DAG request.  The YARN queue <code>hive.server2.tez.interactive.queue</code> will need to be large enough to contain the other Workload Management AM&rsquo;s in addition to the job requirements.  If the queue is small and the other Workload AM&rsquo;s have not been allocated or reclaimed during a quiet period, new jobs may not launch right away.</p>
+
+<p><strong>Environment</strong></p>
+
+<pre><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+hive.server2.tez.sessions.custom.queue.allowed=true
+-- Utilitization of 'llap_tez_am' should be nil with Workload Management
+hive.server2.tez.default.queues=llap_tez_am
+hive.llap.daemon.queue.name=llap
+</code></pre>
+
+<p>Set (To enable Workload Management).  There&rsquo;s more to do for Workload Management, which isn&rsquo;t covered here.</p>
+
+<pre><code>hive.server2.tez.interactive.queue=llap_wm
+</code></pre>
+
+<p><strong>Session Level</strong></p>
+
+<p>Set via Hive/Beeline Init, Script, or JDBC connection string.</p>
+
+<pre><code>set hive.execution.mode=container
+</code></pre>
+
+<p>Launch the query and check the Resource Manager.  You should see the AM in the target queue (llap_wm), and that AM in YARN will grow additional containers to run the job.</p>
+
+    </div>
+
+    
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tags/hive/">hive</a>
+  
+  <a class="badge badge-light" href="/tags/llap/">llap</a>
+  
+  <a class="badge badge-light" href="/tags/execution-mode/">execution mode</a>
+  
+  <a class="badge badge-light" href="/tags/container/">container</a>
+  
+  <a class="badge badge-light" href="/tags/queue/">queue</a>
+  
+  <a class="badge badge-light" href="/tags/workload-management/">workload management</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://blog.streever.com/post/2019/drafts/container_mode_in_llap/&amp;text=&amp;#39;Right%20Pathing&amp;#39;%20Alternate%20Workloads%20while%20using%20HiveServer2%20Interactive%20%28LLAP%29" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://blog.streever.com/post/2019/drafts/container_mode_in_llap/&amp;t=&amp;#39;Right%20Pathing&amp;#39;%20Alternate%20Workloads%20while%20using%20HiveServer2%20Interactive%20%28LLAP%29" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=&amp;#39;Right%20Pathing&amp;#39;%20Alternate%20Workloads%20while%20using%20HiveServer2%20Interactive%20%28LLAP%29&amp;body=http://blog.streever.com/post/2019/drafts/container_mode_in_llap/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://blog.streever.com/post/2019/drafts/container_mode_in_llap/&amp;title=&amp;#39;Right%20Pathing&amp;#39;%20Alternate%20Workloads%20while%20using%20HiveServer2%20Interactive%20%28LLAP%29" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=&amp;#39;Right%20Pathing&amp;#39;%20Alternate%20Workloads%20while%20using%20HiveServer2%20Interactive%20%28LLAP%29%20http://blog.streever.com/post/2019/drafts/container_mode_in_llap/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://blog.streever.com/post/2019/drafts/container_mode_in_llap/&amp;title=&amp;#39;Right%20Pathing&amp;#39;%20Alternate%20Workloads%20while%20using%20HiveServer2%20Interactive%20%28LLAP%29" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+  
+
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <img class="portrait mr-3" src="/authors/dstreev/avatar_hudf7b8620e192de66d79d1f7e36df7824_20455_250x250_fill_q90_lanczos_center.jpg" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="http://blog.streever.com/">David W. Streever</a></h5>
+      <h6 class="card-subtitle">Vice President - Engineering</h6>
+      <p class="card-text">Platform Enablement - Tiger Team</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:david@streever.com" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/davidstreever/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/DavidStreever" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/dstreev" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/files/2019-08-David%20Streever.pdf" >
+        <i class="ai ai-cv"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/project/hive-llap-calculator/">Hive LLAP Calculator</a></li>
+      
+      <li><a href="/post/2019/filter-hive-compactions/">Filter Hive Compactions</a></li>
+      
+      <li><a href="/project/hdp3-upgrade-planning/">HDP3 Upgrade Planning</a></li>
+      
+      <li><a href="/post/2019/jdbc-federation/">The Power of Hive JDBC Federation</a></li>
+      
+      <li><a href="/post/2015/-mng-immutable-data-windowing-style/">Managing Immutable Data in Hive with Windowing RANK</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js" integrity="sha256-aYTdUrn6Ow1DDgh5JTc3aDGnnju48y/1c8s1dgkYPQ8=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js"></script>
+        
+      
+
+      
+      
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+    
+      
+      <a href="/terms/">Terms</a>
+    
+  </p>
+  
+
+  <p class="powered-by">
+    &copy; 2019 &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

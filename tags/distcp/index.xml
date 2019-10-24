@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>distcp | David W. Streever</title>
+    <link>http://blog.streever.com/tags/distcp/</link>
+      <atom:link href="http://blog.streever.com/tags/distcp/index.xml" rel="self" type="application/rss+xml" />
+    <description>distcp</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 30 Mar 2017 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>http://blog.streever.com/img/icon-192.png</url>
+      <title>distcp</title>
+      <link>http://blog.streever.com/tags/distcp/</link>
+    </image>
+    
+    <item>
+      <title>Efficient Distcp with HDFS Snapshots</title>
+      <link>http://blog.streever.com/post/2017/distcp-with-snapshots/</link>
+      <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/post/2017/distcp-with-snapshots/</guid>
+      <description>
+
+&lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;
+
+&lt;p&gt;Traditional &amp;lsquo;distcp&amp;rsquo; from one directory to another or from cluster to cluster is quite useful in moving massive amounts of data, once. But what happens when you need to &amp;ldquo;update&amp;rdquo; a target directory or cluster with only the changes made since the last &amp;lsquo;distcp&amp;rsquo; had run. That becomes a very tricky scenario. &amp;lsquo;distcp&amp;rsquo; offers an &amp;lsquo;-update&amp;rsquo; flag, which is suppose to move only the files that have changed. In this case &amp;lsquo;distcp&amp;rsquo; will pull a list of files and directories from the source and targets, compare them and then build a migration plan.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s an expensive and time-consuming task. Furthermore, the process is not atomic. First, the cost of gathering a list of files and directories, along with their metadata is expensive when you&amp;rsquo;re considering sources with millions of file and directory objects. And this cost is incurred on both the source and target namenode&amp;rsquo;s, resulting in quite a bit of pressure on those systems.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s up to &lt;code&gt;distcp&lt;/code&gt; to reconcile the difference between the source and target, which is very expensive. When it&amp;rsquo;s finally complete, only then does the process start to move data. And if data changes while the process is running, those changes can impact the transfer and lead to failure and partial migration.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-solution&#34;&gt;The Solution&lt;/h2&gt;
+
+&lt;p&gt;The process needs to be atomic, and it needs to be efficient. With Hadoop 2.0, HDFS introduce &amp;ldquo;snapshots.&amp;rdquo; HDFS &amp;ldquo;snapshots&amp;rdquo; are a point-in-time copy of the directories metadata. The copy is stored in a hidden location and maintains references to all of the immutable filesystem objects. Creating a snapshot is atomic, and the characteristics of HDFS (being immutable) means that an image of a directories metadata doesn&amp;rsquo;t require an addition copy of the underlying data.&lt;/p&gt;
+
+&lt;p&gt;Another feature of snapshots is the ability to efficiently calculate changes between &amp;lsquo;any&amp;rsquo; two snapshots on the same directory. Using &amp;lsquo;hdfs snapshotDiff &amp;lsquo;, you can build a list of &amp;ldquo;changes&amp;rdquo; between these two point-in-time references.&lt;/p&gt;
+
+&lt;h3 id=&#34;for-example&#34;&gt;For Example&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;[hdfs@m3 ~]$ hdfs snapshotDiff /user/dstreev/stats s1 s2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Difference between snapshot s1 and snapshot s2 under directory /user/dstreev/stats:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;M .+./attempt
+M ./namenode/fs_state/2016-12.txt
+M ./namenode/nn_info/2016-12.txt
+M ./namenode/top_user_ops/2016-12.txt
+M ./scheduler/queue_paths/2016-12.txt
+M ./scheduler/queue_usage/2016-12.txt
+M ./scheduler/queues/2016-12.txt 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take the &amp;lsquo;distcp&amp;rsquo; update concept and supercharge it with the efficiency of snapshots. Now you have a solution that will scale far beyond the original &lt;code&gt;distcp -update.&lt;/code&gt; and in the process remove the burden and load from the namenode&amp;rsquo;s previously encountered.&lt;/p&gt;
+
+&lt;h2 id=&#34;pre-requisites-and-requirements&#34;&gt;Pre-Requisites and Requirements&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Source must support hdfs &amp;lsquo;snapshots&amp;rsquo;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot &amp;lt;path&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Target is &amp;ldquo;read-only&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Target, after initial baseline &amp;lsquo;distcp&amp;rsquo; sync needs to support snapshots.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;process&#34;&gt;Process&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Identify the source and target &amp;lsquo;parent&amp;rsquo; directory&lt;/li&gt;
+&lt;li&gt;Do not initially create the destination directory, allow the first distcp to do that. For example: If I want to sync source &lt;code&gt;/data/a&lt;/code&gt; with &lt;code&gt;/data/a_target&lt;/code&gt;, do &lt;em&gt;NOT&lt;/em&gt; pre-create the &amp;lsquo;a_target&amp;rsquo; directory.&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Allow snapshots on the source directory&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot /data/a
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Create a Snapshot of /data/a&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a s1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Distcp the baseline copy (from the atomic snapshot). Note: /data/a_target does NOT exists prior to the following command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop distcp /data/a/.snapshot/s1 /data/a_target
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Allow snapshots on the newly create target directory&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot /data/a_target
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;At this point /data/a_target should be considered &amp;ldquo;read-only&amp;rdquo;. Do NOT make any changes to the content here.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Create a matching snapshot in /data/a_target that matches the name of the snapshot used to build the baseline&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a_target s1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Add some content to the source directory /data/a. Make changes, add, deletes, etc. that need to be replicated to /data/a_target.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Take a new snapshot of /data/a&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a s2
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Just for fun, check on whats changed between the two snapshots&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs snapshotDiff /data/a s1 s2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Ok, now let&amp;rsquo;s migrate the changes to /data/a_target&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hadoop distcp -diff s1 s2 -update /data/a /data/a_target
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;When that&amp;rsquo;s completed, finish the cycle by creating a matching snapshot on /data/a_target&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a_target s2
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;That&amp;rsquo;s it. You&amp;rsquo;ve completed the cycle. Rinse and repeat.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-few-hints&#34;&gt;A Few Hints&lt;/h2&gt;
+
+&lt;p&gt;Remember, snapshots need to be managed manually. They will stay around forever unless you clean them up with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;hdfs dfs -deleteSnapshot 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As long as a snapshot exists, the data exists. Deleting, even with skipTrash, data from a directory that has a snapshot, doesn&amp;rsquo;t free up space. Only when all &amp;ldquo;references&amp;rdquo; to that data are gone, can space be reclaimed.&lt;/p&gt;
+
+&lt;p&gt;Initial migrations of data between systems are very expensive in regards to network I/O. And you probably don&amp;rsquo;t want to have to do that again, ever. I recommend keeping a snapshot of the original copy on each system OR some major checkpoint you can go back to, in the event the process is compromised.&lt;/p&gt;
+
+&lt;p&gt;If &amp;lsquo;distcp&amp;rsquo; can&amp;rsquo;t validate that the snapshot (by name) between the source and the target are the same and that the data at the target hasn&amp;rsquo;t changed since the snapshot, the process will fail. If the failure is because the directory has been updated, you&amp;rsquo;ll need to use the above baseline snapshots to restore it without having to migrate all that data again. And then start the process up again.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

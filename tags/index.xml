@@ -5,12 +5,60 @@
     <link>http://blog.streever.com/tags/</link>
       <atom:link href="http://blog.streever.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <description>Tags</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Sat, 19 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 24 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://blog.streever.com/img/icon-192.png</url>
       <title>Tags</title>
       <link>http://blog.streever.com/tags/</link>
     </image>
+    
+    <item>
+      <title>container</title>
+      <link>http://blog.streever.com/tags/container/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/container/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>execution mode</title>
+      <link>http://blog.streever.com/tags/execution-mode/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/execution-mode/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hive</title>
+      <link>http://blog.streever.com/tags/hive/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/hive/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>llap</title>
+      <link>http://blog.streever.com/tags/llap/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/llap/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>queue</title>
+      <link>http://blog.streever.com/tags/queue/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/queue/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>workload management</title>
+      <link>http://blog.streever.com/tags/workload-management/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/workload-management/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>cleanup</title>
@@ -133,14 +181,6 @@
     </item>
     
     <item>
-      <title>hive</title>
-      <link>http://blog.streever.com/tags/hive/</link>
-      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/hive/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>hive-admin</title>
       <link>http://blog.streever.com/tags/hive-admin/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
@@ -161,14 +201,6 @@
       <link>http://blog.streever.com/tags/jdbc-federation/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/tags/jdbc-federation/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>llap</title>
-      <link>http://blog.streever.com/tags/llap/</link>
-      <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/tags/llap/</guid>
       <description></description>
     </item>
     
@@ -257,6 +289,54 @@
       <link>http://blog.streever.com/tags/rhel/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       <guid>http://blog.streever.com/tags/rhel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>distcp</title>
+      <link>http://blog.streever.com/tags/distcp/</link>
+      <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/distcp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>snapshots</title>
+      <link>http://blog.streever.com/tags/snapshots/</link>
+      <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/snapshots/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>immutable</title>
+      <link>http://blog.streever.com/tags/immutable/</link>
+      <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/immutable/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rank</title>
+      <link>http://blog.streever.com/tags/rank/</link>
+      <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/rank/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>updates</title>
+      <link>http://blog.streever.com/tags/updates/</link>
+      <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/updates/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>windowing</title>
+      <link>http://blog.streever.com/tags/windowing/</link>
+      <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
+      <guid>http://blog.streever.com/tags/windowing/</guid>
       <description></description>
     </item>
     
