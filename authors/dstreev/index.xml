@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>David W. Streever</title>
-    <link>http://blog.streever.com/authors/dstreev/</link>
-      <atom:link href="http://blog.streever.com/authors/dstreev/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/authors/dstreev/</link>
+      <atom:link href="http://www.streever.com/authors/dstreev/index.xml" rel="self" type="application/rss+xml" />
     <description>David W. Streever</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 24 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>David W. Streever</title>
-      <link>http://blog.streever.com/authors/dstreev/</link>
+      <link>http://www.streever.com/authors/dstreev/</link>
     </image>
     
     <item>
       <title>&#39;Right Pathing&#39; Alternate Workloads while using HiveServer2 Interactive (LLAP)</title>
-      <link>http://blog.streever.com/post/2019/drafts/container_mode_in_llap/</link>
+      <link>http://www.streever.com/post/2019/drafts/container_mode_in_llap/</link>
       <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2019/drafts/container_mode_in_llap/</guid>
+      <guid>http://www.streever.com/post/2019/drafts/container_mode_in_llap/</guid>
       <description>
 
 &lt;blockquote&gt;
@@ -223,9 +223,9 @@ hive.llap.daemon.queue.name=llap
     
     <item>
       <title>Hadoop CLI for HDFS Directory Cleanup</title>
-      <link>http://blog.streever.com/post/2019/cleaning-up-hdfs/</link>
+      <link>http://www.streever.com/post/2019/cleaning-up-hdfs/</link>
       <pubDate>Sat, 19 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2019/cleaning-up-hdfs/</guid>
+      <guid>http://www.streever.com/post/2019/cleaning-up-hdfs/</guid>
       <description>
 
 &lt;p&gt;Refer to the &amp;lsquo;project&amp;rsquo; and &amp;lsquo;slides&amp;rsquo; above for details on &amp;lsquo;Hadoop CLI&amp;rsquo;.  See the &amp;lsquo;related&amp;rsquo; posts at the end of this post for other information.&lt;/p&gt;
@@ -238,7 +238,7 @@ hive.llap.daemon.queue.name=llap
 
 &lt;ul&gt;
 &lt;li&gt;Test the pipeline results before call a destructive operation.&lt;/li&gt;
-&lt;li&gt;Create an &amp;lsquo;hdfs snapshot&amp;rsquo; of the target base directory in case something doesn&amp;rsquo;t go as planned. See &lt;a href=&#34;http://blog.streever.com/terms&#34;&gt;Terms&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Create an &amp;lsquo;hdfs snapshot&amp;rsquo; of the target base directory in case something doesn&amp;rsquo;t go as planned. See &lt;a href=&#34;http://www.streever.com/terms&#34;&gt;Terms&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&#34;sample-use-case&#34;&gt;Sample Use case&lt;/h3&gt;
@@ -289,9 +289,9 @@ hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
     
     <item>
       <title>Hadoop CLI &#39;lsp&#39; Function</title>
-      <link>http://blog.streever.com/post/hadoop-cli/lsp/</link>
+      <link>http://www.streever.com/post/hadoop-cli/lsp/</link>
       <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/hadoop-cli/lsp/</guid>
+      <guid>http://www.streever.com/post/hadoop-cli/lsp/</guid>
       <description>
 
 &lt;p&gt;Like &amp;lsquo;ls&amp;rsquo;, you can fetch many details about a file.  But with this, you can also add information about the file that includes:
@@ -418,9 +418,9 @@ lsp -o /tmp/test.out /user/dstreev/perf
     
     <item>
       <title>Hadoop CLI - Intro</title>
-      <link>http://blog.streever.com/post/hadoop-cli/intro/</link>
+      <link>http://www.streever.com/post/hadoop-cli/intro/</link>
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/hadoop-cli/intro/</guid>
+      <guid>http://www.streever.com/post/hadoop-cli/intro/</guid>
       <description>&lt;p&gt;Working with Hadoop is much like working with a terminal application, as most everything you do with Hadoop is via the terminal.  If you want to launch a MapReduce job, do it from the terminal.  If you wanted to explore HDFS, run a command from the terminal.&lt;/p&gt;
 
 &lt;p&gt;Working with the Hadoop Distributed File System (HDFS) should be like working with any other file system, at least when you&amp;rsquo;re in the terminal.  Unfortunately, it&amp;rsquo;s not.&lt;/p&gt;
@@ -441,9 +441,9 @@ lsp -o /tmp/test.out /user/dstreev/perf
     
     <item>
       <title>Filter Hive Compactions</title>
-      <link>http://blog.streever.com/post/2019/filter-hive-compactions/</link>
+      <link>http://www.streever.com/post/2019/filter-hive-compactions/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2019/filter-hive-compactions/</guid>
+      <guid>http://www.streever.com/post/2019/filter-hive-compactions/</guid>
       <description>
 
 &lt;p&gt;From Beeline or a standard JDBC client connected to Hive, compactions can be seen with the standard SQL:&lt;/p&gt;
@@ -460,7 +460,7 @@ lsp -o /tmp/test.out /user/dstreev/perf
 
 &lt;p&gt;Until additional functionality is available for this built in function, we can do the following.&lt;/p&gt;
 
-&lt;p&gt;Add links to the Metastore DB tables and create custom views to review compaction details.  See &lt;a href=&#34;http://blog.streever.com/post/the-power-of-hive-jdbc-federation&#34;&gt;The Power of Hive JDBC Federation&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Add links to the Metastore DB tables and create custom views to review compaction details.  See &lt;a href=&#34;http://www.streever.com/post/the-power-of-hive-jdbc-federation&#34;&gt;The Power of Hive JDBC Federation&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;build-out-metadata-elements&#34;&gt;Build Out Metadata Elements&lt;/h2&gt;
 
@@ -610,9 +610,9 @@ LIMIT 10;
     
     <item>
       <title>The Power of Hive JDBC Federation</title>
-      <link>http://blog.streever.com/post/2019/jdbc-federation/</link>
+      <link>http://www.streever.com/post/2019/jdbc-federation/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2019/jdbc-federation/</guid>
+      <guid>http://www.streever.com/post/2019/jdbc-federation/</guid>
       <description>
 
 &lt;p&gt;Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem.   Apache Software Foundation has excellent docs detailing this feature referred to as the &lt;a href=&#34;https://cwiki.apache.org/confluence/display/Hive/JdbcStorageHandler&#34; target=&#34;_blank&#34;&gt;JDBCStorageHandler&lt;/a&gt; .&lt;/p&gt;
@@ -643,16 +643,16 @@ LIMIT 10;
     
     <item>
       <title>Hadoop CLI Walk-Through</title>
-      <link>http://blog.streever.com/slides/hadoop-cli/</link>
+      <link>http://www.streever.com/slides/hadoop-cli/</link>
       <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/slides/hadoop-cli/</guid>
+      <guid>http://www.streever.com/slides/hadoop-cli/</guid>
       <description>
 
 &lt;h2 id=&#34;the-hadoop-cli&#34;&gt;The Hadoop CLI&lt;/h2&gt;
 
 &lt;p&gt;A quick tour of the installation and basic usage.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -801,9 +801,9 @@ hadoopcli # It will be in the global path for most standard configurations
     
     <item>
       <title>Learning Tech - The Dunning-Kruger Effect</title>
-      <link>http://blog.streever.com/post/2018/dunning-kruger-effect-technology/</link>
+      <link>http://www.streever.com/post/2018/dunning-kruger-effect-technology/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2018/dunning-kruger-effect-technology/</guid>
+      <guid>http://www.streever.com/post/2018/dunning-kruger-effect-technology/</guid>
       <description>&lt;p&gt;It happens to everyone, regardless of how long you&amp;rsquo;ve been around.  No matter your experience level, there is no escaping the &amp;lsquo;Dunning-Kruger Effect&amp;rsquo;&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;https://understandinginnovation.files.wordpress.com/2015/06/dunning-kruger-0011.jpg&#34; alt=&#34;Dunning-Kruger-Effect&#34; /&gt;&lt;/p&gt;
@@ -822,9 +822,9 @@ hadoopcli # It will be in the global path for most standard configurations
     
     <item>
       <title>RHEL/CentOS 6 to 7 in-place upgrades with HDP</title>
-      <link>http://blog.streever.com/post/2018/in-place-centos6-to-centos7-hdp/</link>
+      <link>http://www.streever.com/post/2018/in-place-centos6-to-centos7-hdp/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2018/in-place-centos6-to-centos7-hdp/</guid>
+      <guid>http://www.streever.com/post/2018/in-place-centos6-to-centos7-hdp/</guid>
       <description>
 
 &lt;p&gt;If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&amp;rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.&lt;/p&gt;
@@ -842,7 +842,7 @@ hadoopcli # It will be in the global path for most standard configurations
 
 &lt;p&gt;This approach is pretty conservative and general only practically for a small number of nodes.&lt;/p&gt;
 
-&lt;p&gt;With replication set to 3, the default, you can only decommission two nodes at a time.  Beyond that, you risk data being unavailable for a period.  See &lt;a href=&#34;http://blog.streever.com/images/upgrades/its-your-last-block.html&#34;&gt;It&amp;rsquo;s your last block&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;With replication set to 3, the default, you can only decommission two nodes at a time.  Beyond that, you risk data being unavailable for a period.  See &lt;a href=&#34;http://www.streever.com/images/upgrades/its-your-last-block.html&#34;&gt;It&amp;rsquo;s your last block&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;With rack awareness, it&amp;rsquo;s possible to do this a rack at a time.  But beware, if rack awareness wasn&amp;rsquo;t initially configured, you can experience data loss/availability issues.  Always monitor the namenode for data availability issues.&lt;/p&gt;
 
@@ -886,7 +886,7 @@ hadoopcli # It will be in the global path for most standard configurations
 
 &lt;p&gt;With the chosen host, go ahead and shut it down. And start the OS migration process.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_not_connected.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_not_connected.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;As I mentioned earlier, all persisted state information needs to be on a different physical drive(s) than the OS.  The reason for this is that we&amp;rsquo;re going to rebuild the OS partition completely.  This means formatting &lt;strong&gt;ONLY THE ROOT DEVICE&lt;/strong&gt; and reinstalling the new OS on it.  As long as the persisted stores are on other devices, our data is safe.&lt;/p&gt;
 
@@ -910,29 +910,29 @@ hadoopcli # It will be in the global path for most standard configurations
 
 &lt;p&gt;Now that we have the host rebuilt with the basics and an &lt;em&gt;Ambari-Agent&lt;/em&gt; up and running, we should be able to see the host connected to Ambari via the Hosts Page.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_connected.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_connected.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;At this point, you have a host that has been re-associated to Ambari successfully.  In the host details section, you&amp;rsquo;ll notice how the host now identifies with version 7 of the OS.  And at this point, the host will have none of the HDP libraries installed.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_detail_os7.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_detail_os7.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;While none of the HDP libraries are installed, you&amp;rsquo;ll notice that Ambari knows what services should be on the host.  That&amp;rsquo;s because the host FQDN matches the previous OS version of the host and when the &amp;lsquo;ambari-agent&amp;rsquo; registered back with the &amp;lsquo;ambari-server&amp;rsquo;, the host assumed the former identity.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_available_not_installed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_available_not_installed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;This host will also NOT have the previous system accounts for HDP, yet.  IE: hdfs, yarn, hive, etc&amp;hellip;&lt;/p&gt;
 
 &lt;p&gt;Ambari Server has a new feature, added in 2.6, that allows us to recover a host in this state.  From the &amp;lsquo;host&amp;rsquo; window there&amp;rsquo;s a &amp;lsquo;Host Action&amp;rsquo; button in the upper right corner.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_action_button.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_action_button.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Select this and &amp;lsquo;Recover Host&amp;rsquo;.  Ambari will reinstall and configure all the missing services on this host, as they were before.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/recover_host_action.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/recover_host_action.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;We&amp;rsquo;re almost there, do NOT start the services yet!!!  The remounted data directories that still contain all our data (that was the whole point of this exercise) need to be fixed.  Most likely that the POSIX UID&amp;rsquo;s for the user and group assigned in the previous OS, do NOT match or even exist in the new OS.  So the data drive permissions will not be properly configured.  We need to fix this before starting the services.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_data_dir_permissions_broke.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_data_dir_permissions_broke.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Locate each of the data directories and adjust (recursively) the ownership to match the new uid&amp;rsquo;s.  For example:
 The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;.  We need to ensure hdfs:hadoop owns the directory.&lt;/p&gt;
@@ -940,7 +940,7 @@ The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;. 
 &lt;pre&gt;&lt;code&gt;chown -R hdfs:hadoop /data/0/hadoop/hdfs/namenode
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/images/upgrades/host_data_dir_permissions_fixed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_data_dir_permissions_fixed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Make these adjustments for each of the data directories on the host including, but not limited to:
 - Namenode
@@ -980,9 +980,9 @@ The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;. 
     
     <item>
       <title>It&#39;s Your Last Block!</title>
-      <link>http://blog.streever.com/post/2018/its-your-last-block/</link>
+      <link>http://www.streever.com/post/2018/its-your-last-block/</link>
       <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2018/its-your-last-block/</guid>
+      <guid>http://www.streever.com/post/2018/its-your-last-block/</guid>
       <description>&lt;p&gt;In a few other articles, I&amp;rsquo;ll talk about bringing hosts down to facilitate upgrades.&lt;/p&gt;
 
 &lt;p&gt;If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&amp;rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.&lt;/p&gt;
@@ -993,9 +993,9 @@ The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;. 
     
     <item>
       <title>Efficient Distcp with HDFS Snapshots</title>
-      <link>http://blog.streever.com/post/2017/distcp-with-snapshots/</link>
+      <link>http://www.streever.com/post/2017/distcp-with-snapshots/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2017/distcp-with-snapshots/</guid>
+      <guid>http://www.streever.com/post/2017/distcp-with-snapshots/</guid>
       <description>
 
 &lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;
@@ -1128,9 +1128,9 @@ M ./scheduler/queues/2016-12.txt
     
     <item>
       <title>Managing Immutable Data in Hive with Windowing RANK</title>
-      <link>http://blog.streever.com/post/2015/-mng-immutable-data-windowing-style/</link>
+      <link>http://www.streever.com/post/2015/-mng-immutable-data-windowing-style/</link>
       <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2015/-mng-immutable-data-windowing-style/</guid>
+      <guid>http://www.streever.com/post/2015/-mng-immutable-data-windowing-style/</guid>
       <description>
 
 &lt;p&gt;I&amp;rsquo;m often asked how to &amp;ldquo;update&amp;rdquo; records in Hive.  We&amp;rsquo;ll you can&amp;rsquo;t, at least not yet and not in the sense you maybe accustom in an RDBMS.&lt;/p&gt;

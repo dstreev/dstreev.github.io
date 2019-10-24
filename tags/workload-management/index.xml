@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>workload management | David W. Streever</title>
-    <link>http://blog.streever.com/tags/workload-management/</link>
-      <atom:link href="http://blog.streever.com/tags/workload-management/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/tags/workload-management/</link>
+      <atom:link href="http://www.streever.com/tags/workload-management/index.xml" rel="self" type="application/rss+xml" />
     <description>workload management</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 24 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>workload management</title>
-      <link>http://blog.streever.com/tags/workload-management/</link>
+      <link>http://www.streever.com/tags/workload-management/</link>
     </image>
     
     <item>
       <title>&#39;Right Pathing&#39; Alternate Workloads while using HiveServer2 Interactive (LLAP)</title>
-      <link>http://blog.streever.com/post/2019/drafts/container_mode_in_llap/</link>
+      <link>http://www.streever.com/post/2019/drafts/container_mode_in_llap/</link>
       <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2019/drafts/container_mode_in_llap/</guid>
+      <guid>http://www.streever.com/post/2019/drafts/container_mode_in_llap/</guid>
       <description>
 
 &lt;blockquote&gt;

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>search | David W. Streever</title>
-    <link>http://blog.streever.com/categories/search/</link>
-      <atom:link href="http://blog.streever.com/categories/search/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/categories/search/</link>
+      <atom:link href="http://www.streever.com/categories/search/index.xml" rel="self" type="application/rss+xml" />
     <description>search</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Fri, 18 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>search</title>
-      <link>http://blog.streever.com/categories/search/</link>
+      <link>http://www.streever.com/categories/search/</link>
     </image>
     
     <item>
       <title>Hadoop CLI &#39;lsp&#39; Function</title>
-      <link>http://blog.streever.com/post/hadoop-cli/lsp/</link>
+      <link>http://www.streever.com/post/hadoop-cli/lsp/</link>
       <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/hadoop-cli/lsp/</guid>
+      <guid>http://www.streever.com/post/hadoop-cli/lsp/</guid>
       <description>
 
 &lt;p&gt;Like &amp;lsquo;ls&amp;rsquo;, you can fetch many details about a file.  But with this, you can also add information about the file that includes:

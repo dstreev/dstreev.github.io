@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>snapshots | David W. Streever</title>
-    <link>http://blog.streever.com/tags/snapshots/</link>
-      <atom:link href="http://blog.streever.com/tags/snapshots/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/tags/snapshots/</link>
+      <atom:link href="http://www.streever.com/tags/snapshots/index.xml" rel="self" type="application/rss+xml" />
     <description>snapshots</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 30 Mar 2017 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>snapshots</title>
-      <link>http://blog.streever.com/tags/snapshots/</link>
+      <link>http://www.streever.com/tags/snapshots/</link>
     </image>
     
     <item>
       <title>Efficient Distcp with HDFS Snapshots</title>
-      <link>http://blog.streever.com/post/2017/distcp-with-snapshots/</link>
+      <link>http://www.streever.com/post/2017/distcp-with-snapshots/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2017/distcp-with-snapshots/</guid>
+      <guid>http://www.streever.com/post/2017/distcp-with-snapshots/</guid>
       <description>
 
 &lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;

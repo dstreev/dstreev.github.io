@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ansible | David W. Streever</title>
-    <link>http://blog.streever.com/tags/ansible/</link>
-      <atom:link href="http://blog.streever.com/tags/ansible/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/tags/ansible/</link>
+      <atom:link href="http://www.streever.com/tags/ansible/index.xml" rel="self" type="application/rss+xml" />
     <description>ansible</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>ansible</title>
-      <link>http://blog.streever.com/tags/ansible/</link>
+      <link>http://www.streever.com/tags/ansible/</link>
     </image>
     
     <item>
       <title>HWX Ansible</title>
-      <link>http://blog.streever.com/project/hwx-ansible/</link>
+      <link>http://www.streever.com/project/hwx-ansible/</link>
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/project/hwx-ansible/</guid>
+      <guid>http://www.streever.com/project/hwx-ansible/</guid>
       <description></description>
     </item>
     

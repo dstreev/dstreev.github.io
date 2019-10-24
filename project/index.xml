@@ -2,45 +2,45 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Projects | David W. Streever</title>
-    <link>http://blog.streever.com/project/</link>
-      <atom:link href="http://blog.streever.com/project/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/project/</link>
+      <atom:link href="http://www.streever.com/project/index.xml" rel="self" type="application/rss+xml" />
     <description>Projects</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>Projects</title>
-      <link>http://blog.streever.com/project/</link>
+      <link>http://www.streever.com/project/</link>
     </image>
     
     <item>
       <title>HWX Ansible</title>
-      <link>http://blog.streever.com/project/hwx-ansible/</link>
+      <link>http://www.streever.com/project/hwx-ansible/</link>
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/project/hwx-ansible/</guid>
+      <guid>http://www.streever.com/project/hwx-ansible/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Hadoop CLI</title>
-      <link>http://blog.streever.com/project/hadoop-cli/</link>
+      <link>http://www.streever.com/project/hadoop-cli/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/project/hadoop-cli/</guid>
+      <guid>http://www.streever.com/project/hadoop-cli/</guid>
       <description></description>
     </item>
     
     <item>
       <title>HDP3 Upgrade Planning</title>
-      <link>http://blog.streever.com/project/hdp3-upgrade-planning/</link>
+      <link>http://www.streever.com/project/hdp3-upgrade-planning/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/project/hdp3-upgrade-planning/</guid>
+      <guid>http://www.streever.com/project/hdp3-upgrade-planning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Hive LLAP Calculator</title>
-      <link>http://blog.streever.com/project/hive-llap-calculator/</link>
+      <link>http://www.streever.com/project/hive-llap-calculator/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/project/hive-llap-calculator/</guid>
+      <guid>http://www.streever.com/project/hive-llap-calculator/</guid>
       <description></description>
     </item>
     

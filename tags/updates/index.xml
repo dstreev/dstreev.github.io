@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>updates | David W. Streever</title>
-    <link>http://blog.streever.com/tags/updates/</link>
-      <atom:link href="http://blog.streever.com/tags/updates/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/tags/updates/</link>
+      <atom:link href="http://www.streever.com/tags/updates/index.xml" rel="self" type="application/rss+xml" />
     <description>updates</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 27 Aug 2015 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>updates</title>
-      <link>http://blog.streever.com/tags/updates/</link>
+      <link>http://www.streever.com/tags/updates/</link>
     </image>
     
     <item>
       <title>Managing Immutable Data in Hive with Windowing RANK</title>
-      <link>http://blog.streever.com/post/2015/-mng-immutable-data-windowing-style/</link>
+      <link>http://www.streever.com/post/2015/-mng-immutable-data-windowing-style/</link>
       <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2015/-mng-immutable-data-windowing-style/</guid>
+      <guid>http://www.streever.com/post/2015/-mng-immutable-data-windowing-style/</guid>
       <description>
 
 &lt;p&gt;I&amp;rsquo;m often asked how to &amp;ldquo;update&amp;rdquo; records in Hive.  We&amp;rsquo;ll you can&amp;rsquo;t, at least not yet and not in the sense you maybe accustom in an RDBMS.&lt;/p&gt;

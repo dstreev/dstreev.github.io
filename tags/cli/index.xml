@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>cli | David W. Streever</title>
-    <link>http://blog.streever.com/tags/cli/</link>
-      <atom:link href="http://blog.streever.com/tags/cli/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/tags/cli/</link>
+      <atom:link href="http://www.streever.com/tags/cli/index.xml" rel="self" type="application/rss+xml" />
     <description>cli</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>cli</title>
-      <link>http://blog.streever.com/tags/cli/</link>
+      <link>http://www.streever.com/tags/cli/</link>
     </image>
     
     <item>
       <title>Hadoop CLI - Intro</title>
-      <link>http://blog.streever.com/post/hadoop-cli/intro/</link>
+      <link>http://www.streever.com/post/hadoop-cli/intro/</link>
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/hadoop-cli/intro/</guid>
+      <guid>http://www.streever.com/post/hadoop-cli/intro/</guid>
       <description>&lt;p&gt;Working with Hadoop is much like working with a terminal application, as most everything you do with Hadoop is via the terminal.  If you want to launch a MapReduce job, do it from the terminal.  If you wanted to explore HDFS, run a command from the terminal.&lt;/p&gt;
 
 &lt;p&gt;Working with the Hadoop Distributed File System (HDFS) should be like working with any other file system, at least when you&amp;rsquo;re in the terminal.  Unfortunately, it&amp;rsquo;s not.&lt;/p&gt;

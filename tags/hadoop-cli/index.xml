@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>hadoop-cli | David W. Streever</title>
-    <link>http://blog.streever.com/tags/hadoop-cli/</link>
-      <atom:link href="http://blog.streever.com/tags/hadoop-cli/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/tags/hadoop-cli/</link>
+      <atom:link href="http://www.streever.com/tags/hadoop-cli/index.xml" rel="self" type="application/rss+xml" />
     <description>hadoop-cli</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Sat, 19 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>hadoop-cli</title>
-      <link>http://blog.streever.com/tags/hadoop-cli/</link>
+      <link>http://www.streever.com/tags/hadoop-cli/</link>
     </image>
     
     <item>
       <title>Hadoop CLI for HDFS Directory Cleanup</title>
-      <link>http://blog.streever.com/post/2019/cleaning-up-hdfs/</link>
+      <link>http://www.streever.com/post/2019/cleaning-up-hdfs/</link>
       <pubDate>Sat, 19 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2019/cleaning-up-hdfs/</guid>
+      <guid>http://www.streever.com/post/2019/cleaning-up-hdfs/</guid>
       <description>
 
 &lt;p&gt;Refer to the &amp;lsquo;project&amp;rsquo; and &amp;lsquo;slides&amp;rsquo; above for details on &amp;lsquo;Hadoop CLI&amp;rsquo;.  See the &amp;lsquo;related&amp;rsquo; posts at the end of this post for other information.&lt;/p&gt;
@@ -29,7 +29,7 @@
 
 &lt;ul&gt;
 &lt;li&gt;Test the pipeline results before call a destructive operation.&lt;/li&gt;
-&lt;li&gt;Create an &amp;lsquo;hdfs snapshot&amp;rsquo; of the target base directory in case something doesn&amp;rsquo;t go as planned. See &lt;a href=&#34;http://blog.streever.com/terms&#34;&gt;Terms&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Create an &amp;lsquo;hdfs snapshot&amp;rsquo; of the target base directory in case something doesn&amp;rsquo;t go as planned. See &lt;a href=&#34;http://www.streever.com/terms&#34;&gt;Terms&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&#34;sample-use-case&#34;&gt;Sample Use case&lt;/h3&gt;
@@ -80,9 +80,9 @@ hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
     
     <item>
       <title>Hadoop CLI &#39;lsp&#39; Function</title>
-      <link>http://blog.streever.com/post/hadoop-cli/lsp/</link>
+      <link>http://www.streever.com/post/hadoop-cli/lsp/</link>
       <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/hadoop-cli/lsp/</guid>
+      <guid>http://www.streever.com/post/hadoop-cli/lsp/</guid>
       <description>
 
 &lt;p&gt;Like &amp;lsquo;ls&amp;rsquo;, you can fetch many details about a file.  But with this, you can also add information about the file that includes:
@@ -209,9 +209,9 @@ lsp -o /tmp/test.out /user/dstreev/perf
     
     <item>
       <title>Hadoop CLI - Intro</title>
-      <link>http://blog.streever.com/post/hadoop-cli/intro/</link>
+      <link>http://www.streever.com/post/hadoop-cli/intro/</link>
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/hadoop-cli/intro/</guid>
+      <guid>http://www.streever.com/post/hadoop-cli/intro/</guid>
       <description>&lt;p&gt;Working with Hadoop is much like working with a terminal application, as most everything you do with Hadoop is via the terminal.  If you want to launch a MapReduce job, do it from the terminal.  If you wanted to explore HDFS, run a command from the terminal.&lt;/p&gt;
 
 &lt;p&gt;Working with the Hadoop Distributed File System (HDFS) should be like working with any other file system, at least when you&amp;rsquo;re in the terminal.  Unfortunately, it&amp;rsquo;s not.&lt;/p&gt;
@@ -232,24 +232,24 @@ lsp -o /tmp/test.out /user/dstreev/perf
     
     <item>
       <title>Hadoop CLI</title>
-      <link>http://blog.streever.com/project/hadoop-cli/</link>
+      <link>http://www.streever.com/project/hadoop-cli/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/project/hadoop-cli/</guid>
+      <guid>http://www.streever.com/project/hadoop-cli/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Hadoop CLI Walk-Through</title>
-      <link>http://blog.streever.com/slides/hadoop-cli/</link>
+      <link>http://www.streever.com/slides/hadoop-cli/</link>
       <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/slides/hadoop-cli/</guid>
+      <guid>http://www.streever.com/slides/hadoop-cli/</guid>
       <description>
 
 &lt;h2 id=&#34;the-hadoop-cli&#34;&gt;The Hadoop CLI&lt;/h2&gt;
 
 &lt;p&gt;A quick tour of the installation and basic usage.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 

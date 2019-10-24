@@ -2,93 +2,93 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories | David W. Streever</title>
-    <link>http://blog.streever.com/categories/</link>
-      <atom:link href="http://blog.streever.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/categories/</link>
+      <atom:link href="http://www.streever.com/categories/index.xml" rel="self" type="application/rss+xml" />
     <description>Categories</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 24 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>Categories</title>
-      <link>http://blog.streever.com/categories/</link>
+      <link>http://www.streever.com/categories/</link>
     </image>
     
     <item>
       <title>analytics</title>
-      <link>http://blog.streever.com/categories/analytics/</link>
+      <link>http://www.streever.com/categories/analytics/</link>
       <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/analytics/</guid>
+      <guid>http://www.streever.com/categories/analytics/</guid>
       <description></description>
     </item>
     
     <item>
       <title>devops</title>
-      <link>http://blog.streever.com/categories/devops/</link>
+      <link>http://www.streever.com/categories/devops/</link>
       <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/devops/</guid>
+      <guid>http://www.streever.com/categories/devops/</guid>
       <description></description>
     </item>
     
     <item>
       <title>navigation</title>
-      <link>http://blog.streever.com/categories/navigation/</link>
+      <link>http://www.streever.com/categories/navigation/</link>
       <pubDate>Sat, 19 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/navigation/</guid>
+      <guid>http://www.streever.com/categories/navigation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>search</title>
-      <link>http://blog.streever.com/categories/search/</link>
+      <link>http://www.streever.com/categories/search/</link>
       <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/search/</guid>
+      <guid>http://www.streever.com/categories/search/</guid>
       <description></description>
     </item>
     
     <item>
       <title>big data</title>
-      <link>http://blog.streever.com/categories/big-data/</link>
+      <link>http://www.streever.com/categories/big-data/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/big-data/</guid>
+      <guid>http://www.streever.com/categories/big-data/</guid>
       <description></description>
     </item>
     
     <item>
       <title>planning</title>
-      <link>http://blog.streever.com/categories/planning/</link>
+      <link>http://www.streever.com/categories/planning/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/planning/</guid>
+      <guid>http://www.streever.com/categories/planning/</guid>
       <description></description>
     </item>
     
     <item>
       <title>upgrade</title>
-      <link>http://blog.streever.com/categories/upgrade/</link>
+      <link>http://www.streever.com/categories/upgrade/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/upgrade/</guid>
+      <guid>http://www.streever.com/categories/upgrade/</guid>
       <description></description>
     </item>
     
     <item>
       <title>opinion</title>
-      <link>http://blog.streever.com/categories/opinion/</link>
+      <link>http://www.streever.com/categories/opinion/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/opinion/</guid>
+      <guid>http://www.streever.com/categories/opinion/</guid>
       <description></description>
     </item>
     
     <item>
       <title>edw</title>
-      <link>http://blog.streever.com/categories/edw/</link>
+      <link>http://www.streever.com/categories/edw/</link>
       <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/edw/</guid>
+      <guid>http://www.streever.com/categories/edw/</guid>
       <description></description>
     </item>
     
     <item>
       <title>guidance</title>
-      <link>http://blog.streever.com/categories/guidance/</link>
+      <link>http://www.streever.com/categories/guidance/</link>
       <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/categories/guidance/</guid>
+      <guid>http://www.streever.com/categories/guidance/</guid>
       <description></description>
     </item>
     

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>tech | David W. Streever</title>
-    <link>http://blog.streever.com/tags/tech/</link>
-      <atom:link href="http://blog.streever.com/tags/tech/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/tags/tech/</link>
+      <atom:link href="http://www.streever.com/tags/tech/index.xml" rel="self" type="application/rss+xml" />
     <description>tech</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Fri, 10 Aug 2018 00:00:00 +0000</lastBuildDate>
     <image>
-      <url>http://blog.streever.com/img/icon-192.png</url>
+      <url>http://www.streever.com/img/icon-192.png</url>
       <title>tech</title>
-      <link>http://blog.streever.com/tags/tech/</link>
+      <link>http://www.streever.com/tags/tech/</link>
     </image>
     
     <item>
       <title>Learning Tech - The Dunning-Kruger Effect</title>
-      <link>http://blog.streever.com/post/2018/dunning-kruger-effect-technology/</link>
+      <link>http://www.streever.com/post/2018/dunning-kruger-effect-technology/</link>
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/post/2018/dunning-kruger-effect-technology/</guid>
+      <guid>http://www.streever.com/post/2018/dunning-kruger-effect-technology/</guid>
       <description>&lt;p&gt;It happens to everyone, regardless of how long you&amp;rsquo;ve been around.  No matter your experience level, there is no escaping the &amp;lsquo;Dunning-Kruger Effect&amp;rsquo;&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;https://understandinginnovation.files.wordpress.com/2015/06/dunning-kruger-0011.jpg&#34; alt=&#34;Dunning-Kruger-Effect&#34; /&gt;&lt;/p&gt;

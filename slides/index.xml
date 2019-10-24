@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Slides | David W. Streever</title>
-    <link>http://blog.streever.com/slides/</link>
-      <atom:link href="http://blog.streever.com/slides/index.xml" rel="self" type="application/rss+xml" />
+    <link>http://www.streever.com/slides/</link>
+      <atom:link href="http://www.streever.com/slides/index.xml" rel="self" type="application/rss+xml" />
     <description>Slides</description>
     <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Tue, 05 Feb 2019 00:00:00 +0000</lastBuildDate>
     <item>
       <title>Hadoop CLI Walk-Through</title>
-      <link>http://blog.streever.com/slides/hadoop-cli/</link>
+      <link>http://www.streever.com/slides/hadoop-cli/</link>
       <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
-      <guid>http://blog.streever.com/slides/hadoop-cli/</guid>
+      <guid>http://www.streever.com/slides/hadoop-cli/</guid>
       <description>
 
 &lt;h2 id=&#34;the-hadoop-cli&#34;&gt;The Hadoop CLI&lt;/h2&gt;
 
 &lt;p&gt;A quick tour of the installation and basic usage.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 
