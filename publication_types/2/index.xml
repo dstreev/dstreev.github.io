@@ -809,5 +809,24 @@ david      2015-08-23  195
 </description>
     </item>
     
+    <item>
+      <title>Email Signature</title>
+      <link>http://www.streever.com/post/email/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://www.streever.com/post/email/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;images/emailimages/banner.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/blogger.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_1.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_2.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_3.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_4.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_5.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/github.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/linkedin.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/promote_icon.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/twitter.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>
