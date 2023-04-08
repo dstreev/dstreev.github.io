@@ -83,7 +83,7 @@
   
   
   
-  <link rel="stylesheet" href="/css/academic.min.29726bb59dc2ea0a73ccb249d1f01fa7.css">
+  <link rel="stylesheet" href="/css/academic.min.a94fe622e8e0f367fe40a299a24dfc4c.css">
 
   
 
@@ -552,132 +552,86 @@
   <div class="article-container">
 
     <div class="article-style">
-      
-
-<h2 id="the-problem">The Problem</h2>
-
+      <h2 id="the-problem">The Problem</h2>
 <p>Traditional &lsquo;distcp&rsquo; from one directory to another or from cluster to cluster is quite useful in moving massive amounts of data, once. But what happens when you need to &ldquo;update&rdquo; a target directory or cluster with only the changes made since the last &lsquo;distcp&rsquo; had run. That becomes a very tricky scenario. &lsquo;distcp&rsquo; offers an &lsquo;-update&rsquo; flag, which is suppose to move only the files that have changed. In this case &lsquo;distcp&rsquo; will pull a list of files and directories from the source and targets, compare them and then build a migration plan.</p>
-
 <p>It&rsquo;s an expensive and time-consuming task. Furthermore, the process is not atomic. First, the cost of gathering a list of files and directories, along with their metadata is expensive when you&rsquo;re considering sources with millions of file and directory objects. And this cost is incurred on both the source and target namenode&rsquo;s, resulting in quite a bit of pressure on those systems.</p>
-
 <p>It&rsquo;s up to <code>distcp</code> to reconcile the difference between the source and target, which is very expensive. When it&rsquo;s finally complete, only then does the process start to move data. And if data changes while the process is running, those changes can impact the transfer and lead to failure and partial migration.</p>
-
 <h2 id="the-solution">The Solution</h2>
-
 <p>The process needs to be atomic, and it needs to be efficient. With Hadoop 2.0, HDFS introduce &ldquo;snapshots.&rdquo; HDFS &ldquo;snapshots&rdquo; are a point-in-time copy of the directories metadata. The copy is stored in a hidden location and maintains references to all of the immutable filesystem objects. Creating a snapshot is atomic, and the characteristics of HDFS (being immutable) means that an image of a directories metadata doesn&rsquo;t require an addition copy of the underlying data.</p>
-
 <p>Another feature of snapshots is the ability to efficiently calculate changes between &lsquo;any&rsquo; two snapshots on the same directory. Using &lsquo;hdfs snapshotDiff &lsquo;, you can build a list of &ldquo;changes&rdquo; between these two point-in-time references.</p>
-
 <h3 id="for-example">For Example</h3>
-
-<pre><code>[hdfs@m3 ~]$ hdfs snapshotDiff /user/dstreev/stats s1 s2
-</code></pre>
-
-<p>Difference between snapshot s1 and snapshot s2 under directory /user/dstreev/stats:</p>
-
-<pre><code>M .+./attempt
+<pre tabindex="0"><code>[hdfs@m3 ~]$ hdfs snapshotDiff /user/dstreev/stats s1 s2
+</code></pre><p>Difference between snapshot s1 and snapshot s2 under directory /user/dstreev/stats:</p>
+<pre tabindex="0"><code>M .+./attempt
 M ./namenode/fs_state/2016-12.txt
 M ./namenode/nn_info/2016-12.txt
 M ./namenode/top_user_ops/2016-12.txt
 M ./scheduler/queue_paths/2016-12.txt
 M ./scheduler/queue_usage/2016-12.txt
 M ./scheduler/queues/2016-12.txt 
-</code></pre>
-
-<p>Let&rsquo;s take the &lsquo;distcp&rsquo; update concept and supercharge it with the efficiency of snapshots. Now you have a solution that will scale far beyond the original <code>distcp -update.</code> and in the process remove the burden and load from the namenode&rsquo;s previously encountered.</p>
-
+</code></pre><p>Let&rsquo;s take the &lsquo;distcp&rsquo; update concept and supercharge it with the efficiency of snapshots. Now you have a solution that will scale far beyond the original <code>distcp -update.</code> and in the process remove the burden and load from the namenode&rsquo;s previously encountered.</p>
 <h2 id="pre-requisites-and-requirements">Pre-Requisites and Requirements</h2>
-
 <ul>
-<li><p>Source must support hdfs &lsquo;snapshots&rsquo;</p>
-
-<pre><code>hdfs dfsadmin -allowSnapshot &lt;path&gt;
-</code></pre></li>
-
-<li><p>Target is &ldquo;read-only&rdquo;</p></li>
-
-<li><p>Target, after initial baseline &lsquo;distcp&rsquo; sync needs to support snapshots.</p></li>
+<li>Source must support hdfs &lsquo;snapshots&rsquo;</li>
 </ul>
-
+<pre tabindex="0"><code>hdfs dfsadmin -allowSnapshot &lt;path&gt;
+</code></pre><ul>
+<li>
+<p>Target is &ldquo;read-only&rdquo;</p>
+</li>
+<li>
+<p>Target, after initial baseline &lsquo;distcp&rsquo; sync needs to support snapshots.</p>
+</li>
+</ul>
 <h2 id="process">Process</h2>
-
 <ul>
 <li>Identify the source and target &lsquo;parent&rsquo; directory</li>
 <li>Do not initially create the destination directory, allow the first distcp to do that. For example: If I want to sync source <code>/data/a</code> with <code>/data/a_target</code>, do <em>NOT</em> pre-create the &lsquo;a_target&rsquo; directory.</li>
-
-<li><p>Allow snapshots on the source directory</p>
-
-<pre><code>hdfs dfsadmin -allowSnapshot /data/a
-</code></pre></li>
-
-<li><p>Create a Snapshot of /data/a</p>
-
-<pre><code>hdfs dfs -createSnapshot /data/a s1
-</code></pre></li>
-
-<li><p>Distcp the baseline copy (from the atomic snapshot). Note: /data/a_target does NOT exists prior to the following command.</p>
-
-<pre><code>hadoop distcp /data/a/.snapshot/s1 /data/a_target
-</code></pre></li>
-
-<li><p>Allow snapshots on the newly create target directory</p>
-
-<pre><code>hdfs dfsadmin -allowSnapshot /data/a_target
-</code></pre></li>
+<li>Allow snapshots on the source directory</li>
 </ul>
-
-<blockquote>
+<pre tabindex="0"><code>hdfs dfsadmin -allowSnapshot /data/a
+</code></pre><ul>
+<li>Create a Snapshot of /data/a</li>
+</ul>
+<pre tabindex="0"><code>hdfs dfs -createSnapshot /data/a s1
+</code></pre><ul>
+<li>Distcp the baseline copy (from the atomic snapshot). Note: /data/a_target does NOT exists prior to the following command.</li>
+</ul>
+<pre tabindex="0"><code>hadoop distcp /data/a/.snapshot/s1 /data/a_target
+</code></pre><ul>
+<li>Allow snapshots on the newly create target directory</li>
+</ul>
+<pre tabindex="0"><code>hdfs dfsadmin -allowSnapshot /data/a_target
+</code></pre><blockquote>
 <p>At this point /data/a_target should be considered &ldquo;read-only&rdquo;. Do NOT make any changes to the content here.</p>
 </blockquote>
-
 <ul>
-<li><p>Create a matching snapshot in /data/a_target that matches the name of the snapshot used to build the baseline</p>
-
-<pre><code>hdfs dfs -createSnapshot /data/a_target s1
-</code></pre></li>
+<li>Create a matching snapshot in /data/a_target that matches the name of the snapshot used to build the baseline</li>
 </ul>
-
-<blockquote>
+<pre tabindex="0"><code>hdfs dfs -createSnapshot /data/a_target s1
+</code></pre><blockquote>
 <p>Add some content to the source directory /data/a. Make changes, add, deletes, etc. that need to be replicated to /data/a_target.</p>
 </blockquote>
-
 <ul>
-<li><p>Take a new snapshot of /data/a</p>
-
-<pre><code>hdfs dfs -createSnapshot /data/a s2
-</code></pre></li>
+<li>Take a new snapshot of /data/a</li>
 </ul>
-
-<p>Just for fun, check on whats changed between the two snapshots</p>
-
-<pre><code>hdfs snapshotDiff /data/a s1 s2
-</code></pre>
-
-<ul>
-<li><p>Ok, now let&rsquo;s migrate the changes to /data/a_target</p>
-
-<pre><code>hadoop distcp -diff s1 s2 -update /data/a /data/a_target
-</code></pre></li>
-
-<li><p>When that&rsquo;s completed, finish the cycle by creating a matching snapshot on /data/a_target</p>
-
-<pre><code>hdfs dfs -createSnapshot /data/a_target s2
-</code></pre></li>
+<pre tabindex="0"><code>hdfs dfs -createSnapshot /data/a s2
+</code></pre><p>Just for fun, check on whats changed between the two snapshots</p>
+<pre tabindex="0"><code>hdfs snapshotDiff /data/a s1 s2
+</code></pre><ul>
+<li>Ok, now let&rsquo;s migrate the changes to /data/a_target</li>
 </ul>
-
-<p>That&rsquo;s it. You&rsquo;ve completed the cycle. Rinse and repeat.</p>
-
+<pre tabindex="0"><code>hadoop distcp -diff s1 s2 -update /data/a /data/a_target
+</code></pre><ul>
+<li>When that&rsquo;s completed, finish the cycle by creating a matching snapshot on /data/a_target</li>
+</ul>
+<pre tabindex="0"><code>hdfs dfs -createSnapshot /data/a_target s2
+</code></pre><p>That&rsquo;s it. You&rsquo;ve completed the cycle. Rinse and repeat.</p>
 <h2 id="a-few-hints">A Few Hints</h2>
-
 <p>Remember, snapshots need to be managed manually. They will stay around forever unless you clean them up with:</p>
-
-<pre><code>hdfs dfs -deleteSnapshot 
-</code></pre>
-
-<p>As long as a snapshot exists, the data exists. Deleting, even with skipTrash, data from a directory that has a snapshot, doesn&rsquo;t free up space. Only when all &ldquo;references&rdquo; to that data are gone, can space be reclaimed.</p>
-
+<pre tabindex="0"><code>hdfs dfs -deleteSnapshot 
+</code></pre><p>As long as a snapshot exists, the data exists. Deleting, even with skipTrash, data from a directory that has a snapshot, doesn&rsquo;t free up space. Only when all &ldquo;references&rdquo; to that data are gone, can space be reclaimed.</p>
 <p>Initial migrations of data between systems are very expensive in regards to network I/O. And you probably don&rsquo;t want to have to do that again, ever. I recommend keeping a snapshot of the original copy on each system OR some major checkpoint you can go back to, in the event the process is compromised.</p>
-
 <p>If &lsquo;distcp&rsquo; can&rsquo;t validate that the snapshot (by name) between the source and the target are the same and that the data at the target hasn&rsquo;t changed since the snapshot, the process will fail. If the failure is because the directory has been updated, you&rsquo;ll need to use the above baseline snapshots to restore it without having to migrate all that data again. And then start the process up again.</p>
 
     </div>
@@ -815,7 +769,7 @@ M ./scheduler/queues/2016-12.txt
   <div class="media author-card content-widget-hr">
     
       
-      <img class="portrait mr-3" src="/authors/dstreev/avatar_hudf7b8620e192de66d79d1f7e36df7824_20455_250x250_fill_q90_lanczos_center.jpg" alt="Avatar">
+      <img class="portrait mr-3" src="/authors/dstreev/avatar_hud613f8a8db9ce517d021860c7525521a_604030_250x250_fill_lanczos_center_3.png" alt="Avatar">
     
 
     <div class="media-body">
@@ -1025,7 +979,7 @@ M ./scheduler/queues/2016-12.txt
     
     
     
-    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+    <script src="/js/academic.min.01f68d44d80310e669a1731b68a35481.js"></script>
 
     
 
@@ -1049,7 +1003,7 @@ M ./scheduler/queues/2016-12.txt
   
 
   <p class="powered-by">
-    &copy; 2019 &middot; 
+    © 2023 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

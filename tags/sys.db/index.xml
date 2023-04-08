@@ -5,7 +5,7 @@
     <link>http://www.streever.com/tags/sys.db/</link>
       <atom:link href="http://www.streever.com/tags/sys.db/index.xml" rel="self" type="application/rss+xml" />
     <description>sys.db</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://www.streever.com/img/icon-192.png</url>
       <title>sys.db</title>
@@ -17,168 +17,143 @@
       <link>http://www.streever.com/post/2019/filter-hive-compactions/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2019/filter-hive-compactions/</guid>
-      <description>
-
-&lt;p&gt;From Beeline or a standard JDBC client connected to Hive, compactions can be seen with the standard SQL:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SHOW COMPACTIONS;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;But this method has a couple of problems:&lt;/p&gt;
-
+      <description>&lt;p&gt;From Beeline or a standard JDBC client connected to Hive, compactions can be seen with the standard SQL:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SHOW&lt;/span&gt; COMPACTIONS;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;But this method has a couple of problems:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;No Filtering&lt;/li&gt;
 &lt;li&gt;Timestamps are hard to interpret&lt;/li&gt;
 &lt;/ol&gt;
-
 &lt;p&gt;Until additional functionality is available for this built in function, we can do the following.&lt;/p&gt;
-
 &lt;p&gt;Add links to the Metastore DB tables and create custom views to review compaction details.  See &lt;a href=&#34;http://www.streever.com/post/the-power-of-hive-jdbc-federation&#34;&gt;The Power of Hive JDBC Federation&lt;/a&gt;&lt;/p&gt;
-
 &lt;h2 id=&#34;build-out-metadata-elements&#34;&gt;Build Out Metadata Elements&lt;/h2&gt;
-
-&lt;div class=&#34;alert alert-note&#34;&gt;
-  &lt;div&gt;
-    &lt;p&gt;A word of caution here.  All the &amp;lsquo;extras&amp;rsquo; you create against the metastore DB can/may break with the next release.  This isn&amp;rsquo;t a supported method of accessing metadata.&lt;/p&gt;
-
-&lt;p&gt;Don&amp;rsquo;t add &lt;em&gt;new&lt;/em&gt; tables to the current &lt;code&gt;sys.db&lt;/code&gt;.  That&amp;rsquo;s bad form and could cause issues for the platform during the next upgrade cycle, especially if there are naming conflicts.  Put it somewhere else!!&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;CREATE DATABASE IF NOT EXISTS custom_sys;
-
-DROP TABLE IF EXISTS `custom_sys`.`completed_compactions`;
-DROP TABLE IF EXISTS `custom_sys`.`compaction_queue`;
-
-CREATE EXTERNAL TABLE `custom_sys`.`completed_compactions`(
-	CC_ID bigint COMMENT &#39;from deserializer&#39;,
-	CC_DATABASE string COMMENT &#39;from deserializer&#39;,
-	CC_TABLE string COMMENT &#39;from deserializer&#39;,
-	CC_PARTITION string COMMENT &#39;from deserializer&#39;,
-	CC_STATE string COMMENT &#39;from deserializer&#39;,
-	CC_TYPE string COMMENT &#39;from deserializer&#39;,
-	CC_TBLPROPERTIES string COMMENT &#39;from deserializer&#39;,
-	CC_WORKER_ID string COMMENT &#39;from deserializer&#39;,
-	CC_START bigint COMMENT &#39;from deserializer&#39;,
-	CC_END bigint COMMENT &#39;from deserializer&#39;,
-	CC_RUN_AS string COMMENT &#39;from deserializer&#39;,
-	CC_HIGHEST_WRITE_ID bigint COMMENT &#39;from deserializer&#39;,
-	CC_META_INFO string COMMENT &#39;from deserializer&#39;,
-	CC_HADOOP_JOB_ID string COMMENT &#39;from deserializer&#39;
-)
- ROW FORMAT SERDE                                   
-   &#39;org.apache.hive.storage.jdbc.JdbcSerDe&#39;         
- STORED BY                                          
-   &#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&#39;  
- WITH SERDEPROPERTIES (                             
-   &#39;serialization.format&#39;=&#39;1&#39;)                      
- TBLPROPERTIES (                                    
-   &#39;bucketing_version&#39;=&#39;2&#39;,                         
-   &#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;,            
-   &#39;hive.sql.query&#39;=&#39;SELECT CC_ID, CC_DATABASE, CC_TABLE, CC_PARTITION, CC_STATE, CC_TYPE, CC_TBLPROPERTIES, CC_WORKER_ID, CC_START, CC_END, CC_RUN_AS, CC_HIGHEST_WRITE_ID, CC_META_INFO, CC_HADOOP_JOB_ID FROM COMPLETED_COMPACTIONS&#39;);
-
-CREATE EXTERNAL TABLE `custom_sys`.`compaction_queue`(
-	CQ_ID bigint COMMENT &#39;from deserializer&#39;,
-	CQ_DATABASE string COMMENT &#39;from deserializer&#39;,
-	CQ_TABLE string COMMENT &#39;from deserializer&#39;,
-	CQ_PARTITION string COMMENT &#39;from deserializer&#39;,
-	CQ_STATE string COMMENT &#39;from deserializer&#39;,
-	CQ_TYPE string COMMENT &#39;from deserializer&#39;,
-	CQ_TBLPROPERTIES string COMMENT &#39;from deserializer&#39;,
-	CQ_WORKER_ID string COMMENT &#39;from deserializer&#39;,
-	CQ_START bigint COMMENT &#39;from deserializer&#39;,
-	CQ_RUN_AS string COMMENT &#39;from deserializer&#39;,
-	CQ_HIGHEST_WRITE_ID bigint COMMENT &#39;from deserializer&#39;,
-	CQ_META_INFO string COMMENT &#39;from deserializer&#39;,
-	CQ_HADOOP_JOB_ID string COMMENT &#39;from deserializer&#39;
-)
- ROW FORMAT SERDE                                   
-   &#39;org.apache.hive.storage.jdbc.JdbcSerDe&#39;         
- STORED BY                                          
-   &#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&#39;  
- WITH SERDEPROPERTIES (                             
-   &#39;serialization.format&#39;=&#39;1&#39;)                      
- TBLPROPERTIES (                                    
-   &#39;bucketing_version&#39;=&#39;2&#39;,                         
-   &#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;,            
-   &#39;hive.sql.query&#39;=&#39;SELECT CQ_ID, CQ_DATABASE, CQ_TABLE, CQ_PARTITION, CQ_STATE, CQ_TYPE, CQ_TBLPROPERTIES, CQ_WORKER_ID, CQ_START, CQ_RUN_AS, CQ_HIGHEST_WRITE_ID, CQ_META_INFO, CQ_HADOOP_JOB_ID FROM COMPACTION_QUEUE&#39;);
-
-DROP VIEW IF EXISTS `custom_sys`.`compactions`;
-
--- TODO: Handle / Show Aborted Transactions (maybe) I think txn data may be transient...
-CREATE VIEW IF NOT EXISTS `custom_sys`.`compactions` AS
-SELECT CC_ID AS id,
-       CC_DATABASE AS `database`,
-       CC_TABLE AS `table`,
-       CC_PARTITION AS `partition`,
-       CASE CC_STATE
-           WHEN &#39;s&#39; THEN &#39;SUCCEEDED&#39;
-           WHEN &#39;a&#39; THEN &#39;ATTEMPTED&#39;
-           WHEN &#39;f&#39; THEN &#39;FAILED&#39;
-       END AS STATE,
-       CASE CC_TYPE
-           WHEN &#39;a&#39; THEN &#39;MAJOR&#39;
-           WHEN &#39;i&#39; THEN &#39;MINOR&#39;
-       END AS TYPE,
-       CC_TBLPROPERTIES AS tblproperties,
-       CC_WORKER_ID AS worker_id,
-       to_utc_timestamp(CC_START,&#39;UTC&#39;) AS `start`,
-       to_utc_timestamp(CC_END, &#39;UTC&#39;) AS `end`,
-       CC_RUN_AS AS run_as,
-       CC_HIGHEST_WRITE_ID AS highest_write_id,
-       CC_META_INFO AS meta_info,
-       CC_HADOOP_JOB_ID AS hadoop_job_id
-FROM `custom_sys`.`completed_compactions`
-UNION ALL
-SELECT CQ_ID AS id,
-       CQ_DATABASE AS `database`,
-       CQ_TABLE AS `table`,
-       CQ_PARTITION AS `partition`,
-       CASE CQ_STATE
-           WHEN &#39;i&#39; THEN &#39;INITIATED&#39;
-           WHEN &#39;w&#39; THEN &#39;WORKING&#39;
-           WHEN &#39;r&#39; THEN &#39;READY_FOR_CLEANING&#39;
-       END AS `state`,
-       CASE CQ_TYPE
-           WHEN &#39;a&#39; THEN &#39;MAJOR&#39;
-           WHEN &#39;i&#39; THEN &#39;MINOR&#39;
-       END AS `type`,
-       CQ_TBLPROPERTIES AS tblproperties,
-       CQ_WORKER_ID AS worker_id,
-       to_utc_timestamp(CQ_START, &#39;UTC&#39;) AS `start`,
-       NULL AS `end`,
-               CQ_RUN_AS AS run_as,
-               CQ_HIGHEST_WRITE_ID AS highest_write_id,
-               CQ_META_INFO AS meta_info,
-               CQ_HADOOP_JOB_ID AS hadoop_job_id
-FROM `custom_sys`.`compaction_queue`;
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;see-the-last-10-compaction-events&#34;&gt;See the last 10 compaction events&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select 
-	`database`, `table`, `partition`, `state`, `type`, `start`, `end`, hadoop_job_id 
-FROM
-	`custom_sys`.`compactions` 
-ORDER BY `start` DESC 
-LIMIT 10;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;show-the-last-10-failed-compaction-event&#34;&gt;Show the last 10 failed compaction event&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;-- `state` options are &#39;SUCCEEDED&#39;, &#39;ATTEMPTED&#39;, &#39;FAILED&#39;, &#39;INITIATED&#39;, &#39;WORKING&#39;, and &#39;READY_FOR_CLEANING&#39;
--- `type` options are &#39;MAJOR&#39; and &#39;MINOR&#39;
-select 
-`database`, `table`, `partition`, `state`, `type`, `start`, `end` 
-FROM
-	`custom_sys`.`compactions` 
-WHERE `state` = &#39;FAILED&#39; 
-ORDER BY `start` DESC 
-LIMIT 10;
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CREATE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;DATABASE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;NOT&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; custom_sys;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;DROP&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TABLE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;completed_compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;DROP&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TABLE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compaction_queue&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CREATE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXTERNAL&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TABLE&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;completed_compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_ID bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_DATABASE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_TABLE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_PARTITION string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_STATE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_TYPE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_TBLPROPERTIES string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_WORKER_ID string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_START bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_END bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_RUN_AS string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_HIGHEST_WRITE_ID bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_META_INFO string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_HADOOP_JOB_ID string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;ROW&lt;/span&gt; FORMAT SERDE                                   
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;org.apache.hive.storage.jdbc.JdbcSerDe&amp;#39;&lt;/span&gt;         
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; STORED &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt;                                          
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&amp;#39;&lt;/span&gt;  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;WITH&lt;/span&gt; SERDEPROPERTIES (                             
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;serialization.format&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;1&amp;#39;&lt;/span&gt;)                      
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; TBLPROPERTIES (                                    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;bucketing_version&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2&amp;#39;&lt;/span&gt;,                         
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hive.sql.database.type&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;METASTORE&amp;#39;&lt;/span&gt;,            
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hive.sql.query&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SELECT CC_ID, CC_DATABASE, CC_TABLE, CC_PARTITION, CC_STATE, CC_TYPE, CC_TBLPROPERTIES, CC_WORKER_ID, CC_START, CC_END, CC_RUN_AS, CC_HIGHEST_WRITE_ID, CC_META_INFO, CC_HADOOP_JOB_ID FROM COMPLETED_COMPACTIONS&amp;#39;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CREATE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXTERNAL&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TABLE&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compaction_queue&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_ID bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_DATABASE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_TABLE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_PARTITION string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_STATE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_TYPE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_TBLPROPERTIES string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_WORKER_ID string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_START bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_RUN_AS string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_HIGHEST_WRITE_ID bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_META_INFO string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_HADOOP_JOB_ID string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;ROW&lt;/span&gt; FORMAT SERDE                                   
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;org.apache.hive.storage.jdbc.JdbcSerDe&amp;#39;&lt;/span&gt;         
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; STORED &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt;                                          
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&amp;#39;&lt;/span&gt;  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;WITH&lt;/span&gt; SERDEPROPERTIES (                             
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;serialization.format&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;1&amp;#39;&lt;/span&gt;)                      
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; TBLPROPERTIES (                                    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;bucketing_version&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2&amp;#39;&lt;/span&gt;,                         
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hive.sql.database.type&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;METASTORE&amp;#39;&lt;/span&gt;,            
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hive.sql.query&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SELECT CQ_ID, CQ_DATABASE, CQ_TABLE, CQ_PARTITION, CQ_STATE, CQ_TYPE, CQ_TBLPROPERTIES, CQ_WORKER_ID, CQ_START, CQ_RUN_AS, CQ_HIGHEST_WRITE_ID, CQ_META_INFO, CQ_HADOOP_JOB_ID FROM COMPACTION_QUEUE&amp;#39;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;DROP&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;VIEW&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;-- TODO: Handle / Show Aborted Transactions (maybe) I think txn data may be transient...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CREATE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;VIEW&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;NOT&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; CC_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_DATABASE &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;database&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_TABLE &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_PARTITION &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;partition&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;CASE&lt;/span&gt; CC_STATE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SUCCEEDED&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ATTEMPTED&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;f&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FAILED&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;END&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;STATE&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;CASE&lt;/span&gt; CC_TYPE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MAJOR&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;i&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MINOR&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;END&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TYPE&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_TBLPROPERTIES &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; tblproperties,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_WORKER_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; worker_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       to_utc_timestamp(CC_START,&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;UTC&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       to_utc_timestamp(CC_END, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;UTC&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_RUN_AS &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; run_as,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_HIGHEST_WRITE_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; highest_write_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_META_INFO &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; meta_info,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_HADOOP_JOB_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; hadoop_job_id
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;completed_compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;UNION&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;ALL&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; CQ_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_DATABASE &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;database&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_TABLE &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_PARTITION &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;partition&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;CASE&lt;/span&gt; CQ_STATE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;i&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;INITIATED&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;w&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;WORKING&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;r&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;READY_FOR_CLEANING&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;END&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;state&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;CASE&lt;/span&gt; CQ_TYPE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MAJOR&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;i&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MINOR&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;END&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_TBLPROPERTIES &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; tblproperties,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_WORKER_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; worker_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       to_utc_timestamp(CQ_START, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;UTC&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;NULL&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;               CQ_RUN_AS &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; run_as,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;               CQ_HIGHEST_WRITE_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; highest_write_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;               CQ_META_INFO &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; meta_info,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;               CQ_HADOOP_JOB_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; hadoop_job_id
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compaction_queue&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;see-the-last-10-compaction-events&#34;&gt;See the last 10 compaction events&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;database&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;partition&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;state&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, hadoop_job_id 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;ORDER&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;DESC&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;LIMIT&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;show-the-last-10-failed-compaction-event&#34;&gt;Show the last 10 failed compaction event&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;-- `state` options are &amp;#39;SUCCEEDED&amp;#39;, &amp;#39;ATTEMPTED&amp;#39;, &amp;#39;FAILED&amp;#39;, &amp;#39;INITIATED&amp;#39;, &amp;#39;WORKING&amp;#39;, and &amp;#39;READY_FOR_CLEANING&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;-- `type` options are &amp;#39;MAJOR&amp;#39; and &amp;#39;MINOR&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;database&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;partition&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;state&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;WHERE&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;state&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FAILED&amp;#39;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;ORDER&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;DESC&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;LIMIT&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
     </item>
     
   </channel>

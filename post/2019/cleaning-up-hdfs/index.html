@@ -83,7 +83,7 @@
   
   
   
-  <link rel="stylesheet" href="/css/academic.min.29726bb59dc2ea0a73ccb249d1f01fa7.css">
+  <link rel="stylesheet" href="/css/academic.min.a94fe622e8e0f367fe40a299a24dfc4c.css">
 
   
 
@@ -595,63 +595,46 @@
   <div class="article-container">
 
     <div class="article-style">
-      
-
-<p>Refer to the &lsquo;project&rsquo; and &lsquo;slides&rsquo; above for details on &lsquo;Hadoop CLI&rsquo;.  See the &lsquo;related&rsquo; posts at the end of this post for other information.</p>
-
+      <p>Refer to the &lsquo;project&rsquo; and &lsquo;slides&rsquo; above for details on &lsquo;Hadoop CLI&rsquo;.  See the &lsquo;related&rsquo; posts at the end of this post for other information.</p>
 <p>With pipelining in &lsquo;hadoopcli&rsquo; we can combine search functions with cleanup functions.  So what use to take hours to prep and setup, can be accomplished in seconds.</p>
-
 <h3 id="recommendation">Recommendation</h3>
-
 <p>These operations are &lsquo;destructive&rsquo;, so take precautions.</p>
-
 <ul>
 <li>Test the pipeline results before call a destructive operation.</li>
 <li>Create an &lsquo;hdfs snapshot&rsquo; of the target base directory in case something doesn&rsquo;t go as planned. See <a href="/terms">Terms</a>.</li>
 </ul>
-
 <h3 id="sample-use-case">Sample Use case</h3>
-
 <p>Cleaning up hive directories left behind by some hive bugs in &lsquo;stat&rsquo; collection or <code>insert overwrite</code> operations.</p>
-
 <p>In the &lsquo;hadoopcli&rsquo; application:</p>
-
-<pre><code># Let's test the command.
+<pre tabindex="0"><code># Let&#39;s test the command.
 REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
 hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
 /warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db/catalog_sales/.hive-staging_hive_2019-03-07_11-43-26_995_5066067470456199362-32
 /warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db/catalog_sales/.hive-staging_hive_2019-03-07_12-26-53_012_3155309838210900907-4
 
-# Now we see the results, let's action on it with a pipe to rm -r -f
+# Now we see the results, let&#39;s action on it with a pipe to rm -r -f
 REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/
 tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
 hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path | rm -r -f
 
-# That would've deleted the directories listed above.
-# Now let's try it again, without the pipe and validate the directories are gone.
+# That would&#39;ve deleted the directories listed above.
+# Now let&#39;s try it again, without the pipe and validate the directories are gone.
 REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
 hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
-
-
-</code></pre>
-
-<p>A few notes about this.<br />
-- Since the &lsquo;.hive-staging.*&rsquo; directories are prefixed with a &lsquo;.&rsquo; they&rsquo;re considered <em>invisible</em>.  So use the <code>-i</code> option to find them.
-- Use the <code>-R</code> to support recursion into the directory tree.
-- Output just the &lsquo;path&rsquo; with the <code>-f</code> option because the whole output line is what will be passed into the <code>rm -r -f</code> command.
-- Use the <code>-do</code> &lsquo;directory-only&rsquo; option to output just directories.</p>
-
+</code></pre><p>A few notes about this.</p>
+<ul>
+<li>Since the &lsquo;.hive-staging.*&rsquo; directories are prefixed with a &lsquo;.&rsquo; they&rsquo;re considered <em>invisible</em>.  So use the <code>-i</code> option to find them.</li>
+<li>Use the <code>-R</code> to support recursion into the directory tree.</li>
+<li>Output just the &lsquo;path&rsquo; with the <code>-f</code> option because the whole output line is what will be passed into the <code>rm -r -f</code> command.</li>
+<li>Use the <code>-do</code> &lsquo;directory-only&rsquo; option to output just directories.</li>
+</ul>
 <p>If you want to do a little more investigation before <code>rm</code>, Try piping to <code>count -h</code> for a count and size of Directories and Files.</p>
-
 <h3 id="other-use-cases">Other Use Cases</h3>
-
 <ul>
 <li>Cleaning up Job History</li>
 <li>Cleaning up Spark History</li>
 </ul>
-
 <h2 id="last-note">Last Note</h2>
-
 <p>Doing things in mass is great for productivity.  But equally as dangerous when things go wrong.  Protect yourself!!</p>
 
     </div>
@@ -791,7 +774,7 @@ hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
   <div class="media author-card content-widget-hr">
     
       
-      <img class="portrait mr-3" src="/authors/dstreev/avatar_hudf7b8620e192de66d79d1f7e36df7824_20455_250x250_fill_q90_lanczos_center.jpg" alt="Avatar">
+      <img class="portrait mr-3" src="/authors/dstreev/avatar_hud613f8a8db9ce517d021860c7525521a_604030_250x250_fill_lanczos_center_3.png" alt="Avatar">
     
 
     <div class="media-body">
@@ -1018,7 +1001,7 @@ hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
     
     
     
-    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+    <script src="/js/academic.min.01f68d44d80310e669a1731b68a35481.js"></script>
 
     
 
@@ -1042,7 +1025,7 @@ hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
   
 
   <p class="powered-by">
-    &copy; 2019 &middot; 
+    © 2023 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

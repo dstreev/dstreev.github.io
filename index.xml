@@ -5,7 +5,7 @@
     <link>http://www.streever.com/</link>
       <atom:link href="http://www.streever.com/index.xml" rel="self" type="application/rss+xml" />
     <description>David W. Streever</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 24 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Thu, 24 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://www.streever.com/img/icon-192.png</url>
       <title>David W. Streever</title>
@@ -17,207 +17,119 @@
       <link>http://www.streever.com/post/2019/drafts/container_mode_in_llap/</link>
       <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2019/drafts/container_mode_in_llap/</guid>
-      <description>
-
-&lt;blockquote&gt;
+      <description>&lt;blockquote&gt;
 &lt;p&gt;A few assumptions:  HDP 3.1.4 and Ambari have been used to work through these scenarios.  If you&amp;rsquo;re running different versions, additional tweaks may be required.&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;Hive LLAP is a great way to speed up analytical queries.  The caching layer and immediate task allocation model provides performance that is competitive and often faster than other traditional EDW solutions.&lt;/p&gt;
-
 &lt;p&gt;LLAP&amp;rsquo;s caching layer uses an LFRU (Less Frequently Recently Used) eviction model to manage it&amp;rsquo;s caching layer.  The caching layer is shared across user sessions in LLAP, which means data cached by one user/session is available to another user/session.  The caching model is a significant advantage over session-scoped caches you&amp;rsquo;ll get with other big data query engines.&lt;/p&gt;
-
 &lt;p&gt;From a practical standpoint, LLAP is best suited for BI, discovery, and dashboard-type queries.  These queries share common datasets and need to respond quickly because there is usually a user waiting on the other end.&lt;/p&gt;
-
 &lt;p&gt;While perfectly capable, using LLAP for ETL/ELT isn&amp;rsquo;t the best use of this elevated resource.  Moving massive amounts of data through LLAP doing ELT/ELT work has a few effects:&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Fills cache with datasets that aren&amp;rsquo;t benefiting anyone downstream.&lt;/li&gt;
 &lt;li&gt;Forces eviction of cached elements that &amp;lsquo;are&amp;rsquo; benefiting other users.&lt;/li&gt;
 &lt;li&gt;Consumes resources used by a community with stricter SLA&amp;rsquo;s, when the ETL/ELT community has different SLA standards.&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;h2 id=&#34;problem&#34;&gt;Problem&lt;/h2&gt;
-
 &lt;p&gt;So what can you do when your attached to HS2i and want to run an ETL/ELT job, which is a long-running job that doesn&amp;rsquo;t require the resources of LLAP, or you want to be a courteous user and leave some of those LLAP resources for someone else?  It would be perfectly fine to run your query in the traditional HS2 environment, but you can&amp;rsquo;t/don&amp;rsquo;t want to connect to another environment just to run the query.&lt;/p&gt;
-
 &lt;h2 id=&#34;solution&#34;&gt;Solution&lt;/h2&gt;
-
-&lt;p&gt;Well, HS2i can launch jobs into containers instead of the default &amp;lsquo;llap&amp;rsquo; environment.  Therefore, saving LLAP resources and &amp;lsquo;right pathing&amp;rsquo; your workload.&lt;/p&gt;
-
-&lt;p&gt;HS2i can be configurated to allow sessions to override the &amp;lsquo;execution mode&amp;rsquo; of a query.  &lt;em&gt;When a session is created, and a query is run, the execution mode can not be changed.  Another session must be created.&lt;/em&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hive.execution.mode
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This setting is found in several places (in Ambari) and is used by a &amp;lsquo;session&amp;rsquo; to determine where a query will be executed.  Options are:&lt;/p&gt;
-
+&lt;p&gt;Well, HS2i can launch jobs into containers instead of the default &amp;rsquo;llap&amp;rsquo; environment.  Therefore, saving LLAP resources and &amp;lsquo;right pathing&amp;rsquo; your workload.&lt;/p&gt;
+&lt;p&gt;HS2i can be configurated to allow sessions to override the &amp;rsquo;execution mode&amp;rsquo; of a query.  &lt;em&gt;When a session is created, and a query is run, the execution mode can not be changed.  Another session must be created.&lt;/em&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hive.execution.mode
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This setting is found in several places (in Ambari) and is used by a &amp;lsquo;session&amp;rsquo; to determine where a query will be executed.  Options are:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;container&lt;/li&gt;
 &lt;li&gt;llap&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;As with all settings we&amp;rsquo;ll mention in this article, make sure you are reviewing/setting the values that are appropriate for the environment your in.  For example: In Ambari and LLAP, see the &amp;lsquo;hive-interactive-*&amp;rsquo; sections.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;hive.execution.mode&lt;/code&gt; setting is set and defaults to the appropriate mode for the environment.  Meaning, &amp;lsquo;container&amp;rsquo; is set for the &amp;lsquo;HS2&amp;rsquo; environment, and &amp;lsquo;llap&amp;rsquo; is set for the &amp;lsquo;HS2i&amp;rsquo; environment.  We do NOT want to make this change at the environment level.  &lt;em&gt;We will only change this at the session level.&lt;/em&gt;&lt;/p&gt;
-
+&lt;p&gt;The &lt;code&gt;hive.execution.mode&lt;/code&gt; setting is set and defaults to the appropriate mode for the environment.  Meaning, &amp;lsquo;container&amp;rsquo; is set for the &amp;lsquo;HS2&amp;rsquo; environment, and &amp;rsquo;llap&amp;rsquo; is set for the &amp;lsquo;HS2i&amp;rsquo; environment.  We do NOT want to make this change at the environment level.  &lt;em&gt;We will only change this at the session level.&lt;/em&gt;&lt;/p&gt;
 &lt;h2 id=&#34;some-caveats&#34;&gt;Some Caveats&lt;/h2&gt;
-
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;With&lt;/em&gt;&lt;/strong&gt; Workload Management Enabled&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;You can &lt;em&gt;NOT&lt;/em&gt; request an alternate YARN queue to run.  All &amp;lsquo;container&amp;rsquo; execution mode queries will run in the &amp;lsquo;Workload&amp;rsquo; queue defined by &lt;code&gt;hive.server2.tez.interactive.queue&lt;/code&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;Without&lt;/em&gt;&lt;/strong&gt; Workload Management Enabled&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;You &lt;em&gt;CAN&lt;/em&gt; request an alternate YARN queue to run &amp;lsquo;container&amp;rsquo; mode requests in.&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;h2 id=&#34;controls&#34;&gt;Controls&lt;/h2&gt;
-
 &lt;h3 id=&#34;session-level-settings&#34;&gt;Session Level Settings&lt;/h3&gt;
-
 &lt;p&gt;After adjusting a few environment settings to allow an &amp;lsquo;alternate&amp;rsquo; execution mode, the execution path is controlled by the session.  Users wanting to use the &amp;lsquo;alternate&amp;rsquo; path will declare the alternate path before launching the job.  If nothing is specified, jobs will run in LLAP.  As I mentioned before, once a query has been run in a session, the execution mode for that session can &lt;strong&gt;NOT&lt;/strong&gt; be changed.  Doing so will result in an error.  A new session is required, if they wish the change the &lt;code&gt;execution mode&lt;/code&gt;.&lt;/p&gt;
-
 &lt;h3 id=&#34;environment-level-settings-defaults&#34;&gt;Environment Level Settings (Defaults)&lt;/h3&gt;
-
 &lt;p&gt;Note the sections for each of these settings.  Ambari has the same settings in many areas to control different deployments of Hive Server2.&lt;/p&gt;
-
 &lt;h5 id=&#34;llap-daemon-and-concurrency-settings-default&#34;&gt;LLAP Daemon and Concurrency Settings (Default)&lt;/h5&gt;
-
-&lt;p&gt;&lt;img src=&#34;./queue_n_concurrency.png&#34; alt=&#34;LLAP Daemon and Concurrency Settings&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;./queue_n_concurrency.png&#34; alt=&#34;LLAP Daemon and Concurrency Settings&#34;&gt;&lt;/p&gt;
 &lt;p&gt;What&amp;rsquo;s interesting is that the default configuration runs the LLAP daemons AND the concurrency AM in the same queue.  But this isn&amp;rsquo;t necessary, as we&amp;rsquo;ll see later.&lt;/p&gt;
-
 &lt;h6 id=&#34;llap-execution-restrictions-default&#34;&gt;LLAP Execution Restrictions (Default)&lt;/h6&gt;
-
-&lt;p&gt;&lt;img src=&#34;./hs2i_restricted.png&#34; alt=&#34;LLAP Execution Restrictions&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;./hs2i_restricted.png&#34; alt=&#34;LLAP Execution Restrictions&#34;&gt;&lt;/p&gt;
 &lt;p&gt;We&amp;rsquo;ll change this restriction to allow users to set the &lt;code&gt;hive.exection.mode&lt;/code&gt; later in the options section.&lt;/p&gt;
-
 &lt;h6 id=&#34;llap-interactive-queue&#34;&gt;LLAP Interactive Queue&lt;/h6&gt;
-
-&lt;p&gt;&lt;img src=&#34;./llap_interactive_queue.png&#34; alt=&#34;LLAP Interactive Queue&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The &amp;lsquo;interactive&amp;rsquo; setting needs to be set to enable &lt;strong&gt;Workload Management&lt;/strong&gt;.  The Workload Management AM will run in the defined queue.  These AM&amp;rsquo;s represent each concurrent query (capability) for LLAP.  That concurrency is defined by the aggregate of the &lt;code&gt;parallelism&lt;/code&gt; configured for Workload Management. See this &lt;a href=&#34;https://github.com/dstreev/big-data-apps/blob/master/apps/llap_workload/r1_plan_create.sql&#34; target=&#34;_blank&#34;&gt;example script&lt;/a&gt; as a guide for starting Workload Management. It is not controlled via the concurrency settings we&amp;rsquo;ve seen before (&lt;code&gt;hive.server2.tez.sessions.per.default.queue&lt;/code&gt;).&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;./llap_interactive_queue.png&#34; alt=&#34;LLAP Interactive Queue&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The &amp;lsquo;interactive&amp;rsquo; setting needs to be set to enable &lt;strong&gt;Workload Management&lt;/strong&gt;.  The Workload Management AM will run in the defined queue.  These AM&amp;rsquo;s represent each concurrent query (capability) for LLAP.  That concurrency is defined by the aggregate of the &lt;code&gt;parallelism&lt;/code&gt; configured for Workload Management. See this &lt;a href=&#34;https://github.com/dstreev/big-data-apps/blob/master/apps/llap_workload/r1_plan_create.sql&#34;&gt;example script&lt;/a&gt; as a guide for starting Workload Management. It is not controlled via the concurrency settings we&amp;rsquo;ve seen before (&lt;code&gt;hive.server2.tez.sessions.per.default.queue&lt;/code&gt;).&lt;/p&gt;
 &lt;h3 id=&#34;environment-level-setting-changes&#34;&gt;Environment Level Setting Changes&lt;/h3&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Remove the &lt;code&gt;hive.execution.mode&lt;/code&gt; value from &amp;ldquo;Restricted session configs&amp;rdquo; (&lt;code&gt;hive.server2.tez.sessions.restricted.configs&lt;/code&gt;)&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&#34;./exec_mode_restriction_removed.png&#34; alt=&#34;Removed&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;./exec_mode_restriction_removed.png&#34; alt=&#34;Removed&#34;&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Allow Custom Queues by changing &lt;code&gt;ignore&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hive.server2.tez.sessions.custom.queue.allowed=true
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Allow Custom Queues by changing &lt;code&gt;ignore&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&#34;./allow_custom_queue.png&#34; alt=&#34;Custom Allowed&#34; /&gt;&lt;/p&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hive.server2.tez.sessions.custom.queue.allowed=true
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&#34;./allow_custom_queue.png&#34; alt=&#34;Custom Allowed&#34;&gt;&lt;/p&gt;
 &lt;h5 id=&#34;optional-environment-setting-tweaks-queues&#34;&gt;Optional Environment Setting Tweaks (Queues)&lt;/h5&gt;
-
 &lt;p&gt;These settings have more to do with where you want parts of the system to run (which queues).&lt;/p&gt;
-
 &lt;blockquote&gt;
 &lt;p&gt;&lt;code&gt;hive.server2.tez.default.queues&lt;/code&gt; controls where the Concurrency AM&amp;rsquo;s will run when Workload Management is &lt;em&gt;NOT&lt;/em&gt; enabled.&lt;/p&gt;
-
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
 &lt;p&gt;&lt;code&gt;hive.llap.daemon.queue.name&lt;/code&gt; controls where the LLAP environment will run.&lt;/p&gt;
-
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
 &lt;p&gt;&lt;code&gt;hive.server2.tez.interactive.queue&lt;/code&gt; controls where the Workload Management AM&amp;rsquo;s will run, when Workload Management is activated.&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;h2 id=&#34;options&#34;&gt;Options&lt;/h2&gt;
-
 &lt;p&gt;The behavior changes a bit, depending on whether you&amp;rsquo;re using Workload Management or not.  My suggestion is to &lt;em&gt;NOT&lt;/em&gt; enable Workload Management at first to see what lands in which queue.  Once you activate Workload Management, you will &lt;em&gt;NOT&lt;/em&gt; be able to launch jobs in &lt;code&gt;container&lt;/code&gt; mode outside the queue setup in &lt;code&gt;hive.server2.tez.interactive.queue&lt;/code&gt; .&lt;/p&gt;
-
-&lt;h5 id=&#34;option-1-without-workload-management&#34;&gt;Option #1 - Without Workload Management&lt;/h5&gt;
-
+&lt;h5 id=&#34;option-1---without-workload-management&#34;&gt;Option #1 - Without Workload Management&lt;/h5&gt;
 &lt;p&gt;Scenario: &lt;em&gt;Run LLAP and Concurrency AM&amp;rsquo;s in the same queue&lt;/em&gt;.  Allow users to specify an alternate queue to run &lt;code&gt;container&lt;/code&gt; mode jobs.&lt;/p&gt;
-
 &lt;p&gt;When jobs are launched in &lt;code&gt;container&lt;/code&gt; execution mode, YARN will allocate task resources alongside the AM controlling the &amp;lsquo;DAG.&amp;rsquo;  So where ever you launch the AM for the job, that queue will need resources to run the job.&lt;/p&gt;
-
 &lt;p&gt;&lt;strong&gt;Environment&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hive.server2.tez.sessions.restricted.configs=hive.execution.engine
 hive.server2.tez.sessions.custom.queue.allowed=true
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Unset (To disable Workload Management)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hive.server2.tez.interactive.queue
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;Session Level&lt;/strong&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Unset (To disable Workload Management)&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hive.server2.tez.interactive.queue
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Session Level&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Set via Hive/Beeline Init, Script, or JDBC connection string.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;set hive.execution.mode=container
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;set hive.execution.mode=container
 set tez.queue.name=&amp;lt;target_queue&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that application in YARN will grow additional containers to run the job.&lt;/p&gt;
-
-&lt;h5 id=&#34;option-2-without-workload-management&#34;&gt;Option #2 - Without Workload Management&lt;/h5&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that application in YARN will grow additional containers to run the job.&lt;/p&gt;
+&lt;h5 id=&#34;option-2---without-workload-management&#34;&gt;Option #2 - Without Workload Management&lt;/h5&gt;
 &lt;p&gt;Scenario: &lt;em&gt;Run LLAP and Concurrency AM&amp;rsquo;s in different queues&lt;/em&gt;.  Allow users to specify an alternate queue to run &lt;code&gt;container&lt;/code&gt; mode jobs.&lt;/p&gt;
-
 &lt;p&gt;When jobs are launched in &lt;code&gt;container&lt;/code&gt; execution mode, YARN will allocate task resources alongside the AM controlling the &amp;lsquo;DAG.&amp;rsquo;  So where ever you launch the AM for the job, that queue will need resources to run the job.&lt;/p&gt;
-
 &lt;p&gt;&lt;strong&gt;Environment&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hive.server2.tez.sessions.restricted.configs=hive.execution.engine
 hive.server2.tez.sessions.custom.queue.allowed=true
 hive.server2.tez.default.queues=llap_tez_am
 hive.llap.daemon.queue.name=llap
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Unset (To disable Workload Management)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hive.server2.tez.interactive.queue
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;Session Level&lt;/strong&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Unset (To disable Workload Management)&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hive.server2.tez.interactive.queue
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Session Level&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Set via Hive/Beeline Init, Script, or JDBC connection string.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;set hive.execution.mode=container
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;set hive.execution.mode=container
 set tez.queue.name=&amp;lt;target_queue&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that AM in YARN will grow additional containers to run the job.&lt;/p&gt;
-
-&lt;h5 id=&#34;option-3-with-workload-management&#34;&gt;Option #3 - With Workload Management&lt;/h5&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that AM in YARN will grow additional containers to run the job.&lt;/p&gt;
+&lt;h5 id=&#34;option-3---with-workload-management&#34;&gt;Option #3 - With Workload Management&lt;/h5&gt;
 &lt;p&gt;Scenario: LLAP and Workload Management AM in different queues.  Users will &lt;em&gt;NOT&lt;/em&gt; be able to specify an alternate queue.  The Workload Management AM will grow to fulfill the DAG request.  The YARN queue &lt;code&gt;hive.server2.tez.interactive.queue&lt;/code&gt; will need to be large enough to contain the other Workload Management AM&amp;rsquo;s in addition to the job requirements.  If the queue is small and the other Workload AM&amp;rsquo;s have not been allocated or reclaimed during a quiet period, new jobs may not launch right away.&lt;/p&gt;
-
 &lt;p&gt;&lt;strong&gt;Environment&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hive.server2.tez.sessions.restricted.configs=hive.execution.engine
 hive.server2.tez.sessions.custom.queue.allowed=true
--- Utilitization of &#39;llap_tez_am&#39; should be nil with Workload Management
+-- Utilitization of &amp;#39;llap_tez_am&amp;#39; should be nil with Workload Management
 hive.server2.tez.default.queues=llap_tez_am
 hive.llap.daemon.queue.name=llap
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Set (To enable Workload Management).  There&amp;rsquo;s more to do for Workload Management, which isn&amp;rsquo;t covered here.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hive.server2.tez.interactive.queue=llap_wm
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;Session Level&lt;/strong&gt;&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Set (To enable Workload Management).  There&amp;rsquo;s more to do for Workload Management, which isn&amp;rsquo;t covered here.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hive.server2.tez.interactive.queue=llap_wm
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Session Level&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Set via Hive/Beeline Init, Script, or JDBC connection string.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;set hive.execution.mode=container
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Launch the query and check the Resource Manager.  You should see the AM in the target queue (llap_wm), and that AM in YARN will grow additional containers to run the job.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;set hive.execution.mode=container
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Launch the query and check the Resource Manager.  You should see the AM in the target queue (llap_wm), and that AM in YARN will grow additional containers to run the job.&lt;/p&gt;
 </description>
     </item>
     
@@ -226,63 +138,46 @@ hive.llap.daemon.queue.name=llap
       <link>http://www.streever.com/post/2019/cleaning-up-hdfs/</link>
       <pubDate>Sat, 19 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2019/cleaning-up-hdfs/</guid>
-      <description>
-
-&lt;p&gt;Refer to the &amp;lsquo;project&amp;rsquo; and &amp;lsquo;slides&amp;rsquo; above for details on &amp;lsquo;Hadoop CLI&amp;rsquo;.  See the &amp;lsquo;related&amp;rsquo; posts at the end of this post for other information.&lt;/p&gt;
-
+      <description>&lt;p&gt;Refer to the &amp;lsquo;project&amp;rsquo; and &amp;lsquo;slides&amp;rsquo; above for details on &amp;lsquo;Hadoop CLI&amp;rsquo;.  See the &amp;lsquo;related&amp;rsquo; posts at the end of this post for other information.&lt;/p&gt;
 &lt;p&gt;With pipelining in &amp;lsquo;hadoopcli&amp;rsquo; we can combine search functions with cleanup functions.  So what use to take hours to prep and setup, can be accomplished in seconds.&lt;/p&gt;
-
 &lt;h3 id=&#34;recommendation&#34;&gt;Recommendation&lt;/h3&gt;
-
 &lt;p&gt;These operations are &amp;lsquo;destructive&amp;rsquo;, so take precautions.&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Test the pipeline results before call a destructive operation.&lt;/li&gt;
 &lt;li&gt;Create an &amp;lsquo;hdfs snapshot&amp;rsquo; of the target base directory in case something doesn&amp;rsquo;t go as planned. See &lt;a href=&#34;http://www.streever.com/terms&#34;&gt;Terms&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;h3 id=&#34;sample-use-case&#34;&gt;Sample Use case&lt;/h3&gt;
-
 &lt;p&gt;Cleaning up hive directories left behind by some hive bugs in &amp;lsquo;stat&amp;rsquo; collection or &lt;code&gt;insert overwrite&lt;/code&gt; operations.&lt;/p&gt;
-
 &lt;p&gt;In the &amp;lsquo;hadoopcli&amp;rsquo; application:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# Let&#39;s test the command.
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Let&amp;#39;s test the command.
 REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
 hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
 /warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db/catalog_sales/.hive-staging_hive_2019-03-07_11-43-26_995_5066067470456199362-32
 /warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db/catalog_sales/.hive-staging_hive_2019-03-07_12-26-53_012_3155309838210900907-4
 
-# Now we see the results, let&#39;s action on it with a pipe to rm -r -f
+# Now we see the results, let&amp;#39;s action on it with a pipe to rm -r -f
 REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/
 tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
 hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path | rm -r -f
 
-# That would&#39;ve deleted the directories listed above.
-# Now let&#39;s try it again, without the pipe and validate the directories are gone.
+# That would&amp;#39;ve deleted the directories listed above.
+# Now let&amp;#39;s try it again, without the pipe and validate the directories are gone.
 REMOTE: hdfs://HOME90/warehouse/tablespace/managed/hive/tpcds_bin_partitioned_orc_300.db		LOCAL: file:/home/dstreev
 hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
-
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A few notes about this.&lt;br /&gt;
-- Since the &amp;lsquo;.hive-staging.*&amp;rsquo; directories are prefixed with a &amp;lsquo;.&amp;rsquo; they&amp;rsquo;re considered &lt;em&gt;invisible&lt;/em&gt;.  So use the &lt;code&gt;-i&lt;/code&gt; option to find them.
-- Use the &lt;code&gt;-R&lt;/code&gt; to support recursion into the directory tree.
-- Output just the &amp;lsquo;path&amp;rsquo; with the &lt;code&gt;-f&lt;/code&gt; option because the whole output line is what will be passed into the &lt;code&gt;rm -r -f&lt;/code&gt; command.
-- Use the &lt;code&gt;-do&lt;/code&gt; &amp;lsquo;directory-only&amp;rsquo; option to output just directories.&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;A few notes about this.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Since the &amp;lsquo;.hive-staging.*&amp;rsquo; directories are prefixed with a &amp;lsquo;.&amp;rsquo; they&amp;rsquo;re considered &lt;em&gt;invisible&lt;/em&gt;.  So use the &lt;code&gt;-i&lt;/code&gt; option to find them.&lt;/li&gt;
+&lt;li&gt;Use the &lt;code&gt;-R&lt;/code&gt; to support recursion into the directory tree.&lt;/li&gt;
+&lt;li&gt;Output just the &amp;lsquo;path&amp;rsquo; with the &lt;code&gt;-f&lt;/code&gt; option because the whole output line is what will be passed into the &lt;code&gt;rm -r -f&lt;/code&gt; command.&lt;/li&gt;
+&lt;li&gt;Use the &lt;code&gt;-do&lt;/code&gt; &amp;lsquo;directory-only&amp;rsquo; option to output just directories.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;If you want to do a little more investigation before &lt;code&gt;rm&lt;/code&gt;, Try piping to &lt;code&gt;count -h&lt;/code&gt; for a count and size of Directories and Files.&lt;/p&gt;
-
 &lt;h3 id=&#34;other-use-cases&#34;&gt;Other Use Cases&lt;/h3&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Cleaning up Job History&lt;/li&gt;
 &lt;li&gt;Cleaning up Spark History&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;h2 id=&#34;last-note&#34;&gt;Last Note&lt;/h2&gt;
-
 &lt;p&gt;Doing things in mass is great for productivity.  But equally as dangerous when things go wrong.  Protect yourself!!&lt;/p&gt;
 </description>
     </item>
@@ -292,25 +187,21 @@ hdfs-cli:$ lsp -R -i -do -F .*.hive-staging.* -f path
       <link>http://www.streever.com/post/hadoop-cli/lsp/</link>
       <pubDate>Fri, 18 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/hadoop-cli/lsp/</guid>
-      <description>
-
-&lt;p&gt;Like &amp;lsquo;ls&amp;rsquo;, you can fetch many details about a file.  But with this, you can also add information about the file that includes:
-- Block Size
-- Access Time
-- Ratio of File Size to Block
-- Datanode information for the files blocks (Host and Block Id)&lt;/p&gt;
-
+      <description>&lt;p&gt;Like &amp;rsquo;ls&amp;rsquo;, you can fetch many details about a file.  But with this, you can also add information about the file that includes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Block Size&lt;/li&gt;
+&lt;li&gt;Access Time&lt;/li&gt;
+&lt;li&gt;Ratio of File Size to Block&lt;/li&gt;
+&lt;li&gt;Datanode information for the files blocks (Host and Block Id)&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;lsp&lt;/code&gt; can be used to search hdfs, similar to the &lt;code&gt;find&lt;/code&gt; linux program.  Although the syntax is a bit different.  Use options &lt;code&gt;-F&lt;/code&gt;,&lt;code&gt;-Fe&lt;/code&gt;, and &lt;code&gt;-i&lt;/code&gt;.&lt;/p&gt;
-
 &lt;p&gt;&lt;code&gt;lsp&lt;/code&gt; can be used to output a formatted row for files and directories using the &lt;code&gt;-f&lt;/code&gt; option.  When the &lt;code&gt;datanode_info&lt;/code&gt; option is specified, the output will contain details for each replicated block of a file.&lt;/p&gt;
-
 &lt;h2 id=&#34;options&#34;&gt;Options&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;usage: lsp [OPTION ...] [ARGS ...]
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;usage: lsp [OPTION ...] [ARGS ...]
 Options:
  -c,--comment &amp;lt;comment&amp;gt;                  Add comment to output
  -d,--maxDepth &amp;lt;maxDepth&amp;gt;                Depth of Recursion (default 5),
-                                         use &#39;-1&#39; for unlimited
+                                         use &amp;#39;-1&amp;#39; for unlimited
  -do,--dir-only                          Show Directories Only
  -f,--format &amp;lt;output-format&amp;gt;             Comma separated list of one or
                                          more:
@@ -319,9 +210,9 @@ Options:
                                          access,path,file,datanode_info
                                          (default all of the above)
  -F,--filter &amp;lt;filter&amp;gt;                    Regex Filter of Content. Can be
-                                         &#39;Quoted&#39;
- -Fe,--filter-element &amp;lt;filter element&amp;gt;   Filter on &#39;element&#39;.  One of
-                                         &#39;--format&#39;
+                                         &amp;#39;Quoted&amp;#39;
+ -Fe,--filter-element &amp;lt;filter element&amp;gt;   Filter on &amp;#39;element&amp;#39;.  One of
+                                         &amp;#39;--format&amp;#39;
  -i,--invisible                          Process Invisible
                                          Files/Directories
  -n,--newline &amp;lt;newline&amp;gt;                  New Line
@@ -333,82 +224,43 @@ Options:
  -sp,--show-parent                       For Test, show parent
  -t,--test                               Test for existence
  -v,--invert                             Invert Regex Filter of Content
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;actions&#34;&gt;Actions&lt;/h2&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;actions&#34;&gt;Actions&lt;/h2&gt;
 &lt;h3 id=&#34;recursion&#34;&gt;Recursion&lt;/h3&gt;
-
-&lt;p&gt;Use the &lt;code&gt;-R&lt;/code&gt; to recurse through directories.  Use the &lt;code&gt;-d&lt;/code&gt; option to specify the depth of the recursion.  The default is 5.  Use -1 for no-limit, but be careful because this could iterate through the whole filesystem.  And that&amp;rsquo;s not productive on &amp;lsquo;large&amp;rsquo; filesystem.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;lsp -R
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Control the depth of the recursion.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;lsp -R -d 2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;filtering-and-output&#34;&gt;Filtering and Output&lt;/h3&gt;
-
+&lt;p&gt;Use the &lt;code&gt;-R&lt;/code&gt; to recurse through directories.  Use the &lt;code&gt;-d&lt;/code&gt; option to specify the depth of the recursion.  The default is 5.  Use -1 for no-limit, but be careful because this could iterate through the whole filesystem.  And that&amp;rsquo;s not productive on &amp;rsquo;large&amp;rsquo; filesystem.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsp -R
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Control the depth of the recursion.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsp -R -d 2
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;filtering-and-output&#34;&gt;Filtering and Output&lt;/h3&gt;
 &lt;p&gt;Find files matching a certain pattern, recursively from path context. The &lt;code&gt;-F&lt;/code&gt; option takes a &amp;lsquo;regex&amp;rsquo; expression.  By default, the &amp;lsquo;path&amp;rsquo; &lt;code&gt;-f&lt;/code&gt; option is searched.  If you&amp;rsquo;d like to search another element use &lt;code&gt;-Fe&lt;/code&gt; and specify one of the valid &lt;code&gt;-f&lt;/code&gt; options.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;lsp -R -F .*trans.*
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The output will include the standard output &lt;code&gt;-f&lt;/code&gt;, which maybe quite verbose.&lt;/p&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsp -R -F .*trans.*
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The output will include the standard output &lt;code&gt;-f&lt;/code&gt;, which maybe quite verbose.&lt;/p&gt;
 &lt;p&gt;Limit the result output like:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;lsp -R -F .*trans.* -f path
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Try using the &lt;code&gt;-do&lt;/code&gt; option to list ONLY directories.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;lsp -R -F .*trans.* -f path -do
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;using-comments&#34;&gt;Using Comments&lt;/h3&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsp -R -F .*trans.* -f path
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Try using the &lt;code&gt;-do&lt;/code&gt; option to list ONLY directories.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsp -R -F .*trans.* -f path -do
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;using-comments&#34;&gt;Using Comments&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;-c&lt;/code&gt; option will prepend any output with the comment.  It&amp;rsquo;s a great way to drive scripts from the results.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;lsp -R -c &#39;count -h&#39; -F .*trans.* -f path -do
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;how-about-an-inverted-search&#34;&gt;How about an Inverted Search&lt;/h3&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsp -R -c &amp;#39;count -h&amp;#39; -F .*trans.* -f path -do
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;how-about-an-inverted-search&#34;&gt;How about an Inverted Search&lt;/h3&gt;
 &lt;p&gt;There are times you want to find files that do &lt;em&gt;NOT&lt;/em&gt; match a pattern. Use the &lt;code&gt;-v&lt;/code&gt; option to reverse match on the filter.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;lsp -F *.trans.* -v
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;default-output&#34;&gt;Default Output&lt;/h3&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsp -F *.trans.* -v
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;default-output&#34;&gt;Default Output&lt;/h3&gt;
 &lt;p&gt;When not argument is specified, it will use the current directory.&lt;/p&gt;
-
 &lt;p&gt;Examples:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code&gt;# Using the default format, output a listing to the files in `/user/dstreev/perf` to `/tmp/test.out`
 lsp -o /tmp/test.out /user/dstreev/perf
 &lt;/code&gt;&lt;/pre&gt;
-
 &lt;p&gt;Output with the default format of:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code&gt;permissions_long,replication,user,group,size,block_size,ratio,mod,access,path,datanode_info
 &lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;   rw-------,3,dstreev,hdfs,429496700,134217728,3.200,2015-10-24 12:26:39.689,2015-10-24 12:23:27.406,/user/dstreev/perf/teragen_27/part-m-00004,10.0.0.166,d2.hdp.local,blk_1073747900
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;   rw-------,3,dstreev,hdfs,429496700,134217728,3.200,2015-10-24 12:26:39.689,2015-10-24 12:23:27.406,/user/dstreev/perf/teragen_27/part-m-00004,10.0.0.166,d2.hdp.local,blk_1073747900
    rw-------,3,dstreev,hdfs,429496700,134217728,3.200,2015-10-24 12:26:39.689,2015-10-24 12:23:27.406,/user/dstreev/perf/teragen_27/part-m-00004,10.0.0.167,d3.hdp.local,blk_1073747900
    rw-------,3,dstreev,hdfs,33,134217728,2.459E-7,2015-10-24 12:27:09.134,2015-10-24 12:27:06.560,/user/dstreev/perf/terasort_27/_partition.lst,10.0.0.166,d2.hdp.local,blk_1073747909
    rw-------,3,dstreev,hdfs,33,134217728,2.459E-7,2015-10-24 12:27:09.134,2015-10-24 12:27:06.560,/user/dstreev/perf/terasort_27/_partition.lst,10.0.0.167,d3.hdp.local,blk_1073747909
    rw-------,1,dstreev,hdfs,543201700,134217728,4.047,2015-10-24 12:29:28.706,2015-10-24 12:29:20.882,/user/dstreev/perf/terasort_27/part-r-00002,10.0.0.167,d3.hdp.local,blk_1073747920
    rw-------,1,dstreev,hdfs,543201700,134217728,4.047,2015-10-24 12:29:28.706,2015-10-24 12:29:20.882,/user/dstreev/perf/terasort_27/part-r-00002,10.0.0.167,d3.hdp.local,blk_1073747921
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;With the file in HDFS, you can build a &lt;a href=&#34;lsp.ddl&#34; target=&#34;_blank&#34;&gt;hive table&lt;/a&gt; on top of it to do some analysis.  One of the reasons I created this was to be able to review a directory used by some process and get a baring on the file construction and distribution across the cluster.&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;With the file in HDFS, you can build a &lt;a href=&#34;lsp.ddl&#34;&gt;hive table&lt;/a&gt; on top of it to do some analysis.  One of the reasons I created this was to be able to review a directory used by some process and get a baring on the file construction and distribution across the cluster.&lt;/p&gt;
 &lt;h4 id=&#34;use-cases&#34;&gt;Use Cases&lt;/h4&gt;
-
 &lt;ul&gt;
 &lt;li&gt;The ratio can be used to identify files that are below the block size (small files).&lt;/li&gt;
 &lt;li&gt;With the Datanode information, you can determine if a dataset is hot-spotted on a cluster.  All you need is a full list of hosts to join the results with.&lt;/li&gt;
@@ -422,19 +274,12 @@ lsp -o /tmp/test.out /user/dstreev/perf
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/hadoop-cli/intro/</guid>
       <description>&lt;p&gt;Working with Hadoop is much like working with a terminal application, as most everything you do with Hadoop is via the terminal.  If you want to launch a MapReduce job, do it from the terminal.  If you wanted to explore HDFS, run a command from the terminal.&lt;/p&gt;
-
 &lt;p&gt;Working with the Hadoop Distributed File System (HDFS) should be like working with any other file system, at least when you&amp;rsquo;re in the terminal.  Unfortunately, it&amp;rsquo;s not.&lt;/p&gt;
-
 &lt;p&gt;To do anything with HDFS, launch the command line application &lt;code&gt;hdfs&lt;/code&gt;. &lt;code&gt;hdfs&lt;/code&gt; has several sub-applications for controlling various interactions with &amp;lsquo;HDFS&amp;rsquo;.  My focus is to make the &lt;code&gt;dfs&lt;/code&gt; sub-application more amenable for &amp;lsquo;any&amp;rsquo; user.  Running &lt;code&gt;hdfs dfs -...&lt;/code&gt; for every query isn&amp;rsquo;t the experience that leaves you wanting more.  And honestly, that&amp;rsquo;s been one of Hadoop&amp;rsquo;s issues with user acceptance.  It&amp;rsquo;s an expert system, and every native interface reinforces that 10 fold.&lt;/p&gt;
-
 &lt;p&gt;So there you have it, we&amp;rsquo;ve got a gap.  We should be able to interact with &amp;lsquo;HDFS&amp;rsquo; the same way we interact with the file system on our local computer.&lt;/p&gt;
-
 &lt;p&gt;Five years ago, I discovered the fledgling &amp;lsquo;first&amp;rsquo; iteration of this program written by Taylor Goetz, Apache Storm PMC Chair.  The concept was great but needed some TLC.  So I forked it and have been building and improving it ever since.&lt;/p&gt;
-
 &lt;p&gt;Finally, at least from a terminal perspective, you have the same type of interaction model with HDFS that you have with your local file system.&lt;/p&gt;
-
 &lt;p&gt;And it&amp;rsquo;s not just for basic commands.  Many of the standard HDFS command-line tools are embedded right in the interface.  I&amp;rsquo;ve added scripting, Standard IN, some new commands, and sessions that are context-aware.&lt;/p&gt;
-
 &lt;p&gt;Check out the slides at the top of this post for a brief intro tour.&lt;/p&gt;
 </description>
     </item>
@@ -452,168 +297,143 @@ lsp -o /tmp/test.out /user/dstreev/perf
       <link>http://www.streever.com/post/2019/filter-hive-compactions/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2019/filter-hive-compactions/</guid>
-      <description>
-
-&lt;p&gt;From Beeline or a standard JDBC client connected to Hive, compactions can be seen with the standard SQL:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SHOW COMPACTIONS;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;But this method has a couple of problems:&lt;/p&gt;
-
+      <description>&lt;p&gt;From Beeline or a standard JDBC client connected to Hive, compactions can be seen with the standard SQL:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SHOW&lt;/span&gt; COMPACTIONS;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;But this method has a couple of problems:&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;No Filtering&lt;/li&gt;
 &lt;li&gt;Timestamps are hard to interpret&lt;/li&gt;
 &lt;/ol&gt;
-
 &lt;p&gt;Until additional functionality is available for this built in function, we can do the following.&lt;/p&gt;
-
 &lt;p&gt;Add links to the Metastore DB tables and create custom views to review compaction details.  See &lt;a href=&#34;http://www.streever.com/post/the-power-of-hive-jdbc-federation&#34;&gt;The Power of Hive JDBC Federation&lt;/a&gt;&lt;/p&gt;
-
 &lt;h2 id=&#34;build-out-metadata-elements&#34;&gt;Build Out Metadata Elements&lt;/h2&gt;
-
-&lt;div class=&#34;alert alert-note&#34;&gt;
-  &lt;div&gt;
-    &lt;p&gt;A word of caution here.  All the &amp;lsquo;extras&amp;rsquo; you create against the metastore DB can/may break with the next release.  This isn&amp;rsquo;t a supported method of accessing metadata.&lt;/p&gt;
-
-&lt;p&gt;Don&amp;rsquo;t add &lt;em&gt;new&lt;/em&gt; tables to the current &lt;code&gt;sys.db&lt;/code&gt;.  That&amp;rsquo;s bad form and could cause issues for the platform during the next upgrade cycle, especially if there are naming conflicts.  Put it somewhere else!!&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;CREATE DATABASE IF NOT EXISTS custom_sys;
-
-DROP TABLE IF EXISTS `custom_sys`.`completed_compactions`;
-DROP TABLE IF EXISTS `custom_sys`.`compaction_queue`;
-
-CREATE EXTERNAL TABLE `custom_sys`.`completed_compactions`(
-	CC_ID bigint COMMENT &#39;from deserializer&#39;,
-	CC_DATABASE string COMMENT &#39;from deserializer&#39;,
-	CC_TABLE string COMMENT &#39;from deserializer&#39;,
-	CC_PARTITION string COMMENT &#39;from deserializer&#39;,
-	CC_STATE string COMMENT &#39;from deserializer&#39;,
-	CC_TYPE string COMMENT &#39;from deserializer&#39;,
-	CC_TBLPROPERTIES string COMMENT &#39;from deserializer&#39;,
-	CC_WORKER_ID string COMMENT &#39;from deserializer&#39;,
-	CC_START bigint COMMENT &#39;from deserializer&#39;,
-	CC_END bigint COMMENT &#39;from deserializer&#39;,
-	CC_RUN_AS string COMMENT &#39;from deserializer&#39;,
-	CC_HIGHEST_WRITE_ID bigint COMMENT &#39;from deserializer&#39;,
-	CC_META_INFO string COMMENT &#39;from deserializer&#39;,
-	CC_HADOOP_JOB_ID string COMMENT &#39;from deserializer&#39;
-)
- ROW FORMAT SERDE                                   
-   &#39;org.apache.hive.storage.jdbc.JdbcSerDe&#39;         
- STORED BY                                          
-   &#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&#39;  
- WITH SERDEPROPERTIES (                             
-   &#39;serialization.format&#39;=&#39;1&#39;)                      
- TBLPROPERTIES (                                    
-   &#39;bucketing_version&#39;=&#39;2&#39;,                         
-   &#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;,            
-   &#39;hive.sql.query&#39;=&#39;SELECT CC_ID, CC_DATABASE, CC_TABLE, CC_PARTITION, CC_STATE, CC_TYPE, CC_TBLPROPERTIES, CC_WORKER_ID, CC_START, CC_END, CC_RUN_AS, CC_HIGHEST_WRITE_ID, CC_META_INFO, CC_HADOOP_JOB_ID FROM COMPLETED_COMPACTIONS&#39;);
-
-CREATE EXTERNAL TABLE `custom_sys`.`compaction_queue`(
-	CQ_ID bigint COMMENT &#39;from deserializer&#39;,
-	CQ_DATABASE string COMMENT &#39;from deserializer&#39;,
-	CQ_TABLE string COMMENT &#39;from deserializer&#39;,
-	CQ_PARTITION string COMMENT &#39;from deserializer&#39;,
-	CQ_STATE string COMMENT &#39;from deserializer&#39;,
-	CQ_TYPE string COMMENT &#39;from deserializer&#39;,
-	CQ_TBLPROPERTIES string COMMENT &#39;from deserializer&#39;,
-	CQ_WORKER_ID string COMMENT &#39;from deserializer&#39;,
-	CQ_START bigint COMMENT &#39;from deserializer&#39;,
-	CQ_RUN_AS string COMMENT &#39;from deserializer&#39;,
-	CQ_HIGHEST_WRITE_ID bigint COMMENT &#39;from deserializer&#39;,
-	CQ_META_INFO string COMMENT &#39;from deserializer&#39;,
-	CQ_HADOOP_JOB_ID string COMMENT &#39;from deserializer&#39;
-)
- ROW FORMAT SERDE                                   
-   &#39;org.apache.hive.storage.jdbc.JdbcSerDe&#39;         
- STORED BY                                          
-   &#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&#39;  
- WITH SERDEPROPERTIES (                             
-   &#39;serialization.format&#39;=&#39;1&#39;)                      
- TBLPROPERTIES (                                    
-   &#39;bucketing_version&#39;=&#39;2&#39;,                         
-   &#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;,            
-   &#39;hive.sql.query&#39;=&#39;SELECT CQ_ID, CQ_DATABASE, CQ_TABLE, CQ_PARTITION, CQ_STATE, CQ_TYPE, CQ_TBLPROPERTIES, CQ_WORKER_ID, CQ_START, CQ_RUN_AS, CQ_HIGHEST_WRITE_ID, CQ_META_INFO, CQ_HADOOP_JOB_ID FROM COMPACTION_QUEUE&#39;);
-
-DROP VIEW IF EXISTS `custom_sys`.`compactions`;
-
--- TODO: Handle / Show Aborted Transactions (maybe) I think txn data may be transient...
-CREATE VIEW IF NOT EXISTS `custom_sys`.`compactions` AS
-SELECT CC_ID AS id,
-       CC_DATABASE AS `database`,
-       CC_TABLE AS `table`,
-       CC_PARTITION AS `partition`,
-       CASE CC_STATE
-           WHEN &#39;s&#39; THEN &#39;SUCCEEDED&#39;
-           WHEN &#39;a&#39; THEN &#39;ATTEMPTED&#39;
-           WHEN &#39;f&#39; THEN &#39;FAILED&#39;
-       END AS STATE,
-       CASE CC_TYPE
-           WHEN &#39;a&#39; THEN &#39;MAJOR&#39;
-           WHEN &#39;i&#39; THEN &#39;MINOR&#39;
-       END AS TYPE,
-       CC_TBLPROPERTIES AS tblproperties,
-       CC_WORKER_ID AS worker_id,
-       to_utc_timestamp(CC_START,&#39;UTC&#39;) AS `start`,
-       to_utc_timestamp(CC_END, &#39;UTC&#39;) AS `end`,
-       CC_RUN_AS AS run_as,
-       CC_HIGHEST_WRITE_ID AS highest_write_id,
-       CC_META_INFO AS meta_info,
-       CC_HADOOP_JOB_ID AS hadoop_job_id
-FROM `custom_sys`.`completed_compactions`
-UNION ALL
-SELECT CQ_ID AS id,
-       CQ_DATABASE AS `database`,
-       CQ_TABLE AS `table`,
-       CQ_PARTITION AS `partition`,
-       CASE CQ_STATE
-           WHEN &#39;i&#39; THEN &#39;INITIATED&#39;
-           WHEN &#39;w&#39; THEN &#39;WORKING&#39;
-           WHEN &#39;r&#39; THEN &#39;READY_FOR_CLEANING&#39;
-       END AS `state`,
-       CASE CQ_TYPE
-           WHEN &#39;a&#39; THEN &#39;MAJOR&#39;
-           WHEN &#39;i&#39; THEN &#39;MINOR&#39;
-       END AS `type`,
-       CQ_TBLPROPERTIES AS tblproperties,
-       CQ_WORKER_ID AS worker_id,
-       to_utc_timestamp(CQ_START, &#39;UTC&#39;) AS `start`,
-       NULL AS `end`,
-               CQ_RUN_AS AS run_as,
-               CQ_HIGHEST_WRITE_ID AS highest_write_id,
-               CQ_META_INFO AS meta_info,
-               CQ_HADOOP_JOB_ID AS hadoop_job_id
-FROM `custom_sys`.`compaction_queue`;
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;see-the-last-10-compaction-events&#34;&gt;See the last 10 compaction events&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;select 
-	`database`, `table`, `partition`, `state`, `type`, `start`, `end`, hadoop_job_id 
-FROM
-	`custom_sys`.`compactions` 
-ORDER BY `start` DESC 
-LIMIT 10;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;show-the-last-10-failed-compaction-event&#34;&gt;Show the last 10 failed compaction event&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;-- `state` options are &#39;SUCCEEDED&#39;, &#39;ATTEMPTED&#39;, &#39;FAILED&#39;, &#39;INITIATED&#39;, &#39;WORKING&#39;, and &#39;READY_FOR_CLEANING&#39;
--- `type` options are &#39;MAJOR&#39; and &#39;MINOR&#39;
-select 
-`database`, `table`, `partition`, `state`, `type`, `start`, `end` 
-FROM
-	`custom_sys`.`compactions` 
-WHERE `state` = &#39;FAILED&#39; 
-ORDER BY `start` DESC 
-LIMIT 10;
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CREATE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;DATABASE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;NOT&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; custom_sys;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;DROP&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TABLE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;completed_compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;DROP&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TABLE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compaction_queue&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CREATE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXTERNAL&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TABLE&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;completed_compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_ID bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_DATABASE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_TABLE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_PARTITION string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_STATE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_TYPE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_TBLPROPERTIES string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_WORKER_ID string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_START bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_END bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_RUN_AS string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_HIGHEST_WRITE_ID bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_META_INFO string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CC_HADOOP_JOB_ID string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;ROW&lt;/span&gt; FORMAT SERDE                                   
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;org.apache.hive.storage.jdbc.JdbcSerDe&amp;#39;&lt;/span&gt;         
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; STORED &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt;                                          
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&amp;#39;&lt;/span&gt;  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;WITH&lt;/span&gt; SERDEPROPERTIES (                             
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;serialization.format&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;1&amp;#39;&lt;/span&gt;)                      
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; TBLPROPERTIES (                                    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;bucketing_version&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2&amp;#39;&lt;/span&gt;,                         
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hive.sql.database.type&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;METASTORE&amp;#39;&lt;/span&gt;,            
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hive.sql.query&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SELECT CC_ID, CC_DATABASE, CC_TABLE, CC_PARTITION, CC_STATE, CC_TYPE, CC_TBLPROPERTIES, CC_WORKER_ID, CC_START, CC_END, CC_RUN_AS, CC_HIGHEST_WRITE_ID, CC_META_INFO, CC_HADOOP_JOB_ID FROM COMPLETED_COMPACTIONS&amp;#39;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CREATE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXTERNAL&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TABLE&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compaction_queue&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_ID bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_DATABASE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_TABLE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_PARTITION string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_STATE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_TYPE string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_TBLPROPERTIES string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_WORKER_ID string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_START bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_RUN_AS string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_HIGHEST_WRITE_ID bigint &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_META_INFO string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	CQ_HADOOP_JOB_ID string &lt;span style=&#34;color:#66d9ef&#34;&gt;COMMENT&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;from deserializer&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;ROW&lt;/span&gt; FORMAT SERDE                                   
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;org.apache.hive.storage.jdbc.JdbcSerDe&amp;#39;&lt;/span&gt;         
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; STORED &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt;                                          
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;org.apache.hive.storage.jdbc.JdbcStorageHandler&amp;#39;&lt;/span&gt;  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;WITH&lt;/span&gt; SERDEPROPERTIES (                             
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;serialization.format&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;1&amp;#39;&lt;/span&gt;)                      
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt; TBLPROPERTIES (                                    
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;bucketing_version&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2&amp;#39;&lt;/span&gt;,                         
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hive.sql.database.type&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;METASTORE&amp;#39;&lt;/span&gt;,            
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hive.sql.query&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SELECT CQ_ID, CQ_DATABASE, CQ_TABLE, CQ_PARTITION, CQ_STATE, CQ_TYPE, CQ_TBLPROPERTIES, CQ_WORKER_ID, CQ_START, CQ_RUN_AS, CQ_HIGHEST_WRITE_ID, CQ_META_INFO, CQ_HADOOP_JOB_ID FROM COMPACTION_QUEUE&amp;#39;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;DROP&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;VIEW&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;-- TODO: Handle / Show Aborted Transactions (maybe) I think txn data may be transient...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CREATE&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;VIEW&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;IF&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;NOT&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;EXISTS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; CC_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_DATABASE &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;database&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_TABLE &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_PARTITION &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;partition&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;CASE&lt;/span&gt; CC_STATE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SUCCEEDED&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ATTEMPTED&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;f&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FAILED&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;END&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;STATE&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;CASE&lt;/span&gt; CC_TYPE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MAJOR&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;i&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MINOR&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;END&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;TYPE&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_TBLPROPERTIES &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; tblproperties,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_WORKER_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; worker_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       to_utc_timestamp(CC_START,&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;UTC&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       to_utc_timestamp(CC_END, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;UTC&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_RUN_AS &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; run_as,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_HIGHEST_WRITE_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; highest_write_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_META_INFO &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; meta_info,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CC_HADOOP_JOB_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; hadoop_job_id
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;completed_compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;UNION&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;ALL&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; CQ_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_DATABASE &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;database&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_TABLE &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_PARTITION &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;partition&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;CASE&lt;/span&gt; CQ_STATE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;i&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;INITIATED&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;w&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;WORKING&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;r&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;READY_FOR_CLEANING&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;END&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;state&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;CASE&lt;/span&gt; CQ_TYPE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MAJOR&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           &lt;span style=&#34;color:#66d9ef&#34;&gt;WHEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;i&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;THEN&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MINOR&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;END&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_TBLPROPERTIES &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; tblproperties,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       CQ_WORKER_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; worker_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       to_utc_timestamp(CQ_START, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;UTC&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;NULL&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;               CQ_RUN_AS &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; run_as,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;               CQ_HIGHEST_WRITE_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; highest_write_id,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;               CQ_META_INFO &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; meta_info,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;               CQ_HADOOP_JOB_ID &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; hadoop_job_id
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compaction_queue&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;see-the-last-10-compaction-events&#34;&gt;See the last 10 compaction events&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;database&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;partition&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;state&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, hadoop_job_id 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;ORDER&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;DESC&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;LIMIT&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;show-the-last-10-failed-compaction-event&#34;&gt;Show the last 10 failed compaction event&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;-- `state` options are &amp;#39;SUCCEEDED&amp;#39;, &amp;#39;ATTEMPTED&amp;#39;, &amp;#39;FAILED&amp;#39;, &amp;#39;INITIATED&amp;#39;, &amp;#39;WORKING&amp;#39;, and &amp;#39;READY_FOR_CLEANING&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;-- `type` options are &amp;#39;MAJOR&amp;#39; and &amp;#39;MINOR&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;database&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;table&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;partition&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;state&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;, &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;custom_sys&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;.&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;compactions&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;WHERE&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;state&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FAILED&amp;#39;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;ORDER&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;`&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;DESC&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;LIMIT&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
     </item>
     
     <item>
@@ -645,31 +465,17 @@ LIMIT 10;
       <link>http://www.streever.com/post/2019/jdbc-federation/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2019/jdbc-federation/</guid>
-      <description>
-
-&lt;p&gt;Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem.   Apache Software Foundation has excellent docs detailing this feature referred to as the &lt;a href=&#34;https://cwiki.apache.org/confluence/display/Hive/JdbcStorageHandler&#34; target=&#34;_blank&#34;&gt;JDBCStorageHandler&lt;/a&gt; .&lt;/p&gt;
-
+      <description>&lt;p&gt;Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem.   Apache Software Foundation has excellent docs detailing this feature referred to as the &lt;a href=&#34;https://cwiki.apache.org/confluence/display/Hive/JdbcStorageHandler&#34;&gt;JDBCStorageHandler&lt;/a&gt; .&lt;/p&gt;
 &lt;p&gt;Interesting points about this StorageHandler include:&lt;/p&gt;
-
 &lt;ol&gt;
 &lt;li&gt;Securing Passwords - &lt;strong&gt;Protects  passwords using a &amp;lsquo;jceks&amp;rsquo; file stored on &amp;lsquo;hdfs&amp;rsquo;&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;Partitioning - &lt;strong&gt;Could be used as an alternate to SQOOP for importing data to Hive&lt;/strong&gt;&lt;/li&gt;
 &lt;/ol&gt;
-
 &lt;h2 id=&#34;more-hive-metadata&#34;&gt;More Hive Metadata!&lt;/h2&gt;
-
 &lt;p&gt;Hive Metadata, previously only available via &lt;code&gt;WebHCat&lt;/code&gt; which has been removed, can be retrieved through hive&amp;rsquo;s &lt;code&gt;sys&lt;/code&gt; database.   And the &lt;code&gt;sys&lt;/code&gt; db is actually using the JDBCStorageHandler with a special tblproperty &lt;code&gt;&#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;&lt;/code&gt; used with the storage handler and &lt;code&gt;&#39;hive.sql.query&#39;=&#39;SELECT ... FROM ...&#39;&lt;/code&gt;.&lt;/p&gt;
-
 &lt;p&gt;I&amp;rsquo;ve used this technique to expose tables that support &lt;code&gt;COMPACTION&lt;/code&gt;, &lt;code&gt;LOCKS&lt;/code&gt;, and &lt;code&gt;TRANSACTIONS&lt;/code&gt; in order to fill some gaps with the current admin functions.   See the examples below for details.&lt;/p&gt;
-
-&lt;div class=&#34;alert alert-note&#34;&gt;
-  &lt;div&gt;
-    &lt;p&gt;A word of caution here.  All the &amp;lsquo;extras&amp;rsquo; you create against the metastore DB can/may break with the next release.  This isn&amp;rsquo;t a supported method of accessing metadata.&lt;/p&gt;
-
-&lt;p&gt;Don&amp;rsquo;t add &lt;em&gt;new&lt;/em&gt; tables to the current &lt;code&gt;sys.db&lt;/code&gt;.  That&amp;rsquo;s bad form and could cause issues for the platform during the next upgrade cycle, especially if there are naming conflicts.  Put it somewhere else!!&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;
 </description>
     </item>
     
@@ -678,18 +484,11 @@ LIMIT 10;
       <link>http://www.streever.com/slides/hadoop-cli/</link>
       <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/slides/hadoop-cli/</guid>
-      <description>
-
-&lt;h2 id=&#34;the-hadoop-cli&#34;&gt;The Hadoop CLI&lt;/h2&gt;
-
+      <description>&lt;h2 id=&#34;the-hadoop-cli&#34;&gt;The Hadoop CLI&lt;/h2&gt;
 &lt;p&gt;A quick tour of the installation and basic usage.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34; /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/img/hadoopcli_icon.png&#34; alt=&#34;Hadoop CLI&#34;&gt;&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;slide-controls&#34;&gt;Slide Controls&lt;/h2&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Next: &lt;code&gt;Right Arrow&lt;/code&gt; or &lt;code&gt;Space&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Previous: &lt;code&gt;Left Arrow&lt;/code&gt;&lt;/li&gt;
@@ -700,133 +499,78 @@ LIMIT 10;
 &lt;li&gt;Fullscreen: &lt;code&gt;F&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Zoom: &lt;code&gt;Alt(Option) + Click&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;what-is-the-hadoop-cli&#34;&gt;What is the Hadoop-CLI?&lt;/h2&gt;
-
 &lt;p&gt;It is the missing CLI for HDFS.&lt;/p&gt;
-
 &lt;p&gt;Launch a session and benefit from an interactive CLI experience (like your local filesyste) against HDFS.&lt;/p&gt;
-
-&lt;p&gt;It does &amp;lsquo;tab&amp;rsquo; completion, has location &amp;lsquo;context&amp;rsquo;, supports &amp;lsquo;most&amp;rsquo; hdfs commands, and has a few &amp;lsquo;nice surprises&amp;rsquo;.&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;p&gt;It does &amp;rsquo;tab&amp;rsquo; completion, has location &amp;lsquo;context&amp;rsquo;, supports &amp;lsquo;most&amp;rsquo; hdfs commands, and has a few &amp;rsquo;nice surprises&amp;rsquo;.&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;where-to-find-it&#34;&gt;Where to Find it&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/dstreev/hadoop-cli&#34; target=&#34;_blank&#34;&gt;On Github&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/dstreev/hadoop-cli/releases&#34; target=&#34;_blank&#34;&gt;Pre-built Releases&lt;/a&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;p&gt;&lt;a href=&#34;https://github.com/dstreev/hadoop-cli&#34;&gt;On Github&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/dstreev/hadoop-cli/releases&#34;&gt;Pre-built Releases&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;installation&#34;&gt;Installation&lt;/h2&gt;
-
 &lt;ul&gt;
-&lt;li&gt;Download the latest &lt;code&gt;tar.gz&lt;/code&gt; from &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/releases&#34; target=&#34;_blank&#34;&gt;Releases&lt;/a&gt;
-
+&lt;li&gt;Download the latest &lt;code&gt;tar.gz&lt;/code&gt; from &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/releases&#34;&gt;Releases&lt;/a&gt;
 &lt;ul&gt;
 &lt;li&gt;See the &amp;lsquo;Assets&amp;rsquo; associated with a release and downland.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Run the installation as &lt;code&gt;root&lt;/code&gt; or &lt;code&gt;sudo&lt;/code&gt; to allow it to create and install global links.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;wget &amp;lt;release-link-from-asset-section&amp;gt;
-tar xvfz hadoop.cli-&amp;lt;version&amp;gt;-3.1.tar.gz
-cd hadoop-cli-3.1
-sudo ./setup.sh
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;p&gt;That&amp;rsquo;s it.  I&amp;rsquo;m making an assumption you have &lt;code&gt;java 8&lt;/code&gt; on the host.&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;/li&gt;
+&lt;li&gt;Run the installation as &lt;code&gt;root&lt;/code&gt; or &lt;code&gt;sudo&lt;/code&gt; to allow it to create and install global links.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;wget &amp;lt;release-link-from-asset-section&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;tar xvfz hadoop.cli-&amp;lt;version&amp;gt;-3.1.tar.gz
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cd hadoop-cli-3.1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo ./setup.sh
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;That&amp;rsquo;s it.  I&amp;rsquo;m making an assumption you have &lt;code&gt;java 8&lt;/code&gt; on the host.&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;start-up&#34;&gt;Start-up&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cd # to return to your home directory
-hadoopcli # It will be in the global path for most standard configurations
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;hadoopcli-startup.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;let-s-try-a-simple-command&#34;&gt;Let&amp;rsquo;s try a simple command&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;ls
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Notice how way didn&amp;rsquo;t specify a full path (or any path) for &lt;code&gt;ls&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;step_01.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cd &lt;span style=&#34;color:#75715e&#34;&gt;# to return to your home directory&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;hadoopcli &lt;span style=&#34;color:#75715e&#34;&gt;# It will be in the global path for most standard configurations&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;hadoopcli-startup.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;lets-try-a-simple-command&#34;&gt;Let&amp;rsquo;s try a simple command&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ls
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Notice how way didn&amp;rsquo;t specify a full path (or any path) for &lt;code&gt;ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;step_01.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;and-with-a-relative-reference&#34;&gt;And with a &amp;lsquo;relative&amp;rsquo; reference&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;du -h data
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The path for &lt;code&gt;du -h&lt;/code&gt; is relative (no preceeding &amp;lsquo;/&amp;rsquo;)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;step_02.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;du -h data
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The path for &lt;code&gt;du -h&lt;/code&gt; is relative (no preceeding &amp;lsquo;/&amp;rsquo;)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;step_02.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;context-aware&#34;&gt;Context Aware&lt;/h2&gt;
-
 &lt;p&gt;Both HDFS and the Local Filesystem are accessible.  HDFS is considered the primary, meaning that standard commands will be applied to it.&lt;/p&gt;
-
 &lt;p&gt;Context is tracked for each file system, so commands without a preceeding &amp;lsquo;/&amp;rsquo; will append to the current location.&lt;/p&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;need-help&#34;&gt;Need Help&lt;/h2&gt;
-
 &lt;p&gt;Get a complete command reference with:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;help
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Get command help with:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;help &amp;lt;command&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;help
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Get command help with:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;help &amp;lt;command&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
 &lt;h2 id=&#34;environment-details&#34;&gt;Environment Details&lt;/h2&gt;
-
 &lt;ul&gt;
 &lt;li&gt;This is a valid HDFS client, using Hadoop-HDFS libraries.  All permissions are applied to the user as if they were using &lt;code&gt;hdfs dfs -&amp;lt;cmd&amp;gt; ...&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;By default, the application will look for configurations in &lt;code&gt;/etc/hadoop/conf&lt;/code&gt;.  It requires &lt;code&gt;hdfs-site.xml&lt;/code&gt; and &lt;code&gt;core-site.xml&lt;/code&gt; from your cluster.&lt;/li&gt;
 &lt;li&gt;Security is applied the same way as if using &lt;code&gt;hdfs dfs&lt;/code&gt;.  Via &amp;lsquo;os username&amp;rsquo; or &amp;lsquo;kerberos&amp;rsquo;.  Get a Kerberos ticket &lt;em&gt;before&lt;/em&gt; starting the cli.&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr /&gt;
-
+&lt;hr&gt;
 &lt;h2 id=&#34;environment-details-cont&#34;&gt;Environment Details (cont.)&lt;/h2&gt;
-
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Support for alternative configs(location) via commandline parameter&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hadoopcli --config &amp;lt;alt-location&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Support for alternative configs(location) via commandline parameter&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;hr /&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hadoopcli --config &amp;lt;alt-location&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
 &lt;h2 id=&#34;feedback&#34;&gt;Feedback&lt;/h2&gt;
-
-&lt;h3 id=&#34;i-m-always-looking-for-feedback-to-make-it-better&#34;&gt;I&amp;rsquo;m always looking for feedback to make it better.&lt;/h3&gt;
-
+&lt;h3 id=&#34;im-always-looking-for-feedback-to-make-it-better&#34;&gt;I&amp;rsquo;m always looking for feedback to make it better.&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;If you find an issue, log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34; target=&#34;_blank&#34;&gt;on my project issues page&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;If you think of an enhancement, please log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34; target=&#34;_blank&#34;&gt;on my project issues page&lt;/a&gt; as well.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you find an issue, log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34;&gt;on my project issues page&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you think of an enhancement, please log it &lt;a href=&#34;https://github.com/dstreev/hadoop-cli/issues&#34;&gt;on my project issues page&lt;/a&gt; as well.&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
@@ -837,17 +581,11 @@ hadoopcli # It will be in the global path for most standard configurations
       <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2018/dunning-kruger-effect-technology/</guid>
       <description>&lt;p&gt;It happens to everyone, regardless of how long you&amp;rsquo;ve been around.  No matter your experience level, there is no escaping the &amp;lsquo;Dunning-Kruger Effect&amp;rsquo;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://understandinginnovation.files.wordpress.com/2015/06/dunning-kruger-0011.jpg&#34; alt=&#34;Dunning-Kruger-Effect&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;https://understandinginnovation.files.wordpress.com/2015/06/dunning-kruger-0011.jpg&#34; alt=&#34;Dunning-Kruger-Effect&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Learning a new technology can be rewarding, but you have to push through the &amp;lsquo;valley of despair&amp;rsquo; first.  I&amp;rsquo;ve been around a while and a few times a year, I have to go through this.  And the process is painful.  Not only for me, but those around me as well.  They could just rename the effect, &amp;ldquo;The Grumpy Effect&amp;rdquo;.&lt;/p&gt;
-
 &lt;p&gt;In the beginning, there&amp;rsquo;s a sense of understanding.  You feel enlighten by the concepts and totally start to understand the benefits of the new venture, but this is short lived.  The next step is actually putting this new knowledge to work.  Now you need to roll up your sleeves and actually do it.  That&amp;rsquo;s when the confidence you&amp;rsquo;ve just built up, start to crash down.  At the height of this confidence, you&amp;rsquo;re king of the world.  And soon there after, your less than the dirt on the bottom of your shoe.&lt;/p&gt;
-
 &lt;p&gt;As you wade through the valley, everything appears foreign and distant.  The most simple concept seems to elude your every attempt at understanding.  You&amp;rsquo;ll reread a passage numerous times without so much as a hint at it&amp;rsquo;s meaning or relevance.&lt;/p&gt;
-
 &lt;p&gt;And then it happens, the swamp starts to drain, the fog lifts and the pieces just start to fall into place.  It can take hours, days or maybe months but it will happen.  That is, if you can handle the &amp;lsquo;valley&amp;rsquo;.&lt;/p&gt;
-
 &lt;p&gt;After 30 years in this business, I found the number 1 asset is &amp;lsquo;persistence&amp;rsquo;.  You&amp;rsquo;ll never succeed if you give up!  PRESS ON!!!&lt;/p&gt;
 </description>
     </item>
@@ -857,34 +595,19 @@ hadoopcli # It will be in the global path for most standard configurations
       <link>http://www.streever.com/terms/</link>
       <pubDate>Thu, 28 Jun 2018 00:00:00 +0100</pubDate>
       <guid>http://www.streever.com/terms/</guid>
-      <description>
-
-&lt;h2 id=&#34;disclaimer&#34;&gt;Disclaimer&lt;/h2&gt;
-
+      <description>&lt;h2 id=&#34;disclaimer&#34;&gt;Disclaimer&lt;/h2&gt;
 &lt;p&gt;This disclaimer (&amp;ldquo;Disclaimer&amp;rdquo;, &amp;ldquo;Agreement&amp;rdquo;) is an agreement between Website Operator (&amp;ldquo;Website Operator&amp;rdquo;, &amp;ldquo;us&amp;rdquo;, &amp;ldquo;we&amp;rdquo; or &amp;ldquo;our&amp;rdquo;) and you (&amp;ldquo;User&amp;rdquo;, &amp;ldquo;you&amp;rdquo; or &amp;ldquo;your&amp;rdquo;). This Disclaimer sets forth the general guidelines, terms and conditions of your use of the blog.streever.com website and any of its products or services (collectively, &amp;ldquo;Website&amp;rdquo; or &amp;ldquo;Services&amp;rdquo;).&lt;/p&gt;
-
 &lt;h2 id=&#34;representation&#34;&gt;Representation&lt;/h2&gt;
-
 &lt;p&gt;Any views or opinions represented in this Website are personal and belong solely to Website Operator and do not represent those of people, institutions or organizations that the owner may or may not be associated with in professional or personal capacity unless explicitly stated. Any views or opinions are not intended to malign any religion, ethnic group, club, organization, company, or individual.&lt;/p&gt;
-
 &lt;h2 id=&#34;content-and-postings&#34;&gt;Content and postings&lt;/h2&gt;
-
 &lt;p&gt;You may print a copy of any part of this Website for your personal or non-commercial use.&lt;/p&gt;
-
 &lt;h2 id=&#34;indemnification-and-warranties&#34;&gt;Indemnification and warranties&lt;/h2&gt;
-
 &lt;p&gt;While we have made every attempt to ensure that the information contained on the Website is correct, Website Operator is not responsible for any errors or omissions, or for the results obtained from the use of this information. All information on the Website is provided &amp;ldquo;as is&amp;rdquo;, with no guarantee of completeness, accuracy, timeliness or of the results obtained from the use of this information, and without warranty of any kind, express or implied. In no event will Website Operator be liable to you or anyone else for any decision made or action taken in reliance on the information on the Website or for any consequential, special or similar damages, even if advised of the possibility of such damages. Information on the Website is for general information purposes only and is not intended to provide legal, financial, medical, or any other type of professional advice. Please seek professional assistance should you require it. Furthermore, information contained on the Website and any pages linked to and from it are subject to change at any time and without warning.&lt;/p&gt;
-
 &lt;p&gt;We reserve the right to modify this Disclaimer relating to the Website or Services at any time, effective upon posting of an updated version of this Disclaimer on the Website. When we do we will post a notification on the main page of our Website. Continued use of the Website after any such changes shall constitute your consent to such changes. Policy was created with WebsitePolicies.&lt;/p&gt;
-
 &lt;h2 id=&#34;acceptance-of-this-disclaimer&#34;&gt;Acceptance of this disclaimer&lt;/h2&gt;
-
 &lt;p&gt;You acknowledge that you have read this Disclaimer and agree to all its terms and conditions. By accessing the Website you agree to be bound by this Disclaimer. If you do not agree to abide by the terms of this Disclaimer, you are not authorized to use or access the Website.&lt;/p&gt;
-
 &lt;h2 id=&#34;contacting-us&#34;&gt;Contacting us&lt;/h2&gt;
-
-&lt;p&gt;If you would like to contact us to understand more about this Disclaimer or wish to contact us concerning any matter relating to it, you may send an email to david+terms@streever.com&lt;/p&gt;
-
+&lt;p&gt;If you would like to contact us to understand more about this Disclaimer or wish to contact us concerning any matter relating to it, you may send an email to &lt;a href=&#34;mailto:david+terms@streever.com&#34;&gt;david+terms@streever.com&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;This document was last updated on October 18, 2019&lt;/p&gt;
 </description>
     </item>
@@ -894,155 +617,108 @@ hadoopcli # It will be in the global path for most standard configurations
       <link>http://www.streever.com/post/2018/in-place-centos6-to-centos7-hdp/</link>
       <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2018/in-place-centos6-to-centos7-hdp/</guid>
-      <description>
-
-&lt;p&gt;If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&amp;rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.&lt;/p&gt;
-
+      <description>&lt;p&gt;If you are an RHEL/CentOS shop, version 7 should be your target OS for Hadoop.  But if you&amp;rsquo;re cluster has been around a while, you probably have a few machines on version 6.x.&lt;/p&gt;
 &lt;p&gt;Unfortunately, RHEL / CentOS don&amp;rsquo;t offer an upgrade path from 6 to 7.  The only certified option is to wipe the OS and reinstall, which is a problem when it&amp;rsquo;s part of an active cluster.&lt;/p&gt;
-
-&lt;p&gt;There are 3 methods for dealing with this.
-- Decommission the node and replace it.
-- Migrate the workloads to another cluster and rebuild.
-- Hot swap the OS.&lt;/p&gt;
-
+&lt;p&gt;There are 3 methods for dealing with this.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Decommission the node and replace it.&lt;/li&gt;
+&lt;li&gt;Migrate the workloads to another cluster and rebuild.&lt;/li&gt;
+&lt;li&gt;Hot swap the OS.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;decommission-method&#34;&gt;Decommission Method&lt;/h2&gt;
-
 &lt;p&gt;Decommissioning is a process which gracefully migrates data off a data node in a controlled manner.   Thereby removing the data node from the active cluster while ensuring the integrity of the data is maintained.&lt;/p&gt;
-
 &lt;p&gt;This approach is pretty conservative and general only practically for a small number of nodes.&lt;/p&gt;
-
 &lt;p&gt;With replication set to 3, the default, you can only decommission two nodes at a time.  Beyond that, you risk data being unavailable for a period.  See &lt;a href=&#34;http://www.streever.com/images/upgrades/its-your-last-block.html&#34;&gt;It&amp;rsquo;s your last block&lt;/a&gt;.&lt;/p&gt;
-
 &lt;p&gt;With rack awareness, it&amp;rsquo;s possible to do this a rack at a time.  But beware, if rack awareness wasn&amp;rsquo;t initially configured, you can experience data loss/availability issues.  Always monitor the namenode for data availability issues.&lt;/p&gt;
-
-&lt;p&gt;While the safest approach, there are three major concerns.
-- Network Bandwidth - This process will force the movement of a dataset equivalent to the used hdfs storage on the device.
-- Pressure on the Namenode - Namenode resources are required to manage the movement/tracking of blocks left under replicated by the decommissioning process.
-- Time - This is a lengthy process.&lt;/p&gt;
-
+&lt;p&gt;While the safest approach, there are three major concerns.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Network Bandwidth - This process will force the movement of a dataset equivalent to the used hdfs storage on the device.&lt;/li&gt;
+&lt;li&gt;Pressure on the Namenode - Namenode resources are required to manage the movement/tracking of blocks left under replicated by the decommissioning process.&lt;/li&gt;
+&lt;li&gt;Time - This is a lengthy process.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;For large clusters with hundreds of nodes, it&amp;rsquo;s unlikely you&amp;rsquo;ll be able to keep up a pace needed to replace each node within a reasonable window.&lt;/p&gt;
-
 &lt;h2 id=&#34;migration&#34;&gt;Migration&lt;/h2&gt;
-
 &lt;p&gt;Depending on how much hardware you have around for this process, it&amp;rsquo;s not a likely option.  If you happen to have an abundance of hardware around, you could migrate workloads from one cluster to another, over time.&lt;/p&gt;
-
-&lt;p&gt;The difficulties with this approach:
-- Requires a duplicate set of hardware
-- SLDC processes for an application that are using/ingesting and building the data need to be altered.
-- Consumers needs to adjust so they can use the new cluster.
-- Transitions in Big Data are not &amp;ldquo;atomic&amp;rdquo;.  The volume ingested and changed on the source is usually too high to be synchronized atomically.  Further leading to risk.&lt;/p&gt;
-
+&lt;p&gt;The difficulties with this approach:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Requires a duplicate set of hardware&lt;/li&gt;
+&lt;li&gt;SLDC processes for an application that are using/ingesting and building the data need to be altered.&lt;/li&gt;
+&lt;li&gt;Consumers needs to adjust so they can use the new cluster.&lt;/li&gt;
+&lt;li&gt;Transitions in Big Data are not &amp;ldquo;atomic&amp;rdquo;.  The volume ingested and changed on the source is usually too high to be synchronized atomically.  Further leading to risk.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;hot-swapping-the-os&#34;&gt;Hot swapping the OS&lt;/h2&gt;
-
 &lt;p&gt;Sounds sexy, doesn&amp;rsquo;t it?  Well, in geek-speak it kind of is.  If you&amp;rsquo;re familiar with how Hadoop manages its filesystem, you know there are three things you need to preserve:  fsimage, edits and block pools.  When it comes down to it, if these things are safe, you can restore HDFS.&lt;/p&gt;
-
 &lt;p&gt;To hot swap the OS, you need to have followed some best practices around component/data layouts on your hardware.  The first and most important part is that the data directories for the Namenodes, Journal Nodes and Data Nodes should be on physically separate devices from the OS.  These drives should NOT be part of any LVM controlled by the OS.  They should be simple JBOD devices, formatted as either ext4 or xfs drives.&lt;/p&gt;
-
 &lt;p&gt;As for the remaining services on your cluster, ensure that all the persisted data elements of each service aren&amp;rsquo;t co-located with the OS drive partition.  Which includes (but not limited to): Zeppelin Notebooks, AMS, ATS, Application Data, NFS, etc..  Check for specific OS level customizations like CRONTAB, fstab, etc. on hosts and be prepared to reinstate those after rebuilding the OS.&lt;/p&gt;
-
 &lt;p&gt;To run this process against your master nodes and continue to support operations in your cluster, the master services for HDFS, YARN, HBase, Oozie, Druid, and Hive should be configured with HA.&lt;/p&gt;
-
 &lt;p&gt;The cluster metadata stores for Ambari, Hive, Oozie, Ranger, and Druid should be on separately managed RDBMS host(s) and aren&amp;rsquo;t a part of the OS upgrade process we&amp;rsquo;ll cover here.&lt;/p&gt;
-
 &lt;p&gt;If the above isn&amp;rsquo;t true, you&amp;rsquo;ll need to make it accurate before you can continue with this upgrade method.&lt;/p&gt;
-
 &lt;p&gt;This process relies on fast and consistent OS (re)builds.  For that, I suggest that you invest some time in DevOps automation in the form of Ansible, Puppet, Chef or some other provisioning toolset.  You need to be able to rebuild and host and have it ready to be added back to the cluster in under 15 minutes.  That may be aggressive, but consider what happens when a data node is marked &amp;lsquo;dead&amp;rsquo;, which will occur after 10 minutes.  A lot of traffic and resources will start to be consumed, attempting to repair the missing replicas in the system left by the missing block pool that was managed by the host you&amp;rsquo;re upgrading.  So our goal is to reduce the amount of time that the block pool on the host is out of the cluster.&lt;/p&gt;
-
-&lt;p&gt;Some considerations before shutting the host down:
-- If you want to manage YARN gracefully, you can decommission yarn through Ambari.
-- We will NOT &amp;lsquo;decommission&amp;rsquo; the Data Node.
-- If this is a Master with an Active Component, fail it over to the other server before starting this process.  This provides you with a bit more control over the process.&lt;/p&gt;
-
+&lt;p&gt;Some considerations before shutting the host down:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If you want to manage YARN gracefully, you can decommission yarn through Ambari.&lt;/li&gt;
+&lt;li&gt;We will NOT &amp;lsquo;decommission&amp;rsquo; the Data Node.&lt;/li&gt;
+&lt;li&gt;If this is a Master with an Active Component, fail it over to the other server before starting this process.  This provides you with a bit more control over the process.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;With the chosen host, go ahead and shut it down. And start the OS migration process.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_not_connected.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_not_connected.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;As I mentioned earlier, all persisted state information needs to be on a different physical drive(s) than the OS.  The reason for this is that we&amp;rsquo;re going to rebuild the OS partition completely.  This means formatting &lt;strong&gt;ONLY THE ROOT DEVICE&lt;/strong&gt; and reinstalling the new OS on it.  As long as the persisted stores are on other devices, our data is safe.&lt;/p&gt;
-
-&lt;p&gt;The process for rebuilding the OS should include all major pre-requisites for a Hadoop cluster, but not limited to this list:
-- THP (Transparent Huge Pages) disabled
-- NNTP installed and active
-- IDM integration (sssd or other)
-- JDK 8 - latest version installed
-- OS Patches applied
-- SELinux - disabled
-- Swappiness=1 for worker nodes&lt;/p&gt;
-
-&lt;p&gt;Consult the Hortonworks &lt;a href=&#34;https://docs.hortonworks.com/HDPDocuments/Ambari-2.6.1.5/bk_ambari-installation/content/prepare_the_environment.html&#34; target=&#34;_blank&#34;&gt;documentation&lt;/a&gt; for further details.&lt;/p&gt;
-
+&lt;p&gt;The process for rebuilding the OS should include all major pre-requisites for a Hadoop cluster, but not limited to this list:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;THP (Transparent Huge Pages) disabled&lt;/li&gt;
+&lt;li&gt;NNTP installed and active&lt;/li&gt;
+&lt;li&gt;IDM integration (sssd or other)&lt;/li&gt;
+&lt;li&gt;JDK 8 - latest version installed&lt;/li&gt;
+&lt;li&gt;OS Patches applied&lt;/li&gt;
+&lt;li&gt;SELinux - disabled&lt;/li&gt;
+&lt;li&gt;Swappiness=1 for worker nodes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Consult the Hortonworks &lt;a href=&#34;https://docs.hortonworks.com/HDPDocuments/Ambari-2.6.1.5/bk_ambari-installation/content/prepare_the_environment.html&#34;&gt;documentation&lt;/a&gt; for further details.&lt;/p&gt;
 &lt;p&gt;It is &lt;strong&gt;CRITICAL&lt;/strong&gt; that the host retains the same &lt;strong&gt;FQDN&lt;/strong&gt; as before the upgrade.  If this changes, we will NOT be able to use Ambari to complete the process.  The hosts &amp;lsquo;fstab&amp;rsquo; configuration should match what was previously configured, regarding the data drives.  Don&amp;rsquo;t change mount points at this time, it will only complicate the process and setup.&lt;/p&gt;
-
 &lt;p&gt;In addition to these, you&amp;rsquo;ll need to install the &lt;em&gt;Ambari-Agent&lt;/em&gt; on the host and configure it for the &lt;em&gt;Ambari-Server&lt;/em&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo ambari-agent reset ${AMBARI_SERVER_HOST}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now that we have the host rebuilt with the basics and an &lt;em&gt;Ambari-Agent&lt;/em&gt; up and running, we should be able to see the host connected to Ambari via the Hosts Page.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_connected.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo ambari-agent reset ${AMBARI_SERVER_HOST}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Now that we have the host rebuilt with the basics and an &lt;em&gt;Ambari-Agent&lt;/em&gt; up and running, we should be able to see the host connected to Ambari via the Hosts Page.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_connected.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;At this point, you have a host that has been re-associated to Ambari successfully.  In the host details section, you&amp;rsquo;ll notice how the host now identifies with version 7 of the OS.  And at this point, the host will have none of the HDP libraries installed.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_detail_os7.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_detail_os7.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;While none of the HDP libraries are installed, you&amp;rsquo;ll notice that Ambari knows what services should be on the host.  That&amp;rsquo;s because the host FQDN matches the previous OS version of the host and when the &amp;lsquo;ambari-agent&amp;rsquo; registered back with the &amp;lsquo;ambari-server&amp;rsquo;, the host assumed the former identity.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_available_not_installed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_available_not_installed.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;This host will also NOT have the previous system accounts for HDP, yet.  IE: hdfs, yarn, hive, etc&amp;hellip;&lt;/p&gt;
-
 &lt;p&gt;Ambari Server has a new feature, added in 2.6, that allows us to recover a host in this state.  From the &amp;lsquo;host&amp;rsquo; window there&amp;rsquo;s a &amp;lsquo;Host Action&amp;rsquo; button in the upper right corner.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_action_button.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_action_button.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Select this and &amp;lsquo;Recover Host&amp;rsquo;.  Ambari will reinstall and configure all the missing services on this host, as they were before.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/recover_host_action.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/recover_host_action.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;We&amp;rsquo;re almost there, do NOT start the services yet!!!  The remounted data directories that still contain all our data (that was the whole point of this exercise) need to be fixed.  Most likely that the POSIX UID&amp;rsquo;s for the user and group assigned in the previous OS, do NOT match or even exist in the new OS.  So the data drive permissions will not be properly configured.  We need to fix this before starting the services.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_data_dir_permissions_broke.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
+&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_data_dir_permissions_broke.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Locate each of the data directories and adjust (recursively) the ownership to match the new uid&amp;rsquo;s.  For example:
 The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;.  We need to ensure hdfs:hadoop owns the directory.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;chown -R hdfs:hadoop /data/0/hadoop/hdfs/namenode
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_data_dir_permissions_fixed.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Make these adjustments for each of the data directories on the host including, but not limited to:
-- Namenode
-- Secondary Namenode (when applicable)
-- Journal Node
-- ZooKeeper
-- ATS
-- Yarn (local and logs)
-- Datanode (Block Pools)
-- Log Directories (if these were on separate drives and survived the OS rebuild)
-- Pid Directories (if these were on separate drives and survived the OS rebuild)&lt;/p&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;chown -R hdfs:hadoop /data/0/hadoop/hdfs/namenode
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&#34;http://www.streever.com/images/upgrades/host_data_dir_permissions_fixed.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Make these adjustments for each of the data directories on the host including, but not limited to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Namenode&lt;/li&gt;
+&lt;li&gt;Secondary Namenode (when applicable)&lt;/li&gt;
+&lt;li&gt;Journal Node&lt;/li&gt;
+&lt;li&gt;ZooKeeper&lt;/li&gt;
+&lt;li&gt;ATS&lt;/li&gt;
+&lt;li&gt;Yarn (local and logs)&lt;/li&gt;
+&lt;li&gt;Datanode (Block Pools)&lt;/li&gt;
+&lt;li&gt;Log Directories (if these were on separate drives and survived the OS rebuild)&lt;/li&gt;
+&lt;li&gt;Pid Directories (if these were on separate drives and survived the OS rebuild)&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;Now that we&amp;rsquo;ve fixed the permissions, we can &lt;strong&gt;restart&lt;/strong&gt; the services on the host.&lt;/p&gt;
-
 &lt;h3 id=&#34;validate&#34;&gt;Validate&lt;/h3&gt;
-
 &lt;p&gt;At this point, you should validate the services are operating as expected.  The validation should be thorough to ensure the host is a healthy member of the cluster &lt;strong&gt;BEFORE&lt;/strong&gt; proceeding on to the next host.&lt;/p&gt;
-
-&lt;h3 id=&#34;some-known-gotcha-s&#34;&gt;Some known gotcha&amp;rsquo;s&lt;/h3&gt;
-
+&lt;h3 id=&#34;some-known-gotchas&#34;&gt;Some known gotcha&amp;rsquo;s&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;Not all running jobs are tolerant to failed nodes.  For example: a long running Spark task that dies because the host was removed, may not recover very well.  In which case, the job may need to be restarted.&lt;/li&gt;
 &lt;li&gt;When cycling through the master services, dropping a Hive Server 2 host will cause job failures for those connected to that host.  If you consumers are using the ZooKeeper discovery protocol and you have multiple HiveServer2 instances, they&amp;rsquo;ll be routed to a working HiveServer2.  Stagger the replacement of these HiveServer2 nodes to avoid chasing active connections down and killing them in short order.&lt;/li&gt;
 &lt;li&gt;Some master services that aren&amp;rsquo;t HA will experience downtime as they go through this process.  I suggest that the process be managed more carefully across the master nodes, opposed to the worker nodes.&lt;/li&gt;
 &lt;li&gt;If you&amp;rsquo;re running LLAP, ensure the queue has enough room to support a missing host.  LLAP daemons will attempt to restart, when a host is brought down and will need a place to go.&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;h3 id=&#34;automation&#34;&gt;Automation&lt;/h3&gt;
-
 &lt;p&gt;Now that you&amp;rsquo;ve seen how this can be done, it&amp;rsquo;s time to automate this.  Using your companies DevOps automation tools and practices, you should be able to cycle through a host upgrade every 15-30 minutes.  You should be able to cycle through all the worker nodes in record time.&lt;/p&gt;
-
 &lt;p&gt;We briefly discussed a DevOps model to automate the OS rebuild.  Another automation measure to consider is through Ambari.&lt;/p&gt;
-
 &lt;p&gt;If you have several hundred nodes to do this to, you&amp;rsquo;ll want to investigate the Ambari REST API and automate the actions we&amp;rsquo;ve performed through the Ambari UI.&lt;/p&gt;
 </description>
     </item>
@@ -1053,9 +729,7 @@ The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;. 
       <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2018/its-your-last-block/</guid>
       <description>&lt;p&gt;In a few other articles, I&amp;rsquo;ll talk about bringing hosts down to facilitate upgrades.&lt;/p&gt;
-
 &lt;p&gt;If you do this at rack at a time, it may also lead to data loss if any other drive in the system fails during the operation.  That&amp;rsquo;s because the rules for replication when setting to 3 will place the second and third blocks on the same rack.  The first block becomes the only viable source.  If a drive fails, that contains this single block, the file will become corrupt.  Restoring the data directories will fix the block issue, restoring the integrity of the file.  But, jobs that depend on this file during the time it was corrupt/unavailable will fail.&lt;/p&gt;
-
 &lt;p&gt;If critical jobs can&amp;rsquo;t handle this risk, identify the supporting files/directories and increase the replication factor for the duration of the upgrade process to ensure you have adequate replicas available.&lt;/p&gt;
 </description>
     </item>
@@ -1065,132 +739,86 @@ The NN data directory at &lt;code&gt;/data/0/hadoop/hdfs/namenode&lt;/code&gt;. 
       <link>http://www.streever.com/post/2017/distcp-with-snapshots/</link>
       <pubDate>Thu, 30 Mar 2017 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2017/distcp-with-snapshots/</guid>
-      <description>
-
-&lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;
-
+      <description>&lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;
 &lt;p&gt;Traditional &amp;lsquo;distcp&amp;rsquo; from one directory to another or from cluster to cluster is quite useful in moving massive amounts of data, once. But what happens when you need to &amp;ldquo;update&amp;rdquo; a target directory or cluster with only the changes made since the last &amp;lsquo;distcp&amp;rsquo; had run. That becomes a very tricky scenario. &amp;lsquo;distcp&amp;rsquo; offers an &amp;lsquo;-update&amp;rsquo; flag, which is suppose to move only the files that have changed. In this case &amp;lsquo;distcp&amp;rsquo; will pull a list of files and directories from the source and targets, compare them and then build a migration plan.&lt;/p&gt;
-
 &lt;p&gt;It&amp;rsquo;s an expensive and time-consuming task. Furthermore, the process is not atomic. First, the cost of gathering a list of files and directories, along with their metadata is expensive when you&amp;rsquo;re considering sources with millions of file and directory objects. And this cost is incurred on both the source and target namenode&amp;rsquo;s, resulting in quite a bit of pressure on those systems.&lt;/p&gt;
-
 &lt;p&gt;It&amp;rsquo;s up to &lt;code&gt;distcp&lt;/code&gt; to reconcile the difference between the source and target, which is very expensive. When it&amp;rsquo;s finally complete, only then does the process start to move data. And if data changes while the process is running, those changes can impact the transfer and lead to failure and partial migration.&lt;/p&gt;
-
 &lt;h2 id=&#34;the-solution&#34;&gt;The Solution&lt;/h2&gt;
-
 &lt;p&gt;The process needs to be atomic, and it needs to be efficient. With Hadoop 2.0, HDFS introduce &amp;ldquo;snapshots.&amp;rdquo; HDFS &amp;ldquo;snapshots&amp;rdquo; are a point-in-time copy of the directories metadata. The copy is stored in a hidden location and maintains references to all of the immutable filesystem objects. Creating a snapshot is atomic, and the characteristics of HDFS (being immutable) means that an image of a directories metadata doesn&amp;rsquo;t require an addition copy of the underlying data.&lt;/p&gt;
-
 &lt;p&gt;Another feature of snapshots is the ability to efficiently calculate changes between &amp;lsquo;any&amp;rsquo; two snapshots on the same directory. Using &amp;lsquo;hdfs snapshotDiff &amp;lsquo;, you can build a list of &amp;ldquo;changes&amp;rdquo; between these two point-in-time references.&lt;/p&gt;
-
 &lt;h3 id=&#34;for-example&#34;&gt;For Example&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;[hdfs@m3 ~]$ hdfs snapshotDiff /user/dstreev/stats s1 s2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Difference between snapshot s1 and snapshot s2 under directory /user/dstreev/stats:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;M .+./attempt
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[hdfs@m3 ~]$ hdfs snapshotDiff /user/dstreev/stats s1 s2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Difference between snapshot s1 and snapshot s2 under directory /user/dstreev/stats:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;M .+./attempt
 M ./namenode/fs_state/2016-12.txt
 M ./namenode/nn_info/2016-12.txt
 M ./namenode/top_user_ops/2016-12.txt
 M ./scheduler/queue_paths/2016-12.txt
 M ./scheduler/queue_usage/2016-12.txt
 M ./scheduler/queues/2016-12.txt 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Let&amp;rsquo;s take the &amp;lsquo;distcp&amp;rsquo; update concept and supercharge it with the efficiency of snapshots. Now you have a solution that will scale far beyond the original &lt;code&gt;distcp -update.&lt;/code&gt; and in the process remove the burden and load from the namenode&amp;rsquo;s previously encountered.&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Let&amp;rsquo;s take the &amp;lsquo;distcp&amp;rsquo; update concept and supercharge it with the efficiency of snapshots. Now you have a solution that will scale far beyond the original &lt;code&gt;distcp -update.&lt;/code&gt; and in the process remove the burden and load from the namenode&amp;rsquo;s previously encountered.&lt;/p&gt;
 &lt;h2 id=&#34;pre-requisites-and-requirements&#34;&gt;Pre-Requisites and Requirements&lt;/h2&gt;
-
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Source must support hdfs &amp;lsquo;snapshots&amp;rsquo;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot &amp;lt;path&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Target is &amp;ldquo;read-only&amp;rdquo;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Target, after initial baseline &amp;lsquo;distcp&amp;rsquo; sync needs to support snapshots.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Source must support hdfs &amp;lsquo;snapshots&amp;rsquo;&lt;/li&gt;
 &lt;/ul&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot &amp;lt;path&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Target is &amp;ldquo;read-only&amp;rdquo;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Target, after initial baseline &amp;lsquo;distcp&amp;rsquo; sync needs to support snapshots.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;process&#34;&gt;Process&lt;/h2&gt;
-
 &lt;ul&gt;
 &lt;li&gt;Identify the source and target &amp;lsquo;parent&amp;rsquo; directory&lt;/li&gt;
 &lt;li&gt;Do not initially create the destination directory, allow the first distcp to do that. For example: If I want to sync source &lt;code&gt;/data/a&lt;/code&gt; with &lt;code&gt;/data/a_target&lt;/code&gt;, do &lt;em&gt;NOT&lt;/em&gt; pre-create the &amp;lsquo;a_target&amp;rsquo; directory.&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Allow snapshots on the source directory&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot /data/a
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Create a Snapshot of /data/a&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a s1
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Distcp the baseline copy (from the atomic snapshot). Note: /data/a_target does NOT exists prior to the following command.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hadoop distcp /data/a/.snapshot/s1 /data/a_target
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Allow snapshots on the newly create target directory&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot /data/a_target
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Allow snapshots on the source directory&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;blockquote&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot /data/a
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;Create a Snapshot of /data/a&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a s1
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;Distcp the baseline copy (from the atomic snapshot). Note: /data/a_target does NOT exists prior to the following command.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hadoop distcp /data/a/.snapshot/s1 /data/a_target
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;Allow snapshots on the newly create target directory&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs dfsadmin -allowSnapshot /data/a_target
+&lt;/code&gt;&lt;/pre&gt;&lt;blockquote&gt;
 &lt;p&gt;At this point /data/a_target should be considered &amp;ldquo;read-only&amp;rdquo;. Do NOT make any changes to the content here.&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Create a matching snapshot in /data/a_target that matches the name of the snapshot used to build the baseline&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a_target s1
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Create a matching snapshot in /data/a_target that matches the name of the snapshot used to build the baseline&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;blockquote&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a_target s1
+&lt;/code&gt;&lt;/pre&gt;&lt;blockquote&gt;
 &lt;p&gt;Add some content to the source directory /data/a. Make changes, add, deletes, etc. that need to be replicated to /data/a_target.&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Take a new snapshot of /data/a&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a s2
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;Take a new snapshot of /data/a&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;p&gt;Just for fun, check on whats changed between the two snapshots&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs snapshotDiff /data/a s1 s2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Ok, now let&amp;rsquo;s migrate the changes to /data/a_target&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hadoop distcp -diff s1 s2 -update /data/a /data/a_target
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;When that&amp;rsquo;s completed, finish the cycle by creating a matching snapshot on /data/a_target&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a_target s2
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a s2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Just for fun, check on whats changed between the two snapshots&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs snapshotDiff /data/a s1 s2
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;Ok, now let&amp;rsquo;s migrate the changes to /data/a_target&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;p&gt;That&amp;rsquo;s it. You&amp;rsquo;ve completed the cycle. Rinse and repeat.&lt;/p&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hadoop distcp -diff s1 s2 -update /data/a /data/a_target
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;When that&amp;rsquo;s completed, finish the cycle by creating a matching snapshot on /data/a_target&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs dfs -createSnapshot /data/a_target s2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;That&amp;rsquo;s it. You&amp;rsquo;ve completed the cycle. Rinse and repeat.&lt;/p&gt;
 &lt;h2 id=&#34;a-few-hints&#34;&gt;A Few Hints&lt;/h2&gt;
-
 &lt;p&gt;Remember, snapshots need to be managed manually. They will stay around forever unless you clean them up with:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hdfs dfs -deleteSnapshot 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As long as a snapshot exists, the data exists. Deleting, even with skipTrash, data from a directory that has a snapshot, doesn&amp;rsquo;t free up space. Only when all &amp;ldquo;references&amp;rdquo; to that data are gone, can space be reclaimed.&lt;/p&gt;
-
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hdfs dfs -deleteSnapshot 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;As long as a snapshot exists, the data exists. Deleting, even with skipTrash, data from a directory that has a snapshot, doesn&amp;rsquo;t free up space. Only when all &amp;ldquo;references&amp;rdquo; to that data are gone, can space be reclaimed.&lt;/p&gt;
 &lt;p&gt;Initial migrations of data between systems are very expensive in regards to network I/O. And you probably don&amp;rsquo;t want to have to do that again, ever. I recommend keeping a snapshot of the original copy on each system OR some major checkpoint you can go back to, in the event the process is compromised.&lt;/p&gt;
-
 &lt;p&gt;If &amp;lsquo;distcp&amp;rsquo; can&amp;rsquo;t validate that the snapshot (by name) between the source and the target are the same and that the data at the target hasn&amp;rsquo;t changed since the snapshot, the process will fail. If the failure is because the directory has been updated, you&amp;rsquo;ll need to use the above baseline snapshots to restore it without having to migrate all that data again. And then start the process up again.&lt;/p&gt;
 </description>
     </item>
@@ -1200,39 +828,27 @@ M ./scheduler/queues/2016-12.txt
       <link>http://www.streever.com/post/2015/-mng-immutable-data-windowing-style/</link>
       <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2015/-mng-immutable-data-windowing-style/</guid>
-      <description>
-
-&lt;p&gt;I&amp;rsquo;m often asked how to &amp;ldquo;update&amp;rdquo; records in Hive.  We&amp;rsquo;ll you can&amp;rsquo;t, at least not yet and not in the sense you maybe accustom in an RDBMS.&lt;/p&gt;
-
+      <description>&lt;p&gt;I&amp;rsquo;m often asked how to &amp;ldquo;update&amp;rdquo; records in Hive.  We&amp;rsquo;ll you can&amp;rsquo;t, at least not yet and not in the sense you maybe accustom in an RDBMS.&lt;/p&gt;
 &lt;p&gt;Store your record updates in a transactional table that includes some identifier that represents the most resent update.  For example:&lt;/p&gt;
-
 &lt;h3 id=&#34;table-schema&#34;&gt;Table Schema&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;create external table fitness (
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;create external table fitness (
     firstname string,
     updated date,
     weight double
 )
-ROW FORMAT SERDE &#39;org.apache.hadoop.hive.serde2.OpenCSVSerde&#39;
+ROW FORMAT SERDE &amp;#39;org.apache.hadoop.hive.serde2.OpenCSVSerde&amp;#39;
 STORED AS TEXTFILE
-LOCATION &#39;...&#39;;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;data&#34;&gt;Data&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;fitness.firstname  fitness.updated  fitness.weight 
+LOCATION &amp;#39;...&amp;#39;;
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;data&#34;&gt;Data&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;fitness.firstname  fitness.updated  fitness.weight 
 -----------------  ---------------  -------------- 
 david              2015-01-12       210            
 david              2015-04-03       205            
 david              2015-06-02       200            
 david              2015-08-23       195
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Hive now support &amp;ldquo;Windowing&amp;rdquo; functions which make it really simply to extract the &amp;ldquo;most recent&amp;rdquo; record from this table.  Use those results to build your new &amp;ldquo;entity&amp;rdquo; table.&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Hive now support &amp;ldquo;Windowing&amp;rdquo; functions which make it really simply to extract the &amp;ldquo;most recent&amp;rdquo; record from this table.  Use those results to build your new &amp;ldquo;entity&amp;rdquo; table.&lt;/p&gt;
 &lt;h3 id=&#34;rank-to-find-most-current&#34;&gt;Rank to Find Most Current&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;SELECT
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;SELECT
   sub.firstname firstname,
   sub.updated updated,
   sub.weight weight
@@ -1248,15 +864,11 @@ FROM
   ) sub
 WHERE
   sub.rank=1;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;firstname  updated     weight 
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;firstname  updated     weight 
 ---------  ----------  ------ 
 david      2015-08-23  195     
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;/code&gt;&lt;/pre&gt;</description>
     </item>
     
     <item>
@@ -1272,17 +884,17 @@ david      2015-08-23  195
       <link>http://www.streever.com/post/email/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/email/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;images/emailimages/banner.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/blogger.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/custom_badge_1.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/custom_badge_2.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/custom_badge_3.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/custom_badge_4.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/custom_badge_5.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/github.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/linkedin.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/promote_icon.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;
-&lt;a href=&#34;images/emailimages/twitter.png&#34; target=&#34;_blank&#34;&gt;banner&lt;/a&gt;&lt;/p&gt;
+      <description>&lt;p&gt;&lt;a href=&#34;images/emailimages/banner.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/blogger.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_1.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_2.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_3.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_4.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/custom_badge_5.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/github.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/linkedin.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/promote_icon.png&#34;&gt;banner&lt;/a&gt;
+&lt;a href=&#34;images/emailimages/twitter.png&#34;&gt;banner&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

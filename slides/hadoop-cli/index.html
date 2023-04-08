@@ -54,27 +54,11 @@
     
     <section>
     
-      
-
-<h2 id="the-hadoop-cli">The Hadoop CLI</h2>
-
+      <h2 id="the-hadoop-cli">The Hadoop CLI</h2>
 <p>A quick tour of the installation and basic usage.</p>
-
-<p><img src="/img/hadoopcli_icon.png" alt="Hadoop CLI" /></p>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<p><img src="/img/hadoopcli_icon.png" alt="Hadoop CLI"></p>
+<hr>
 <h2 id="slide-controls">Slide Controls</h2>
-
 <ul>
 <li>Next: <code>Right Arrow</code> or <code>Space</code></li>
 <li>Previous: <code>Left Arrow</code></li>
@@ -85,232 +69,78 @@
 <li>Fullscreen: <code>F</code></li>
 <li>Zoom: <code>Alt(Option) + Click</code></li>
 </ul>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<hr>
 <h2 id="what-is-the-hadoop-cli">What is the Hadoop-CLI?</h2>
-
 <p>It is the missing CLI for HDFS.</p>
-
 <p>Launch a session and benefit from an interactive CLI experience (like your local filesyste) against HDFS.</p>
-
-<p>It does &lsquo;tab&rsquo; completion, has location &lsquo;context&rsquo;, supports &lsquo;most&rsquo; hdfs commands, and has a few &lsquo;nice surprises&rsquo;.</p>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<p>It does &rsquo;tab&rsquo; completion, has location &lsquo;context&rsquo;, supports &lsquo;most&rsquo; hdfs commands, and has a few &rsquo;nice surprises&rsquo;.</p>
+<hr>
 <h2 id="where-to-find-it">Where to Find it</h2>
-
-<p><a href="https://github.com/dstreev/hadoop-cli" target="_blank">On Github</a></p>
-
-<p><a href="https://github.com/dstreev/hadoop-cli/releases" target="_blank">Pre-built Releases</a></p>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<p><a href="https://github.com/dstreev/hadoop-cli">On Github</a></p>
+<p><a href="https://github.com/dstreev/hadoop-cli/releases">Pre-built Releases</a></p>
+<hr>
 <h2 id="installation">Installation</h2>
-
 <ul>
-<li>Download the latest <code>tar.gz</code> from <a href="https://github.com/dstreev/hadoop-cli/releases" target="_blank">Releases</a>
-
+<li>Download the latest <code>tar.gz</code> from <a href="https://github.com/dstreev/hadoop-cli/releases">Releases</a>
 <ul>
 <li>See the &lsquo;Assets&rsquo; associated with a release and downland.</li>
-</ul></li>
-
-<li><p>Run the installation as <code>root</code> or <code>sudo</code> to allow it to create and install global links.</p>
-
-<pre><code class="language-sh">wget &lt;release-link-from-asset-section&gt;
-tar xvfz hadoop.cli-&lt;version&gt;-3.1.tar.gz
-cd hadoop-cli-3.1
-sudo ./setup.sh
-</code></pre></li>
 </ul>
-
-<p>That&rsquo;s it.  I&rsquo;m making an assumption you have <code>java 8</code> on the host.</p>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+</li>
+<li>Run the installation as <code>root</code> or <code>sudo</code> to allow it to create and install global links.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>wget &lt;release-link-from-asset-section&gt;
+</span></span><span style="display:flex;"><span>tar xvfz hadoop.cli-&lt;version&gt;-3.1.tar.gz
+</span></span><span style="display:flex;"><span>cd hadoop-cli-3.1
+</span></span><span style="display:flex;"><span>sudo ./setup.sh
+</span></span></code></pre></div><p>That&rsquo;s it.  I&rsquo;m making an assumption you have <code>java 8</code> on the host.</p>
+<hr>
 <h2 id="start-up">Start-up</h2>
-
-<pre><code class="language-bash">cd # to return to your home directory
-hadoopcli # It will be in the global path for most standard configurations
-
-</code></pre>
-
-<p><img src="hadoopcli-startup.png" alt="" /></p>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
-<h2 id="let-s-try-a-simple-command">Let&rsquo;s try a simple command</h2>
-
-<pre><code>ls
-</code></pre>
-
-<p>Notice how way didn&rsquo;t specify a full path (or any path) for <code>ls</code></p>
-
-<p><img src="step_01.png" alt="" /></p>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd <span style="color:#75715e"># to return to your home directory</span>
+</span></span><span style="display:flex;"><span>hadoopcli <span style="color:#75715e"># It will be in the global path for most standard configurations</span>
+</span></span></code></pre></div><p><img src="hadoopcli-startup.png" alt=""></p>
+<hr>
+<h2 id="lets-try-a-simple-command">Let&rsquo;s try a simple command</h2>
+<pre tabindex="0"><code>ls
+</code></pre><p>Notice how way didn&rsquo;t specify a full path (or any path) for <code>ls</code></p>
+<p><img src="step_01.png" alt=""></p>
+<hr>
 <h2 id="and-with-a-relative-reference">And with a &lsquo;relative&rsquo; reference</h2>
-
-<pre><code>du -h data
-</code></pre>
-
-<p>The path for <code>du -h</code> is relative (no preceeding &lsquo;/&rsquo;)</p>
-
-<p><img src="step_02.png" alt="" /></p>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<pre tabindex="0"><code>du -h data
+</code></pre><p>The path for <code>du -h</code> is relative (no preceeding &lsquo;/&rsquo;)</p>
+<p><img src="step_02.png" alt=""></p>
+<hr>
 <h2 id="context-aware">Context Aware</h2>
-
 <p>Both HDFS and the Local Filesystem are accessible.  HDFS is considered the primary, meaning that standard commands will be applied to it.</p>
-
 <p>Context is tracked for each file system, so commands without a preceeding &lsquo;/&rsquo; will append to the current location.</p>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<hr>
 <h2 id="need-help">Need Help</h2>
-
 <p>Get a complete command reference with:</p>
-
-<pre><code>help
-</code></pre>
-
-<p>Get command help with:</p>
-
-<pre><code>help &lt;command&gt;
-</code></pre>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<pre tabindex="0"><code>help
+</code></pre><p>Get command help with:</p>
+<pre tabindex="0"><code>help &lt;command&gt;
+</code></pre><hr>
 <h2 id="environment-details">Environment Details</h2>
-
 <ul>
 <li>This is a valid HDFS client, using Hadoop-HDFS libraries.  All permissions are applied to the user as if they were using <code>hdfs dfs -&lt;cmd&gt; ...</code></li>
 <li>By default, the application will look for configurations in <code>/etc/hadoop/conf</code>.  It requires <code>hdfs-site.xml</code> and <code>core-site.xml</code> from your cluster.</li>
 <li>Security is applied the same way as if using <code>hdfs dfs</code>.  Via &lsquo;os username&rsquo; or &lsquo;kerberos&rsquo;.  Get a Kerberos ticket <em>before</em> starting the cli.</li>
 </ul>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<hr>
 <h2 id="environment-details-cont">Environment Details (cont.)</h2>
-
 <ul>
-<li><p>Support for alternative configs(location) via commandline parameter</p>
-
-<pre><code>hadoopcli --config &lt;alt-location&gt;
-</code></pre></li>
+<li>Support for alternative configs(location) via commandline parameter</li>
 </ul>
-
-
-    </section>
-    
-
-    
-    
-    
-    <section>
-    
-      
-
+<pre tabindex="0"><code>hadoopcli --config &lt;alt-location&gt;
+</code></pre><hr>
 <h2 id="feedback">Feedback</h2>
-
-<h3 id="i-m-always-looking-for-feedback-to-make-it-better">I&rsquo;m always looking for feedback to make it better.</h3>
-
+<h3 id="im-always-looking-for-feedback-to-make-it-better">I&rsquo;m always looking for feedback to make it better.</h3>
 <ul>
-<li><p>If you find an issue, log it <a href="https://github.com/dstreev/hadoop-cli/issues" target="_blank">on my project issues page</a></p></li>
-
-<li><p>If you think of an enhancement, please log it <a href="https://github.com/dstreev/hadoop-cli/issues" target="_blank">on my project issues page</a> as well.</p></li>
+<li>
+<p>If you find an issue, log it <a href="https://github.com/dstreev/hadoop-cli/issues">on my project issues page</a></p>
+</li>
+<li>
+<p>If you think of an enhancement, please log it <a href="https://github.com/dstreev/hadoop-cli/issues">on my project issues page</a> as well.</p>
+</li>
 </ul>
 
     </section>

@@ -5,7 +5,7 @@
     <link>http://www.streever.com/tags/cli/</link>
       <atom:link href="http://www.streever.com/tags/cli/index.xml" rel="self" type="application/rss+xml" />
     <description>cli</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Thu, 17 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://www.streever.com/img/icon-192.png</url>
       <title>cli</title>
@@ -18,19 +18,12 @@
       <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/hadoop-cli/intro/</guid>
       <description>&lt;p&gt;Working with Hadoop is much like working with a terminal application, as most everything you do with Hadoop is via the terminal.  If you want to launch a MapReduce job, do it from the terminal.  If you wanted to explore HDFS, run a command from the terminal.&lt;/p&gt;
-
 &lt;p&gt;Working with the Hadoop Distributed File System (HDFS) should be like working with any other file system, at least when you&amp;rsquo;re in the terminal.  Unfortunately, it&amp;rsquo;s not.&lt;/p&gt;
-
 &lt;p&gt;To do anything with HDFS, launch the command line application &lt;code&gt;hdfs&lt;/code&gt;. &lt;code&gt;hdfs&lt;/code&gt; has several sub-applications for controlling various interactions with &amp;lsquo;HDFS&amp;rsquo;.  My focus is to make the &lt;code&gt;dfs&lt;/code&gt; sub-application more amenable for &amp;lsquo;any&amp;rsquo; user.  Running &lt;code&gt;hdfs dfs -...&lt;/code&gt; for every query isn&amp;rsquo;t the experience that leaves you wanting more.  And honestly, that&amp;rsquo;s been one of Hadoop&amp;rsquo;s issues with user acceptance.  It&amp;rsquo;s an expert system, and every native interface reinforces that 10 fold.&lt;/p&gt;
-
 &lt;p&gt;So there you have it, we&amp;rsquo;ve got a gap.  We should be able to interact with &amp;lsquo;HDFS&amp;rsquo; the same way we interact with the file system on our local computer.&lt;/p&gt;
-
 &lt;p&gt;Five years ago, I discovered the fledgling &amp;lsquo;first&amp;rsquo; iteration of this program written by Taylor Goetz, Apache Storm PMC Chair.  The concept was great but needed some TLC.  So I forked it and have been building and improving it ever since.&lt;/p&gt;
-
 &lt;p&gt;Finally, at least from a terminal perspective, you have the same type of interaction model with HDFS that you have with your local file system.&lt;/p&gt;
-
 &lt;p&gt;And it&amp;rsquo;s not just for basic commands.  Many of the standard HDFS command-line tools are embedded right in the interface.  I&amp;rsquo;ve added scripting, Standard IN, some new commands, and sessions that are context-aware.&lt;/p&gt;
-
 &lt;p&gt;Check out the slides at the top of this post for a brief intro tour.&lt;/p&gt;
 </description>
     </item>

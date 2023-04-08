@@ -30,7 +30,7 @@
   
   <meta name="description" content="Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem. Apache Software Foundation has excellent docs detailing this feature referred to as the JDBCStorageHandler .
 Interesting points about this StorageHandler include:
- Securing Passwords - Protects passwords using a &lsquo;jceks&rsquo; file stored on &lsquo;hdfs&rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive  More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive&rsquo;s sys database.">
+Securing Passwords - Protects passwords using a &lsquo;jceks&rsquo; file stored on &lsquo;hdfs&rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive&rsquo;s sys database.">
 
   
   <link rel="alternate" hreflang="en-us" href="http://www.streever.com/post/2019/jdbc-federation/">
@@ -85,7 +85,7 @@ Interesting points about this StorageHandler include:
   
   
   
-  <link rel="stylesheet" href="/css/academic.min.29726bb59dc2ea0a73ccb249d1f01fa7.css">
+  <link rel="stylesheet" href="/css/academic.min.a94fe622e8e0f367fe40a299a24dfc4c.css">
 
   
 
@@ -123,7 +123,7 @@ Interesting points about this StorageHandler include:
   <meta property="og:title" content="The Power of Hive JDBC Federation | David W. Streever">
   <meta property="og:description" content="Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem. Apache Software Foundation has excellent docs detailing this feature referred to as the JDBCStorageHandler .
 Interesting points about this StorageHandler include:
- Securing Passwords - Protects passwords using a &lsquo;jceks&rsquo; file stored on &lsquo;hdfs&rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive  More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive&rsquo;s sys database."><meta property="og:image" content="http://www.streever.com/img/icon-192.png">
+Securing Passwords - Protects passwords using a &lsquo;jceks&rsquo; file stored on &lsquo;hdfs&rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive&rsquo;s sys database."><meta property="og:image" content="http://www.streever.com/img/icon-192.png">
   <meta property="twitter:image" content="http://www.streever.com/img/icon-192.png"><meta property="og:locale" content="en-us">
   
     
@@ -175,7 +175,7 @@ Interesting points about this StorageHandler include:
       "url": "http://www.streever.com/img/icon-512.png"
     }
   },
-  "description": "Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem. Apache Software Foundation has excellent docs detailing this feature referred to as the JDBCStorageHandler .\nInteresting points about this StorageHandler include:\n Securing Passwords - Protects passwords using a \u0026lsquo;jceks\u0026rsquo; file stored on \u0026lsquo;hdfs\u0026rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive  More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive\u0026rsquo;s sys database."
+  "description": "Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem. Apache Software Foundation has excellent docs detailing this feature referred to as the JDBCStorageHandler .\nInteresting points about this StorageHandler include:\nSecuring Passwords - Protects passwords using a \u0026lsquo;jceks\u0026rsquo; file stored on \u0026lsquo;hdfs\u0026rsquo; Partitioning - Could be used as an alternate to SQOOP for importing data to Hive More Hive Metadata! Hive Metadata, previously only available via WebHCat which has been removed, can be retrieved through hive\u0026rsquo;s sys database."
 }
 </script>
 
@@ -556,31 +556,17 @@ Interesting points about this StorageHandler include:
   <div class="article-container">
 
     <div class="article-style">
-      
-
-<p>Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem.   Apache Software Foundation has excellent docs detailing this feature referred to as the <a href="https://cwiki.apache.org/confluence/display/Hive/JdbcStorageHandler" target="_blank">JDBCStorageHandler</a> .</p>
-
+      <p>Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem.   Apache Software Foundation has excellent docs detailing this feature referred to as the <a href="https://cwiki.apache.org/confluence/display/Hive/JdbcStorageHandler">JDBCStorageHandler</a> .</p>
 <p>Interesting points about this StorageHandler include:</p>
-
 <ol>
 <li>Securing Passwords - <strong>Protects  passwords using a &lsquo;jceks&rsquo; file stored on &lsquo;hdfs&rsquo;</strong></li>
 <li>Partitioning - <strong>Could be used as an alternate to SQOOP for importing data to Hive</strong></li>
 </ol>
-
 <h2 id="more-hive-metadata">More Hive Metadata!</h2>
-
 <p>Hive Metadata, previously only available via <code>WebHCat</code> which has been removed, can be retrieved through hive&rsquo;s <code>sys</code> database.   And the <code>sys</code> db is actually using the JDBCStorageHandler with a special tblproperty <code>'hive.sql.database.type'='METASTORE'</code> used with the storage handler and <code>'hive.sql.query'='SELECT ... FROM ...'</code>.</p>
-
 <p>I&rsquo;ve used this technique to expose tables that support <code>COMPACTION</code>, <code>LOCKS</code>, and <code>TRANSACTIONS</code> in order to fill some gaps with the current admin functions.   See the examples below for details.</p>
-
-<div class="alert alert-note">
-  <div>
-    <p>A word of caution here.  All the &lsquo;extras&rsquo; you create against the metastore DB can/may break with the next release.  This isn&rsquo;t a supported method of accessing metadata.</p>
-
-<p>Don&rsquo;t add <em>new</em> tables to the current <code>sys.db</code>.  That&rsquo;s bad form and could cause issues for the platform during the next upgrade cycle, especially if there are naming conflicts.  Put it somewhere else!!</p>
-
-  </div>
-</div>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 
     </div>
 
@@ -725,7 +711,7 @@ Interesting points about this StorageHandler include:
   <div class="media author-card content-widget-hr">
     
       
-      <img class="portrait mr-3" src="/authors/dstreev/avatar_hudf7b8620e192de66d79d1f7e36df7824_20455_250x250_fill_q90_lanczos_center.jpg" alt="Avatar">
+      <img class="portrait mr-3" src="/authors/dstreev/avatar_hud613f8a8db9ce517d021860c7525521a_604030_250x250_fill_lanczos_center_3.png" alt="Avatar">
     
 
     <div class="media-body">
@@ -952,7 +938,7 @@ Interesting points about this StorageHandler include:
     
     
     
-    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+    <script src="/js/academic.min.01f68d44d80310e669a1731b68a35481.js"></script>
 
     
 
@@ -976,7 +962,7 @@ Interesting points about this StorageHandler include:
   
 
   <p class="powered-by">
-    &copy; 2019 &middot; 
+    © 2023 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

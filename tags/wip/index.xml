@@ -5,7 +5,7 @@
     <link>http://www.streever.com/tags/wip/</link>
       <atom:link href="http://www.streever.com/tags/wip/index.xml" rel="self" type="application/rss+xml" />
     <description>wip</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://www.streever.com/img/icon-192.png</url>
       <title>wip</title>
@@ -17,31 +17,17 @@
       <link>http://www.streever.com/post/2019/jdbc-federation/</link>
       <pubDate>Tue, 15 Oct 2019 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2019/jdbc-federation/</guid>
-      <description>
-
-&lt;p&gt;Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem.   Apache Software Foundation has excellent docs detailing this feature referred to as the &lt;a href=&#34;https://cwiki.apache.org/confluence/display/Hive/JdbcStorageHandler&#34; target=&#34;_blank&#34;&gt;JDBCStorageHandler&lt;/a&gt; .&lt;/p&gt;
-
+      <description>&lt;p&gt;Hive jdbc-federation is a powerful mechanism to include external sources in your hive ecosystem.   Apache Software Foundation has excellent docs detailing this feature referred to as the &lt;a href=&#34;https://cwiki.apache.org/confluence/display/Hive/JdbcStorageHandler&#34;&gt;JDBCStorageHandler&lt;/a&gt; .&lt;/p&gt;
 &lt;p&gt;Interesting points about this StorageHandler include:&lt;/p&gt;
-
 &lt;ol&gt;
 &lt;li&gt;Securing Passwords - &lt;strong&gt;Protects  passwords using a &amp;lsquo;jceks&amp;rsquo; file stored on &amp;lsquo;hdfs&amp;rsquo;&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;Partitioning - &lt;strong&gt;Could be used as an alternate to SQOOP for importing data to Hive&lt;/strong&gt;&lt;/li&gt;
 &lt;/ol&gt;
-
 &lt;h2 id=&#34;more-hive-metadata&#34;&gt;More Hive Metadata!&lt;/h2&gt;
-
 &lt;p&gt;Hive Metadata, previously only available via &lt;code&gt;WebHCat&lt;/code&gt; which has been removed, can be retrieved through hive&amp;rsquo;s &lt;code&gt;sys&lt;/code&gt; database.   And the &lt;code&gt;sys&lt;/code&gt; db is actually using the JDBCStorageHandler with a special tblproperty &lt;code&gt;&#39;hive.sql.database.type&#39;=&#39;METASTORE&#39;&lt;/code&gt; used with the storage handler and &lt;code&gt;&#39;hive.sql.query&#39;=&#39;SELECT ... FROM ...&#39;&lt;/code&gt;.&lt;/p&gt;
-
 &lt;p&gt;I&amp;rsquo;ve used this technique to expose tables that support &lt;code&gt;COMPACTION&lt;/code&gt;, &lt;code&gt;LOCKS&lt;/code&gt;, and &lt;code&gt;TRANSACTIONS&lt;/code&gt; in order to fill some gaps with the current admin functions.   See the examples below for details.&lt;/p&gt;
-
-&lt;div class=&#34;alert alert-note&#34;&gt;
-  &lt;div&gt;
-    &lt;p&gt;A word of caution here.  All the &amp;lsquo;extras&amp;rsquo; you create against the metastore DB can/may break with the next release.  This isn&amp;rsquo;t a supported method of accessing metadata.&lt;/p&gt;
-
-&lt;p&gt;Don&amp;rsquo;t add &lt;em&gt;new&lt;/em&gt; tables to the current &lt;code&gt;sys.db&lt;/code&gt;.  That&amp;rsquo;s bad form and could cause issues for the platform during the next upgrade cycle, especially if there are naming conflicts.  Put it somewhere else!!&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;!-- raw HTML omitted --&gt;
 </description>
     </item>
     

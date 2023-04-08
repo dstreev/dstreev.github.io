@@ -83,7 +83,7 @@
   
   
   
-  <link rel="stylesheet" href="/css/academic.min.29726bb59dc2ea0a73ccb249d1f01fa7.css">
+  <link rel="stylesheet" href="/css/academic.min.a94fe622e8e0f367fe40a299a24dfc4c.css">
 
   
 
@@ -591,207 +591,119 @@
   <div class="article-container">
 
     <div class="article-style">
-      
-
-<blockquote>
+      <blockquote>
 <p>A few assumptions:  HDP 3.1.4 and Ambari have been used to work through these scenarios.  If you&rsquo;re running different versions, additional tweaks may be required.</p>
 </blockquote>
-
 <p>Hive LLAP is a great way to speed up analytical queries.  The caching layer and immediate task allocation model provides performance that is competitive and often faster than other traditional EDW solutions.</p>
-
 <p>LLAP&rsquo;s caching layer uses an LFRU (Less Frequently Recently Used) eviction model to manage it&rsquo;s caching layer.  The caching layer is shared across user sessions in LLAP, which means data cached by one user/session is available to another user/session.  The caching model is a significant advantage over session-scoped caches you&rsquo;ll get with other big data query engines.</p>
-
 <p>From a practical standpoint, LLAP is best suited for BI, discovery, and dashboard-type queries.  These queries share common datasets and need to respond quickly because there is usually a user waiting on the other end.</p>
-
 <p>While perfectly capable, using LLAP for ETL/ELT isn&rsquo;t the best use of this elevated resource.  Moving massive amounts of data through LLAP doing ELT/ELT work has a few effects:</p>
-
 <ul>
 <li>Fills cache with datasets that aren&rsquo;t benefiting anyone downstream.</li>
 <li>Forces eviction of cached elements that &lsquo;are&rsquo; benefiting other users.</li>
 <li>Consumes resources used by a community with stricter SLA&rsquo;s, when the ETL/ELT community has different SLA standards.</li>
 </ul>
-
 <h2 id="problem">Problem</h2>
-
 <p>So what can you do when your attached to HS2i and want to run an ETL/ELT job, which is a long-running job that doesn&rsquo;t require the resources of LLAP, or you want to be a courteous user and leave some of those LLAP resources for someone else?  It would be perfectly fine to run your query in the traditional HS2 environment, but you can&rsquo;t/don&rsquo;t want to connect to another environment just to run the query.</p>
-
 <h2 id="solution">Solution</h2>
-
-<p>Well, HS2i can launch jobs into containers instead of the default &lsquo;llap&rsquo; environment.  Therefore, saving LLAP resources and &lsquo;right pathing&rsquo; your workload.</p>
-
-<p>HS2i can be configurated to allow sessions to override the &lsquo;execution mode&rsquo; of a query.  <em>When a session is created, and a query is run, the execution mode can not be changed.  Another session must be created.</em></p>
-
-<pre><code>hive.execution.mode
-</code></pre>
-
-<p>This setting is found in several places (in Ambari) and is used by a &lsquo;session&rsquo; to determine where a query will be executed.  Options are:</p>
-
+<p>Well, HS2i can launch jobs into containers instead of the default &rsquo;llap&rsquo; environment.  Therefore, saving LLAP resources and &lsquo;right pathing&rsquo; your workload.</p>
+<p>HS2i can be configurated to allow sessions to override the &rsquo;execution mode&rsquo; of a query.  <em>When a session is created, and a query is run, the execution mode can not be changed.  Another session must be created.</em></p>
+<pre tabindex="0"><code>hive.execution.mode
+</code></pre><p>This setting is found in several places (in Ambari) and is used by a &lsquo;session&rsquo; to determine where a query will be executed.  Options are:</p>
 <ul>
 <li>container</li>
 <li>llap</li>
 </ul>
-
 <p>As with all settings we&rsquo;ll mention in this article, make sure you are reviewing/setting the values that are appropriate for the environment your in.  For example: In Ambari and LLAP, see the &lsquo;hive-interactive-*&rsquo; sections.</p>
-
-<p>The <code>hive.execution.mode</code> setting is set and defaults to the appropriate mode for the environment.  Meaning, &lsquo;container&rsquo; is set for the &lsquo;HS2&rsquo; environment, and &lsquo;llap&rsquo; is set for the &lsquo;HS2i&rsquo; environment.  We do NOT want to make this change at the environment level.  <em>We will only change this at the session level.</em></p>
-
+<p>The <code>hive.execution.mode</code> setting is set and defaults to the appropriate mode for the environment.  Meaning, &lsquo;container&rsquo; is set for the &lsquo;HS2&rsquo; environment, and &rsquo;llap&rsquo; is set for the &lsquo;HS2i&rsquo; environment.  We do NOT want to make this change at the environment level.  <em>We will only change this at the session level.</em></p>
 <h2 id="some-caveats">Some Caveats</h2>
-
 <p><strong><em>With</em></strong> Workload Management Enabled</p>
-
 <blockquote>
 <p>You can <em>NOT</em> request an alternate YARN queue to run.  All &lsquo;container&rsquo; execution mode queries will run in the &lsquo;Workload&rsquo; queue defined by <code>hive.server2.tez.interactive.queue</code>.</p>
 </blockquote>
-
 <p><strong><em>Without</em></strong> Workload Management Enabled</p>
-
 <blockquote>
 <p>You <em>CAN</em> request an alternate YARN queue to run &lsquo;container&rsquo; mode requests in.</p>
 </blockquote>
-
 <h2 id="controls">Controls</h2>
-
 <h3 id="session-level-settings">Session Level Settings</h3>
-
 <p>After adjusting a few environment settings to allow an &lsquo;alternate&rsquo; execution mode, the execution path is controlled by the session.  Users wanting to use the &lsquo;alternate&rsquo; path will declare the alternate path before launching the job.  If nothing is specified, jobs will run in LLAP.  As I mentioned before, once a query has been run in a session, the execution mode for that session can <strong>NOT</strong> be changed.  Doing so will result in an error.  A new session is required, if they wish the change the <code>execution mode</code>.</p>
-
 <h3 id="environment-level-settings-defaults">Environment Level Settings (Defaults)</h3>
-
 <p>Note the sections for each of these settings.  Ambari has the same settings in many areas to control different deployments of Hive Server2.</p>
-
 <h5 id="llap-daemon-and-concurrency-settings-default">LLAP Daemon and Concurrency Settings (Default)</h5>
-
-<p><img src="./queue_n_concurrency.png" alt="LLAP Daemon and Concurrency Settings" /></p>
-
+<p><img src="./queue_n_concurrency.png" alt="LLAP Daemon and Concurrency Settings"></p>
 <p>What&rsquo;s interesting is that the default configuration runs the LLAP daemons AND the concurrency AM in the same queue.  But this isn&rsquo;t necessary, as we&rsquo;ll see later.</p>
-
 <h6 id="llap-execution-restrictions-default">LLAP Execution Restrictions (Default)</h6>
-
-<p><img src="./hs2i_restricted.png" alt="LLAP Execution Restrictions" /></p>
-
+<p><img src="./hs2i_restricted.png" alt="LLAP Execution Restrictions"></p>
 <p>We&rsquo;ll change this restriction to allow users to set the <code>hive.exection.mode</code> later in the options section.</p>
-
 <h6 id="llap-interactive-queue">LLAP Interactive Queue</h6>
-
-<p><img src="./llap_interactive_queue.png" alt="LLAP Interactive Queue" /></p>
-
-<p>The &lsquo;interactive&rsquo; setting needs to be set to enable <strong>Workload Management</strong>.  The Workload Management AM will run in the defined queue.  These AM&rsquo;s represent each concurrent query (capability) for LLAP.  That concurrency is defined by the aggregate of the <code>parallelism</code> configured for Workload Management. See this <a href="https://github.com/dstreev/big-data-apps/blob/master/apps/llap_workload/r1_plan_create.sql" target="_blank">example script</a> as a guide for starting Workload Management. It is not controlled via the concurrency settings we&rsquo;ve seen before (<code>hive.server2.tez.sessions.per.default.queue</code>).</p>
-
+<p><img src="./llap_interactive_queue.png" alt="LLAP Interactive Queue"></p>
+<p>The &lsquo;interactive&rsquo; setting needs to be set to enable <strong>Workload Management</strong>.  The Workload Management AM will run in the defined queue.  These AM&rsquo;s represent each concurrent query (capability) for LLAP.  That concurrency is defined by the aggregate of the <code>parallelism</code> configured for Workload Management. See this <a href="https://github.com/dstreev/big-data-apps/blob/master/apps/llap_workload/r1_plan_create.sql">example script</a> as a guide for starting Workload Management. It is not controlled via the concurrency settings we&rsquo;ve seen before (<code>hive.server2.tez.sessions.per.default.queue</code>).</p>
 <h3 id="environment-level-setting-changes">Environment Level Setting Changes</h3>
-
 <ul>
 <li>Remove the <code>hive.execution.mode</code> value from &ldquo;Restricted session configs&rdquo; (<code>hive.server2.tez.sessions.restricted.configs</code>)</li>
 </ul>
-
-<p><img src="./exec_mode_restriction_removed.png" alt="Removed" /></p>
-
+<p><img src="./exec_mode_restriction_removed.png" alt="Removed"></p>
 <ul>
-<li><p>Allow Custom Queues by changing <code>ignore</code> to <code>true</code></p>
-
-<pre><code>hive.server2.tez.sessions.custom.queue.allowed=true
-</code></pre></li>
+<li>Allow Custom Queues by changing <code>ignore</code> to <code>true</code></li>
 </ul>
-
-<p><img src="./allow_custom_queue.png" alt="Custom Allowed" /></p>
-
+<pre tabindex="0"><code>hive.server2.tez.sessions.custom.queue.allowed=true
+</code></pre><p><img src="./allow_custom_queue.png" alt="Custom Allowed"></p>
 <h5 id="optional-environment-setting-tweaks-queues">Optional Environment Setting Tweaks (Queues)</h5>
-
 <p>These settings have more to do with where you want parts of the system to run (which queues).</p>
-
 <blockquote>
 <p><code>hive.server2.tez.default.queues</code> controls where the Concurrency AM&rsquo;s will run when Workload Management is <em>NOT</em> enabled.</p>
-
+</blockquote>
+<blockquote>
 <p><code>hive.llap.daemon.queue.name</code> controls where the LLAP environment will run.</p>
-
+</blockquote>
+<blockquote>
 <p><code>hive.server2.tez.interactive.queue</code> controls where the Workload Management AM&rsquo;s will run, when Workload Management is activated.</p>
 </blockquote>
-
 <h2 id="options">Options</h2>
-
 <p>The behavior changes a bit, depending on whether you&rsquo;re using Workload Management or not.  My suggestion is to <em>NOT</em> enable Workload Management at first to see what lands in which queue.  Once you activate Workload Management, you will <em>NOT</em> be able to launch jobs in <code>container</code> mode outside the queue setup in <code>hive.server2.tez.interactive.queue</code> .</p>
-
-<h5 id="option-1-without-workload-management">Option #1 - Without Workload Management</h5>
-
+<h5 id="option-1---without-workload-management">Option #1 - Without Workload Management</h5>
 <p>Scenario: <em>Run LLAP and Concurrency AM&rsquo;s in the same queue</em>.  Allow users to specify an alternate queue to run <code>container</code> mode jobs.</p>
-
 <p>When jobs are launched in <code>container</code> execution mode, YARN will allocate task resources alongside the AM controlling the &lsquo;DAG.&rsquo;  So where ever you launch the AM for the job, that queue will need resources to run the job.</p>
-
 <p><strong>Environment</strong></p>
-
-<pre><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+<pre tabindex="0"><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
 hive.server2.tez.sessions.custom.queue.allowed=true
-</code></pre>
-
-<p>Unset (To disable Workload Management)</p>
-
-<pre><code>hive.server2.tez.interactive.queue
-</code></pre>
-
-<p><strong>Session Level</strong></p>
-
+</code></pre><p>Unset (To disable Workload Management)</p>
+<pre tabindex="0"><code>hive.server2.tez.interactive.queue
+</code></pre><p><strong>Session Level</strong></p>
 <p>Set via Hive/Beeline Init, Script, or JDBC connection string.</p>
-
-<pre><code>set hive.execution.mode=container
+<pre tabindex="0"><code>set hive.execution.mode=container
 set tez.queue.name=&lt;target_queue&gt;
-</code></pre>
-
-<p>Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that application in YARN will grow additional containers to run the job.</p>
-
-<h5 id="option-2-without-workload-management">Option #2 - Without Workload Management</h5>
-
+</code></pre><p>Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that application in YARN will grow additional containers to run the job.</p>
+<h5 id="option-2---without-workload-management">Option #2 - Without Workload Management</h5>
 <p>Scenario: <em>Run LLAP and Concurrency AM&rsquo;s in different queues</em>.  Allow users to specify an alternate queue to run <code>container</code> mode jobs.</p>
-
 <p>When jobs are launched in <code>container</code> execution mode, YARN will allocate task resources alongside the AM controlling the &lsquo;DAG.&rsquo;  So where ever you launch the AM for the job, that queue will need resources to run the job.</p>
-
 <p><strong>Environment</strong></p>
-
-<pre><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+<pre tabindex="0"><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
 hive.server2.tez.sessions.custom.queue.allowed=true
 hive.server2.tez.default.queues=llap_tez_am
 hive.llap.daemon.queue.name=llap
-</code></pre>
-
-<p>Unset (To disable Workload Management)</p>
-
-<pre><code>hive.server2.tez.interactive.queue
-</code></pre>
-
-<p><strong>Session Level</strong></p>
-
+</code></pre><p>Unset (To disable Workload Management)</p>
+<pre tabindex="0"><code>hive.server2.tez.interactive.queue
+</code></pre><p><strong>Session Level</strong></p>
 <p>Set via Hive/Beeline Init, Script, or JDBC connection string.</p>
-
-<pre><code>set hive.execution.mode=container
+<pre tabindex="0"><code>set hive.execution.mode=container
 set tez.queue.name=&lt;target_queue&gt;
-</code></pre>
-
-<p>Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that AM in YARN will grow additional containers to run the job.</p>
-
-<h5 id="option-3-with-workload-management">Option #3 - With Workload Management</h5>
-
+</code></pre><p>Launch the query and check the Resource Manager.  You should see the AM in the target queue, and that AM in YARN will grow additional containers to run the job.</p>
+<h5 id="option-3---with-workload-management">Option #3 - With Workload Management</h5>
 <p>Scenario: LLAP and Workload Management AM in different queues.  Users will <em>NOT</em> be able to specify an alternate queue.  The Workload Management AM will grow to fulfill the DAG request.  The YARN queue <code>hive.server2.tez.interactive.queue</code> will need to be large enough to contain the other Workload Management AM&rsquo;s in addition to the job requirements.  If the queue is small and the other Workload AM&rsquo;s have not been allocated or reclaimed during a quiet period, new jobs may not launch right away.</p>
-
 <p><strong>Environment</strong></p>
-
-<pre><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
+<pre tabindex="0"><code>hive.server2.tez.sessions.restricted.configs=hive.execution.engine
 hive.server2.tez.sessions.custom.queue.allowed=true
--- Utilitization of 'llap_tez_am' should be nil with Workload Management
+-- Utilitization of &#39;llap_tez_am&#39; should be nil with Workload Management
 hive.server2.tez.default.queues=llap_tez_am
 hive.llap.daemon.queue.name=llap
-</code></pre>
-
-<p>Set (To enable Workload Management).  There&rsquo;s more to do for Workload Management, which isn&rsquo;t covered here.</p>
-
-<pre><code>hive.server2.tez.interactive.queue=llap_wm
-</code></pre>
-
-<p><strong>Session Level</strong></p>
-
+</code></pre><p>Set (To enable Workload Management).  There&rsquo;s more to do for Workload Management, which isn&rsquo;t covered here.</p>
+<pre tabindex="0"><code>hive.server2.tez.interactive.queue=llap_wm
+</code></pre><p><strong>Session Level</strong></p>
 <p>Set via Hive/Beeline Init, Script, or JDBC connection string.</p>
-
-<pre><code>set hive.execution.mode=container
-</code></pre>
-
-<p>Launch the query and check the Resource Manager.  You should see the AM in the target queue (llap_wm), and that AM in YARN will grow additional containers to run the job.</p>
+<pre tabindex="0"><code>set hive.execution.mode=container
+</code></pre><p>Launch the query and check the Resource Manager.  You should see the AM in the target queue (llap_wm), and that AM in YARN will grow additional containers to run the job.</p>
 
     </div>
 
@@ -934,7 +846,7 @@ hive.llap.daemon.queue.name=llap
   <div class="media author-card content-widget-hr">
     
       
-      <img class="portrait mr-3" src="/authors/dstreev/avatar_hudf7b8620e192de66d79d1f7e36df7824_20455_250x250_fill_q90_lanczos_center.jpg" alt="Avatar">
+      <img class="portrait mr-3" src="/authors/dstreev/avatar_hud613f8a8db9ce517d021860c7525521a_604030_250x250_fill_lanczos_center_3.png" alt="Avatar">
     
 
     <div class="media-body">
@@ -1161,7 +1073,7 @@ hive.llap.daemon.queue.name=llap
     
     
     
-    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+    <script src="/js/academic.min.01f68d44d80310e669a1731b68a35481.js"></script>
 
     
 
@@ -1185,7 +1097,7 @@ hive.llap.daemon.queue.name=llap
   
 
   <p class="powered-by">
-    &copy; 2019 &middot; 
+    © 2023 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

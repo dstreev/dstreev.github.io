@@ -83,7 +83,7 @@
   
   
   
-  <link rel="stylesheet" href="/css/academic.min.29726bb59dc2ea0a73ccb249d1f01fa7.css">
+  <link rel="stylesheet" href="/css/academic.min.a94fe622e8e0f367fe40a299a24dfc4c.css">
 
   
 
@@ -552,39 +552,27 @@
   <div class="article-container">
 
     <div class="article-style">
-      
-
-<p>I&rsquo;m often asked how to &ldquo;update&rdquo; records in Hive.  We&rsquo;ll you can&rsquo;t, at least not yet and not in the sense you maybe accustom in an RDBMS.</p>
-
+      <p>I&rsquo;m often asked how to &ldquo;update&rdquo; records in Hive.  We&rsquo;ll you can&rsquo;t, at least not yet and not in the sense you maybe accustom in an RDBMS.</p>
 <p>Store your record updates in a transactional table that includes some identifier that represents the most resent update.  For example:</p>
-
 <h3 id="table-schema">Table Schema</h3>
-
-<pre><code>create external table fitness (
+<pre tabindex="0"><code>create external table fitness (
     firstname string,
     updated date,
     weight double
 )
-ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+ROW FORMAT SERDE &#39;org.apache.hadoop.hive.serde2.OpenCSVSerde&#39;
 STORED AS TEXTFILE
-LOCATION '...';
-</code></pre>
-
-<h3 id="data">Data</h3>
-
-<pre><code>fitness.firstname  fitness.updated  fitness.weight 
+LOCATION &#39;...&#39;;
+</code></pre><h3 id="data">Data</h3>
+<pre tabindex="0"><code>fitness.firstname  fitness.updated  fitness.weight 
 -----------------  ---------------  -------------- 
 david              2015-01-12       210            
 david              2015-04-03       205            
 david              2015-06-02       200            
 david              2015-08-23       195
-</code></pre>
-
-<p>Hive now support &ldquo;Windowing&rdquo; functions which make it really simply to extract the &ldquo;most recent&rdquo; record from this table.  Use those results to build your new &ldquo;entity&rdquo; table.</p>
-
+</code></pre><p>Hive now support &ldquo;Windowing&rdquo; functions which make it really simply to extract the &ldquo;most recent&rdquo; record from this table.  Use those results to build your new &ldquo;entity&rdquo; table.</p>
 <h3 id="rank-to-find-most-current">Rank to Find Most Current</h3>
-
-<pre><code>SELECT
+<pre tabindex="0"><code>SELECT
   sub.firstname firstname,
   sub.updated updated,
   sub.weight weight
@@ -600,15 +588,11 @@ FROM
   ) sub
 WHERE
   sub.rank=1;
-</code></pre>
-
-<h3 id="results">Results</h3>
-
-<pre><code>firstname  updated     weight 
+</code></pre><h3 id="results">Results</h3>
+<pre tabindex="0"><code>firstname  updated     weight 
 ---------  ----------  ------ 
 david      2015-08-23  195     
 </code></pre>
-
     </div>
 
     
@@ -748,7 +732,7 @@ david      2015-08-23  195
   <div class="media author-card content-widget-hr">
     
       
-      <img class="portrait mr-3" src="/authors/dstreev/avatar_hudf7b8620e192de66d79d1f7e36df7824_20455_250x250_fill_q90_lanczos_center.jpg" alt="Avatar">
+      <img class="portrait mr-3" src="/authors/dstreev/avatar_hud613f8a8db9ce517d021860c7525521a_604030_250x250_fill_lanczos_center_3.png" alt="Avatar">
     
 
     <div class="media-body">
@@ -958,7 +942,7 @@ david      2015-08-23  195
     
     
     
-    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+    <script src="/js/academic.min.01f68d44d80310e669a1731b68a35481.js"></script>
 
     
 
@@ -982,7 +966,7 @@ david      2015-08-23  195
   
 
   <p class="powered-by">
-    &copy; 2019 &middot; 
+    © 2023 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

@@ -83,7 +83,7 @@
   
   
   
-  <link rel="stylesheet" href="/css/academic.min.29726bb59dc2ea0a73ccb249d1f01fa7.css">
+  <link rel="stylesheet" href="/css/academic.min.a94fe622e8e0f367fe40a299a24dfc4c.css">
 
   
 
@@ -591,25 +591,21 @@
   <div class="article-container">
 
     <div class="article-style">
-      
-
-<p>Like &lsquo;ls&rsquo;, you can fetch many details about a file.  But with this, you can also add information about the file that includes:
-- Block Size
-- Access Time
-- Ratio of File Size to Block
-- Datanode information for the files blocks (Host and Block Id)</p>
-
+      <p>Like &rsquo;ls&rsquo;, you can fetch many details about a file.  But with this, you can also add information about the file that includes:</p>
+<ul>
+<li>Block Size</li>
+<li>Access Time</li>
+<li>Ratio of File Size to Block</li>
+<li>Datanode information for the files blocks (Host and Block Id)</li>
+</ul>
 <p><code>lsp</code> can be used to search hdfs, similar to the <code>find</code> linux program.  Although the syntax is a bit different.  Use options <code>-F</code>,<code>-Fe</code>, and <code>-i</code>.</p>
-
 <p><code>lsp</code> can be used to output a formatted row for files and directories using the <code>-f</code> option.  When the <code>datanode_info</code> option is specified, the output will contain details for each replicated block of a file.</p>
-
 <h2 id="options">Options</h2>
-
-<pre><code>usage: lsp [OPTION ...] [ARGS ...]
+<pre tabindex="0"><code>usage: lsp [OPTION ...] [ARGS ...]
 Options:
  -c,--comment &lt;comment&gt;                  Add comment to output
  -d,--maxDepth &lt;maxDepth&gt;                Depth of Recursion (default 5),
-                                         use '-1' for unlimited
+                                         use &#39;-1&#39; for unlimited
  -do,--dir-only                          Show Directories Only
  -f,--format &lt;output-format&gt;             Comma separated list of one or
                                          more:
@@ -618,9 +614,9 @@ Options:
                                          access,path,file,datanode_info
                                          (default all of the above)
  -F,--filter &lt;filter&gt;                    Regex Filter of Content. Can be
-                                         'Quoted'
- -Fe,--filter-element &lt;filter element&gt;   Filter on 'element'.  One of
-                                         '--format'
+                                         &#39;Quoted&#39;
+ -Fe,--filter-element &lt;filter element&gt;   Filter on &#39;element&#39;.  One of
+                                         &#39;--format&#39;
  -i,--invisible                          Process Invisible
                                          Files/Directories
  -n,--newline &lt;newline&gt;                  New Line
@@ -632,82 +628,43 @@ Options:
  -sp,--show-parent                       For Test, show parent
  -t,--test                               Test for existence
  -v,--invert                             Invert Regex Filter of Content
-</code></pre>
-
-<h2 id="actions">Actions</h2>
-
+</code></pre><h2 id="actions">Actions</h2>
 <h3 id="recursion">Recursion</h3>
-
-<p>Use the <code>-R</code> to recurse through directories.  Use the <code>-d</code> option to specify the depth of the recursion.  The default is 5.  Use -1 for no-limit, but be careful because this could iterate through the whole filesystem.  And that&rsquo;s not productive on &lsquo;large&rsquo; filesystem.</p>
-
-<pre><code>lsp -R
-</code></pre>
-
-<p>Control the depth of the recursion.</p>
-
-<pre><code>lsp -R -d 2
-</code></pre>
-
-<h3 id="filtering-and-output">Filtering and Output</h3>
-
+<p>Use the <code>-R</code> to recurse through directories.  Use the <code>-d</code> option to specify the depth of the recursion.  The default is 5.  Use -1 for no-limit, but be careful because this could iterate through the whole filesystem.  And that&rsquo;s not productive on &rsquo;large&rsquo; filesystem.</p>
+<pre tabindex="0"><code>lsp -R
+</code></pre><p>Control the depth of the recursion.</p>
+<pre tabindex="0"><code>lsp -R -d 2
+</code></pre><h3 id="filtering-and-output">Filtering and Output</h3>
 <p>Find files matching a certain pattern, recursively from path context. The <code>-F</code> option takes a &lsquo;regex&rsquo; expression.  By default, the &lsquo;path&rsquo; <code>-f</code> option is searched.  If you&rsquo;d like to search another element use <code>-Fe</code> and specify one of the valid <code>-f</code> options.</p>
-
-<pre><code>lsp -R -F .*trans.*
-</code></pre>
-
-<p>The output will include the standard output <code>-f</code>, which maybe quite verbose.</p>
-
+<pre tabindex="0"><code>lsp -R -F .*trans.*
+</code></pre><p>The output will include the standard output <code>-f</code>, which maybe quite verbose.</p>
 <p>Limit the result output like:</p>
-
-<pre><code>lsp -R -F .*trans.* -f path
-</code></pre>
-
-<p>Try using the <code>-do</code> option to list ONLY directories.</p>
-
-<pre><code>lsp -R -F .*trans.* -f path -do
-</code></pre>
-
-<h3 id="using-comments">Using Comments</h3>
-
+<pre tabindex="0"><code>lsp -R -F .*trans.* -f path
+</code></pre><p>Try using the <code>-do</code> option to list ONLY directories.</p>
+<pre tabindex="0"><code>lsp -R -F .*trans.* -f path -do
+</code></pre><h3 id="using-comments">Using Comments</h3>
 <p>The <code>-c</code> option will prepend any output with the comment.  It&rsquo;s a great way to drive scripts from the results.</p>
-
-<pre><code>lsp -R -c 'count -h' -F .*trans.* -f path -do
-</code></pre>
-
-<h3 id="how-about-an-inverted-search">How about an Inverted Search</h3>
-
+<pre tabindex="0"><code>lsp -R -c &#39;count -h&#39; -F .*trans.* -f path -do
+</code></pre><h3 id="how-about-an-inverted-search">How about an Inverted Search</h3>
 <p>There are times you want to find files that do <em>NOT</em> match a pattern. Use the <code>-v</code> option to reverse match on the filter.</p>
-
-<pre><code>lsp -F *.trans.* -v
-</code></pre>
-
-<h3 id="default-output">Default Output</h3>
-
+<pre tabindex="0"><code>lsp -F *.trans.* -v
+</code></pre><h3 id="default-output">Default Output</h3>
 <p>When not argument is specified, it will use the current directory.</p>
-
 <p>Examples:</p>
-
 <pre><code># Using the default format, output a listing to the files in `/user/dstreev/perf` to `/tmp/test.out`
 lsp -o /tmp/test.out /user/dstreev/perf
 </code></pre>
-
 <p>Output with the default format of:</p>
-
 <pre><code>permissions_long,replication,user,group,size,block_size,ratio,mod,access,path,datanode_info
 </code></pre>
-
-<pre><code>   rw-------,3,dstreev,hdfs,429496700,134217728,3.200,2015-10-24 12:26:39.689,2015-10-24 12:23:27.406,/user/dstreev/perf/teragen_27/part-m-00004,10.0.0.166,d2.hdp.local,blk_1073747900
+<pre tabindex="0"><code>   rw-------,3,dstreev,hdfs,429496700,134217728,3.200,2015-10-24 12:26:39.689,2015-10-24 12:23:27.406,/user/dstreev/perf/teragen_27/part-m-00004,10.0.0.166,d2.hdp.local,blk_1073747900
    rw-------,3,dstreev,hdfs,429496700,134217728,3.200,2015-10-24 12:26:39.689,2015-10-24 12:23:27.406,/user/dstreev/perf/teragen_27/part-m-00004,10.0.0.167,d3.hdp.local,blk_1073747900
    rw-------,3,dstreev,hdfs,33,134217728,2.459E-7,2015-10-24 12:27:09.134,2015-10-24 12:27:06.560,/user/dstreev/perf/terasort_27/_partition.lst,10.0.0.166,d2.hdp.local,blk_1073747909
    rw-------,3,dstreev,hdfs,33,134217728,2.459E-7,2015-10-24 12:27:09.134,2015-10-24 12:27:06.560,/user/dstreev/perf/terasort_27/_partition.lst,10.0.0.167,d3.hdp.local,blk_1073747909
    rw-------,1,dstreev,hdfs,543201700,134217728,4.047,2015-10-24 12:29:28.706,2015-10-24 12:29:20.882,/user/dstreev/perf/terasort_27/part-r-00002,10.0.0.167,d3.hdp.local,blk_1073747920
    rw-------,1,dstreev,hdfs,543201700,134217728,4.047,2015-10-24 12:29:28.706,2015-10-24 12:29:20.882,/user/dstreev/perf/terasort_27/part-r-00002,10.0.0.167,d3.hdp.local,blk_1073747921
-</code></pre>
-
-<p>With the file in HDFS, you can build a <a href="lsp.ddl" target="_blank">hive table</a> on top of it to do some analysis.  One of the reasons I created this was to be able to review a directory used by some process and get a baring on the file construction and distribution across the cluster.</p>
-
+</code></pre><p>With the file in HDFS, you can build a <a href="lsp.ddl">hive table</a> on top of it to do some analysis.  One of the reasons I created this was to be able to review a directory used by some process and get a baring on the file construction and distribution across the cluster.</p>
 <h4 id="use-cases">Use Cases</h4>
-
 <ul>
 <li>The ratio can be used to identify files that are below the block size (small files).</li>
 <li>With the Datanode information, you can determine if a dataset is hot-spotted on a cluster.  All you need is a full list of hosts to join the results with.</li>
@@ -850,7 +807,7 @@ lsp -o /tmp/test.out /user/dstreev/perf
   <div class="media author-card content-widget-hr">
     
       
-      <img class="portrait mr-3" src="/authors/dstreev/avatar_hudf7b8620e192de66d79d1f7e36df7824_20455_250x250_fill_q90_lanczos_center.jpg" alt="Avatar">
+      <img class="portrait mr-3" src="/authors/dstreev/avatar_hud613f8a8db9ce517d021860c7525521a_604030_250x250_fill_lanczos_center_3.png" alt="Avatar">
     
 
     <div class="media-body">
@@ -1077,7 +1034,7 @@ lsp -o /tmp/test.out /user/dstreev/perf
     
     
     
-    <script src="/js/academic.min.d6bd04fdad2ad213aa8111c5a3b72fc5.js"></script>
+    <script src="/js/academic.min.01f68d44d80310e669a1731b68a35481.js"></script>
 
     
 
@@ -1101,7 +1058,7 @@ lsp -o /tmp/test.out /user/dstreev/perf
   
 
   <p class="powered-by">
-    &copy; 2019 &middot; 
+    © 2023 &middot; 
 
     Powered by the
     <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for

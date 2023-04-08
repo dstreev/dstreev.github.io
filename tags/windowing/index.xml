@@ -5,7 +5,7 @@
     <link>http://www.streever.com/tags/windowing/</link>
       <atom:link href="http://www.streever.com/tags/windowing/index.xml" rel="self" type="application/rss+xml" />
     <description>windowing</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2019</copyright><lastBuildDate>Thu, 27 Aug 2015 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Thu, 27 Aug 2015 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://www.streever.com/img/icon-192.png</url>
       <title>windowing</title>
@@ -17,39 +17,27 @@
       <link>http://www.streever.com/post/2015/-mng-immutable-data-windowing-style/</link>
       <pubDate>Thu, 27 Aug 2015 00:00:00 +0000</pubDate>
       <guid>http://www.streever.com/post/2015/-mng-immutable-data-windowing-style/</guid>
-      <description>
-
-&lt;p&gt;I&amp;rsquo;m often asked how to &amp;ldquo;update&amp;rdquo; records in Hive.  We&amp;rsquo;ll you can&amp;rsquo;t, at least not yet and not in the sense you maybe accustom in an RDBMS.&lt;/p&gt;
-
+      <description>&lt;p&gt;I&amp;rsquo;m often asked how to &amp;ldquo;update&amp;rdquo; records in Hive.  We&amp;rsquo;ll you can&amp;rsquo;t, at least not yet and not in the sense you maybe accustom in an RDBMS.&lt;/p&gt;
 &lt;p&gt;Store your record updates in a transactional table that includes some identifier that represents the most resent update.  For example:&lt;/p&gt;
-
 &lt;h3 id=&#34;table-schema&#34;&gt;Table Schema&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;create external table fitness (
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;create external table fitness (
     firstname string,
     updated date,
     weight double
 )
-ROW FORMAT SERDE &#39;org.apache.hadoop.hive.serde2.OpenCSVSerde&#39;
+ROW FORMAT SERDE &amp;#39;org.apache.hadoop.hive.serde2.OpenCSVSerde&amp;#39;
 STORED AS TEXTFILE
-LOCATION &#39;...&#39;;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;data&#34;&gt;Data&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;fitness.firstname  fitness.updated  fitness.weight 
+LOCATION &amp;#39;...&amp;#39;;
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;data&#34;&gt;Data&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;fitness.firstname  fitness.updated  fitness.weight 
 -----------------  ---------------  -------------- 
 david              2015-01-12       210            
 david              2015-04-03       205            
 david              2015-06-02       200            
 david              2015-08-23       195
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Hive now support &amp;ldquo;Windowing&amp;rdquo; functions which make it really simply to extract the &amp;ldquo;most recent&amp;rdquo; record from this table.  Use those results to build your new &amp;ldquo;entity&amp;rdquo; table.&lt;/p&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Hive now support &amp;ldquo;Windowing&amp;rdquo; functions which make it really simply to extract the &amp;ldquo;most recent&amp;rdquo; record from this table.  Use those results to build your new &amp;ldquo;entity&amp;rdquo; table.&lt;/p&gt;
 &lt;h3 id=&#34;rank-to-find-most-current&#34;&gt;Rank to Find Most Current&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;SELECT
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;SELECT
   sub.firstname firstname,
   sub.updated updated,
   sub.weight weight
@@ -65,15 +53,11 @@ FROM
   ) sub
 WHERE
   sub.rank=1;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;firstname  updated     weight 
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;firstname  updated     weight 
 ---------  ----------  ------ 
 david      2015-08-23  195     
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;/code&gt;&lt;/pre&gt;</description>
     </item>
     
   </channel>
