@@ -5,12 +5,21 @@
     <link>http://www.streever.com/tags/metastore/</link>
       <atom:link href="http://www.streever.com/tags/metastore/index.xml" rel="self" type="application/rss+xml" />
     <description>metastore</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Tue, 15 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Sat, 08 Apr 2023 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://www.streever.com/img/icon-192.png</url>
       <title>metastore</title>
       <link>http://www.streever.com/tags/metastore/</link>
     </image>
+    
+    <item>
+      <title>Hive Create Paths</title>
+      <link>http://www.streever.com/post/2023/hive-create-path/</link>
+      <pubDate>Sat, 08 Apr 2023 00:00:00 +0000</pubDate>
+      <guid>http://www.streever.com/post/2023/hive-create-path/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;./create_path.html&#34;&gt;Create Path&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>The Power of Hive JDBC Federation</title>

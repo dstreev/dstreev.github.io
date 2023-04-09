@@ -5,12 +5,21 @@
     <link>http://www.streever.com/publication_types/2/</link>
       <atom:link href="http://www.streever.com/publication_types/2/index.xml" rel="self" type="application/rss+xml" />
     <description>2</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Thu, 24 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>© 2023</copyright><lastBuildDate>Sat, 08 Apr 2023 00:00:00 +0000</lastBuildDate>
     <image>
       <url>http://www.streever.com/img/icon-192.png</url>
       <title>2</title>
       <link>http://www.streever.com/publication_types/2/</link>
     </image>
+    
+    <item>
+      <title>Hive Create Paths</title>
+      <link>http://www.streever.com/post/2023/hive-create-path/</link>
+      <pubDate>Sat, 08 Apr 2023 00:00:00 +0000</pubDate>
+      <guid>http://www.streever.com/post/2023/hive-create-path/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;./create_path.html&#34;&gt;Create Path&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>&#39;Right Pathing&#39; Alternate Workloads while using HiveServer2 Interactive (LLAP)</title>
