@@ -30,6 +30,12 @@
         th {
             background-color: #f2f2f2;
         }
+        th#CELL1 {
+          background-color: aqua;
+        }
+        th#CELL2 {
+          background-color: bisque;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -228,19 +234,19 @@
     <table id="create-table">
         <thead>
         <tr>
-            <th colspan="3" style="text-align:center">Submitted Create</th>
-            <th colspan="7" style="text-align:center">Create(d) Result</th>
+            <th id="CELL1" colspan="3" style="text-align:center" >Submitted Create</th>
+            <th id="CELL2" colspan="7" style="text-align:center" >Create(d) Result</th>
         </tr>
         <tr>
-            <th>Create Statement</th>
-            <th>External</th>
-            <th>Storage Type</th>
-            <th>External</th>
-            <th>Storage Type</th>
-            <th>Transactional</th>
-            <th>Acid Type</th>
-            <th>Purge Flag</th>
-            <th>Metastore Translated</th>
+            <th id="CELL1">Create Statement</th>
+            <th id="CELL1">External</th>
+            <th id="CELL1">Storage Type</th>
+            <th id="CELL2">External</th>
+            <th id="CELL2">Storage Type</th>
+            <th id="CELL2">Transactional</th>
+            <th id="CELL2">Acid Type</th>
+            <th id="CELL2">Purge Flag</th>
+            <th id="CELL2">Metastore Translated</th>
             <th>Error</th>
         </tr>
         </thead>
