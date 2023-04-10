@@ -168,10 +168,12 @@
 <dbf>
     <!-- Navigation links here -->
     <h3>Database Property Filters</h3>
+  <code>CREATE DATABASE xyz WITH DBPROPERTIES ('property'='value')</code><br>
+    <code>ALTER DATABASE xyz SET DBPROPERTIES ('property'='value')</code>
     <table>
         <tr>
-            <th></th>
-            <th colspan="3">Database Properties</th>
+            <th colspan="1">Database Property</th>
+            <th colspan="3">Value</th>
         </tr>
         <tr>
             <td>defaultTableType</td>
@@ -195,10 +197,11 @@
 </dbf>
 <slp>
     <h3>Session Filters</h3>
+  <code>SET property=value;</code><br>
     <table>
         <tr>
-            <th></th>
-            <th colspan="3">Database Properties</th>
+            <th colspan="1">Session Properties</th>
+            <th colspan="3">Value</th>
         </tr>
         <tr>
             <td>Legacy Create Behavior<br>'hive.create.as.external.legacy'</td>
