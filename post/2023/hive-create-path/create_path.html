@@ -165,17 +165,20 @@
         Using the filters, select the configuration to see the resulting table properties.
     </p>
 </top>
-<dbf>
-    <!-- Navigation links here -->
-    <h3>Database Property Filters</h3>
-  <code>CREATE DATABASE xyz WITH DBPROPERTIES ('property'='value')</code><br>
-    <code>ALTER DATABASE xyz SET DBPROPERTIES ('property'='value')</code>
-    <table>
-        <tr>
+<table style="width: fit-content">
+  <tr>
+    <td>
+      <dbf>
+        <!-- Navigation links here -->
+        <h3>Database Property Filters</h3>
+        <code>CREATE DATABASE xyz WITH DBPROPERTIES ('property'='value')</code><br>
+        <code>ALTER DATABASE xyz SET DBPROPERTIES ('property'='value')</code>
+        <table style="width: fit-content">
+          <tr>
             <th colspan="1">Database Property</th>
             <th colspan="3">Value</th>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <td>defaultTableType</td>
             <td><label><input type="radio" name="dbDefaultTableType" value="na" checked>Not-Set(default)</label>
             </td>
@@ -183,8 +186,8 @@
             </td>
             <td><label><input type="radio" name="dbDefaultTableType" value="acid">ACID</label>
             </td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <td>EXTERNAL_TABLES_ONLY</td>
             <td><label><input type="radio" name="dbEXTERNALONLY" value="na" checked>Not-Set(default)</label>
             </td>
@@ -192,41 +195,46 @@
             </td>
             <td><label><input type="radio" name="dbEXTERNALONLY" value="false">false</label>
             </td>
-        </tr>
-    </table>
-</dbf>
-<slp>
-    <h3>Session Filters</h3>
-  <code>SET property=value;</code><br>
-    <table>
-        <tr>
+          </tr>
+        </table>
+      </dbf>
+    </td>
+    <td>
+      <slp>
+        <h3>Session Filters</h3>
+        <code>SET property=value;</code><br>
+        <table style="width: fit-content">
+          <tr>
             <th colspan="1">Session Properties</th>
             <th colspan="3">Value</th>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <td>Legacy Create Behavior<br>'hive.create.as.external.legacy'</td>
             <td><label><input type="radio" name="legacy" value="true">true</label>
             </td>
             <td>
-                <label><input type="radio" name="legacy" value="false" checked>false(default)</label>
+              <label><input type="radio" name="legacy" value="false" checked>false(default)</label>
             </td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <td>Transactional Insert Only<br>'hive.create.as.insert.only'</td>
             <td><label><input type="radio" name="insertOnly" value="true">true</label>
             </td>
             <td><label><input type="radio" name="insertOnly" value="false" checked>false(default)</label>
             </td>
-        </tr>
-        <tr>
+          </tr>
+          <tr>
             <td>Transactional Tables<br>'hive.create.as.acid'</td>
             <td><label><input type="radio" name="acid" value="true" checked>true (default)</label>
             </td>
             <td><label><input type="radio" name="acid" value="false">false</label>
             </td>
-        </tr>
-    </table>
-</slp>
+          </tr>
+        </table>
+      </slp>
+    </td>
+  </tr>
+</table>
 <main>
     <h3>Assumptions</h3>
     <ul>
@@ -234,7 +242,7 @@
     </ul>
 
     <h3>Resulting Table Properties</h3>
-    <table id="create-table">
+    <table id="create-table" style="width: fit-content">
         <thead>
         <tr>
             <th id="CELL1" colspan="3" style="text-align:center" >Submitted Create</th>
@@ -259,7 +267,7 @@
     </table>
     <br><br>
     <h4>Definitions</h4>
-    <table>
+    <table style="width: fit-content">
         <tr>
             <th>Property</th>
             <th>Description</th>
