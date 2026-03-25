@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LakeHouse Query Pulse - The SQL Editor That Big Data Deserves</title>
+  <meta name="description" content="The SQL editor built for Hive and Trino. Real-time query progress, live execution metrics, visual explain plans, Git-backed workspaces, and enterprise security. No external database required.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#" class="logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" width="36" height="36">
+          <defs>
+            <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#667eea"/>
+              <stop offset="100%" style="stop-color:#764ba2"/>
+            </linearGradient>
+          </defs>
+          <rect x="2" y="2" width="36" height="36" rx="8" fill="url(#logo-grad)"/>
+          <!-- Database cylinder -->
+          <ellipse cx="20" cy="14" rx="10" ry="4" fill="none" stroke="white" stroke-width="1.5" opacity="0.9"/>
+          <path d="M10 14v6c0 2.2 4.5 4 10 4s10-1.8 10-4v-6" fill="none" stroke="white" stroke-width="1.5" opacity="0.7"/>
+          <!-- Pulse line -->
+          <polyline points="8,26 14,26 17,20 20,30 23,22 26,26 32,26" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="logo-text">Query<span class="logo-accent">Pulse</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="#engines">Engines</a>
+        <a href="#features">Features</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#enterprise">Enterprise</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#quickstart" class="btn btn-sm btn-primary">Download</a>
+        <a href="../site/index.html" class="nav-docs-link">Docs</a>
+      </div>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#engines" onclick="closeMobileMenu()">Engines</a>
+      <a href="#features" onclick="closeMobileMenu()">Features</a>
+      <a href="#quickstart" onclick="closeMobileMenu()">Quick Start</a>
+      <a href="#enterprise" onclick="closeMobileMenu()">Enterprise</a>
+      <a href="#screenshots" onclick="closeMobileMenu()">Screenshots</a>
+      <a href="#quickstart" class="btn btn-primary" onclick="closeMobileMenu()">Download</a>
+      <a href="../site/index.html" onclick="closeMobileMenu()">Docs</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-particles" id="heroParticles"></div>
+      <div class="hero-glow hero-glow-1"></div>
+      <div class="hero-glow hero-glow-2"></div>
+    </div>
+    <div class="container hero-content">
+      <div class="hero-engines hero-fade-in" style="--delay:0.1s">
+        <span class="hero-engine-label">Built for</span>
+        <span class="hero-engine-name">Hive</span>
+        <span class="hero-engine-amp">&amp;</span>
+        <span class="hero-engine-name">Trino</span>
+      </div>
+      <h1 class="hero-fade-in" style="--delay:0.25s">The SQL Editor That<br><span class="gradient-text">Big Data Deserves.</span></h1>
+      <p class="hero-sub hero-fade-in" style="--delay:0.4s">Real-time query progress. Live execution metrics. Five visual explain plans. Git-backed workspaces. Enterprise security. All in one application &mdash; no complex setup.</p>
+      <div class="hero-actions hero-fade-in" style="--delay:0.55s">
+        <a href="#quickstart" class="btn btn-lg btn-primary btn-pulse">Try It in 5 Minutes</a>
+        <a href="#features" class="btn btn-lg btn-ghost">See What's Inside</a>
+      </div>
+      <div class="hero-screenshot hero-fade-in" style="--delay:0.7s">
+        <div class="screenshot-placeholder hero-img" id="hero-screenshot">
+          <img src="images/hive_realtime_feedback.png" alt="SQL Editor with real-time Hive query progress showing DAG stages, Map and Reduce task counters">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Engine Support -->
+  <section class="engines section-reveal" id="engines">
+    <div class="container">
+      <div class="engines-header" data-animate>
+        <h2>Deep Integration With the Engines You Run</h2>
+        <p>Not just a generic SQL client. Query Pulse is purpose-built for Hive and Trino with engine-specific features you won't find anywhere else.</p>
+      </div>
+      <div class="engines-grid stagger-children">
+        <div class="engine-card" data-animate>
+          <div class="engine-logo">
+            <svg viewBox="0 0 48 48" width="48" height="48">
+              <rect width="48" height="48" rx="12" fill="#FDDE16" opacity="0.15"/>
+              <text x="24" y="30" text-anchor="middle" font-size="20" font-weight="800" fill="#FDDE16">H</text>
+            </svg>
+          </div>
+          <h3>Apache Hive</h3>
+          <p class="engine-tagline">Everything Beeline shows you &mdash; right next to your SQL, not in a separate terminal</p>
+          <ul class="engine-features">
+            <li><strong>Real-time DAG progress</strong> &mdash; Map, Reduce, and Vertex stages with task counters (Total, Completed, Running, Pending, Failed)</li>
+            <li><strong>5 Explain visualizations</strong> &mdash; Visual, CBO, Dependency, Authorization, and Vectorization</li>
+            <li><strong>Execution plan graphs</strong> &mdash; DOT-rendered operator trees with join strategies and data flow</li>
+            <li><strong>Kerberos + ZooKeeper HA</strong> &mdash; Keytab management, dynamic service discovery, Knox Gateway support</li>
+          </ul>
+        </div>
+        <div class="engine-card" data-animate>
+          <div class="engine-logo">
+            <svg viewBox="0 0 48 48" width="48" height="48">
+              <rect width="48" height="48" rx="12" fill="#DD00A1" opacity="0.15"/>
+              <text x="24" y="30" text-anchor="middle" font-size="20" font-weight="800" fill="#DD00A1">T</text>
+            </svg>
+          </div>
+          <h3>Trino</h3>
+          <p class="engine-tagline">The Trino Web UI's stats &mdash; built into the editor, right where you write and run your SQL</p>
+          <ul class="engine-features">
+            <li><strong>Live query state tracking</strong> &mdash; QUEUED, PLANNING, RUNNING, FINISHING, FINISHED, FAILED in real time</li>
+            <li><strong>Task &amp; driver metrics</strong> &mdash; Active tasks, queued drivers, data throughput, and memory usage</li>
+            <li><strong>Comprehensive timing</strong> &mdash; Elapsed, Execution, Queued, Planning, CPU, Scheduled, and Blocked time breakdowns</li>
+            <li><strong>Configurable EXPLAIN</strong> &mdash; Multiple types (LOGICAL, DISTRIBUTED, IO) and formats (TEXT, GRAPHVIZ, JSON)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Real-Time Feedback Callout -->
+  <section class="realtime section-reveal">
+    <div class="container">
+      <div class="realtime-content" data-animate>
+        <div class="realtime-badge">What No Other SQL Editor Shows You</div>
+        <h2>Real-Time Query Feedback</h2>
+        <p>Most SQL editors show a spinner and "Executing..." while you wait. Query Pulse gives you <strong>live, engine-native progress</strong> streamed directly from Hive and Trino. Watch your DAG stages complete. See exactly which phase is running. Know how much data is moving and how long each step takes &mdash; all without leaving the editor.</p>
+        <div class="realtime-stats stagger-children">
+          <div class="realtime-stat">
+            <div class="stat-value">Live</div>
+            <div class="stat-label">Stage-Level Progress</div>
+          </div>
+          <div class="realtime-stat">
+            <div class="stat-value">5</div>
+            <div class="stat-label">Explain Plan Types</div>
+          </div>
+          <div class="realtime-stat">
+            <div class="stat-value">7</div>
+            <div class="stat-label">Trino Timing Metrics</div>
+          </div>
+          <div class="realtime-stat">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Other Editors With This</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Props -->
+  <section class="value-props section-reveal">
+    <div class="container">
+      <div class="props-grid stagger-children">
+        <div class="prop" data-animate>
+          <div class="prop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <h3>No Database Required</h3>
+          <p>Embedded RocksDB storage means zero external dependencies. Your data, credentials, and workspaces are self-contained and portable.</p>
+        </div>
+        <div class="prop" data-animate>
+          <div class="prop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </div>
+          <h3>Enterprise Security Built In</h3>
+          <p>Kerberos, LDAP, OIDC/SSO, TLS/mTLS, and AES-256 credential encryption. Everything you need for production Hadoop environments.</p>
+        </div>
+        <div class="prop" data-animate>
+          <div class="prop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/>
+              <path d="M13 6h3a2 2 0 0 1 2 2v7"/>
+              <path d="M6 9v12"/>
+            </svg>
+          </div>
+          <h3>Git-Backed Workspaces</h3>
+          <p>Every workspace is a full Git repository. Branch, commit, push, and collaborate on SQL the same way you manage application code.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features section-reveal" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Everything You Need.<br>Nothing You Don't.</h2>
+        <p>Purpose-built for data teams working with Big Data platforms. Every feature solves a real problem.</p>
+      </div>
+
+      <!-- Feature 1: SQL Editor -->
+      <div class="feature-row" data-animate>
+        <div class="feature-text">
+          <div class="feature-label">SQL Editor</div>
+          <h3>Write, Execute, Analyze</h3>
+          <p>A multi-tab SQL editor with intelligent code completion, real-time formatting, and multiple execution modes. Run a single statement, execute an entire script, or start from your cursor position.</p>
+          <ul class="feature-list">
+            <li><strong>Intelligent completion</strong> &mdash; understands the tables in your query and suggests only the columns that belong to them, not every column in the schema</li>
+            <li><strong>Dialect-aware</strong> &mdash; automatically adapts keywords, functions, and syntax to Hive or Trino based on your active connection</li>
+            <li>Real-time Hive progress with stage-level detail (Map, Reduce, Vertex)</li>
+            <li>Live Trino statistics with query state, task metrics, and timing breakdown</li>
+            <li>Multi-session support across different connections simultaneously</li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          <div class="carousel" id="editorCarousel">
+            <div class="carousel-track">
+              <div class="carousel-slide active">
+                <div class="screenshot-placeholder">
+                  <img src="images/hive_realtime_feedback.png" alt="Real-time Hive query progress with DAG stage tracking and task counters">
+                </div>
+              </div>
+              <div class="carousel-slide">
+                <div class="screenshot-placeholder">
+                  <img src="images/intelligent_code_completion.png" alt="Intelligent code completion showing column suggestions filtered to referenced tables">
+                </div>
+              </div>
+              <div class="carousel-slide">
+                <div class="screenshot-placeholder">
+                  <img src="images/hive_detailed_stats.png" alt="Execution details with query metadata, timing breakdown, and stage summary">
+                </div>
+              </div>
+            </div>
+            <div class="carousel-dots">
+              <button class="carousel-dot active" onclick="goToSlide('editorCarousel', 0)" aria-label="Real-time progress"></button>
+              <button class="carousel-dot" onclick="goToSlide('editorCarousel', 1)" aria-label="Code completion"></button>
+              <button class="carousel-dot" onclick="goToSlide('editorCarousel', 2)" aria-label="Execution details"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 2: Git-Backed Workspaces -->
+      <div class="feature-row reverse" data-animate>
+        <div class="feature-text">
+          <div class="feature-label">Version Control</div>
+          <h3>Git-Backed Workspaces</h3>
+          <p>Every workspace is a full Git repository. Your SQL files, scripts, and configuration are version-controlled from the start. Branch, commit, diff, and push &mdash; all without leaving the editor.</p>
+          <ul class="feature-list">
+            <li><strong>Inline Git status</strong> &mdash; file browser shows modified, staged, untracked, and deleted indicators at a glance</li>
+            <li><strong>Commit &amp; branch</strong> &mdash; stage changes, write commits, create branches, and switch between them directly in the UI</li>
+            <li><strong>Push &amp; pull</strong> &mdash; sync with remote repositories for team collaboration and backup</li>
+            <li><strong>Clone to start</strong> &mdash; create a workspace by cloning an existing repo with your team's SQL library</li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          <div class="carousel" id="gitCarousel">
+            <div class="carousel-track">
+              <div class="carousel-slide active">
+                <div class="screenshot-placeholder">
+                  <img src="images/full_window_with_git_panel_day.png" alt="Full workspace with Git version control panel in day theme showing results grid and version history">
+                </div>
+              </div>
+              <div class="carousel-slide">
+                <div class="screenshot-placeholder">
+                  <img src="images/full_window_with_git_panel.png" alt="Full workspace with Git version control panel showing changes, staged files, and untracked files in dark theme">
+                </div>
+              </div>
+            </div>
+            <div class="carousel-dots">
+              <button class="carousel-dot active" onclick="goToSlide('gitCarousel', 0)" aria-label="Day theme"></button>
+              <button class="carousel-dot" onclick="goToSlide('gitCarousel', 1)" aria-label="Dark theme"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 3: Query Analysis -->
+      <div class="feature-row" data-animate>
+        <div class="feature-text">
+          <div class="feature-label">Query Analysis</div>
+          <h3>See Inside Your Queries</h3>
+          <p>Five different explain plan visualizations for Hive give you unprecedented insight into query execution. Visual graph rendering shows operator relationships at a glance.</p>
+          <ul class="feature-list">
+            <li>Visual Explain with DOT graph rendering of execution plans</li>
+            <li>Cost-Based Optimization (CBO) analysis</li>
+            <li>Dependency, Authorization, and Vectorization explains</li>
+            <li>Configurable Trino EXPLAIN with type and format options</li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          <div class="screenshot-placeholder" id="feature-explain">
+            <img src="images/hive_graphical_explain_plan.png" alt="Visual Explain Plan with DOT graph showing operator relationships and join strategies">
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 4: CM Integration -->
+      <div class="feature-row reverse" data-animate>
+        <div class="feature-text">
+          <div class="feature-label">Cloudera Manager</div>
+          <h3>Auto-Discover Your Cluster</h3>
+          <p>Connect to Cloudera Manager and automatically discover HiveServer2 endpoints, Kerberos principals, SSL settings, and ZooKeeper HA configurations. No more hand-crafting JDBC URLs.</p>
+          <ul class="feature-list">
+            <li>One-click endpoint discovery from CM clusters</li>
+            <li>Automatic JDBC URL generation with full configuration</li>
+            <li>ZooKeeper-based HA discovery support</li>
+            <li>Deploy and manage via CM with the included CSD and Parcel</li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          <div class="screenshot-placeholder" id="feature-cm">
+            <img src="images/cm_connection_import.png" alt="Cloudera Manager Discovery dialog showing discovered HiveServer2 endpoints ready for import">
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 5: Security -->
+      <div class="feature-row" data-animate>
+        <div class="feature-text">
+          <div class="feature-label">Security</div>
+          <h3>Production-Grade From Day One</h3>
+          <p>Built for the authentication and encryption requirements of enterprise Hadoop environments. Manage keytabs, certificates, and credentials without leaving the application.</p>
+          <ul class="feature-list">
+            <li>Kerberos keytab upload and encrypted storage</li>
+            <li>TLS and mutual TLS (mTLS) with certificate management</li>
+            <li>AES-256-GCM encryption for all sensitive data at rest</li>
+            <li>Local, LDAP/Active Directory, and OIDC/SSO authentication</li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          <div class="screenshot-placeholder" id="feature-security">
+            <img src="images/hive_connection_details.png" alt="Connection configuration showing Kerberos authentication, SSL validation, and JDBC URL">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- More Features Grid -->
+  <section class="more-features section-reveal">
+    <div class="container">
+      <h2>And There's More</h2>
+      <div class="mini-features-grid stagger-children">
+        <div class="mini-feature" data-animate>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>
+          </div>
+          <h4>Drag &amp; Drop Upload</h4>
+          <p>Drop files from your desktop directly into the workspace file browser.</p>
+        </div>
+        <div class="mini-feature" data-animate>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+          </div>
+          <h4>SQL Formatting</h4>
+          <p>Built-in T-SQL and Apache Calcite formatters for consistent, readable SQL.</p>
+        </div>
+        <div class="mini-feature" data-animate>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h4>TPC-DS Benchmarks</h4>
+          <p>Built-in benchmark suite with 24 tables and 99 standard queries for performance testing.</p>
+        </div>
+        <div class="mini-feature" data-animate>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h4>AI Code Assist <span class="coming-soon">Coming Soon</span></h4>
+          <p>LLM-powered SQL suggestions with rich schema context via Ollama integration.</p>
+        </div>
+        <div class="mini-feature" data-animate>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          </div>
+          <h4>Variable Substitution</h4>
+          <p>Parameterized queries with workspace-level and file-level variable overrides.</p>
+        </div>
+        <div class="mini-feature" data-animate>
+          <div class="mini-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </div>
+          <h4>Day &amp; Night Themes</h4>
+          <p>Auto, light, and dark themes that follow your system preference or manual selection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section class="quickstart section-reveal" id="quickstart">
+    <div class="container">
+      <div class="section-header">
+        <h2>Try It in 5 Minutes</h2>
+        <p>Choose your preferred deployment method. All three get you a fully functional instance with zero configuration.</p>
+      </div>
+
+      <div class="install-tabs">
+        <button class="install-tab active" onclick="switchTab('standalone')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Standalone
+        </button>
+        <button class="install-tab" onclick="switchTab('docker')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12s-3-2-6-2-6 2-6 2"/><rect x="2" y="8" width="4" height="4" rx="0.5"/><rect x="7" y="8" width="4" height="4" rx="0.5"/><rect x="12" y="8" width="4" height="4" rx="0.5"/><rect x="7" y="3" width="4" height="4" rx="0.5"/><rect x="12" y="3" width="4" height="4" rx="0.5"/></svg>
+          Docker
+        </button>
+        <button class="install-tab" onclick="switchTab('cloudera')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Cloudera Manager
+        </button>
+      </div>
+
+      <!-- Standalone -->
+      <div class="install-content active" id="tab-standalone">
+        <div class="install-steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>Download &amp; Extract</h4>
+              <div class="code-block">
+                <div class="code-header">
+                  <span>Shell</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>curl -LO https://github.com/dstreev/LakeHouse-Query-Pulse/releases/latest/download/query-pulse-install-dist.tar.gz
+tar xzf query-pulse-install-dist.tar.gz
+cd query-pulse</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Run Setup</h4>
+              <div class="code-block">
+                <div class="code-header">
+                  <span>Shell</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>./setup.sh</code></pre>
+              </div>
+              <p class="step-note">Creates configuration directory at <code>~/.query-pulse/</code> and default settings.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>Launch</h4>
+              <div class="code-block">
+                <div class="code-header">
+                  <span>Shell</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>./query-pulse.sh start</code></pre>
+              </div>
+              <p class="step-note">Open <strong>http://localhost:8088</strong> in your browser.</p>
+            </div>
+          </div>
+        </div>
+        <div class="requirements-note">
+          <strong>Requirements:</strong> Java JDK 17+ &bull; 4 GB RAM minimum &bull; Linux or macOS
+        </div>
+      </div>
+
+      <!-- Docker -->
+      <div class="install-content" id="tab-docker">
+        <div class="install-steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>Pull &amp; Run</h4>
+              <div class="code-block">
+                <div class="code-header">
+                  <span>Shell</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>docker run -d \
+  --name query-pulse \
+  -p 8088:8088 \
+  -v query-pulse-data:/data/query-pulse \
+  dstreev/query-pulse:latest</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Open Your Browser</h4>
+              <p>Navigate to <strong>http://localhost:8088</strong>.</p>
+              <p class="step-note">Data persists in the <code>query-pulse-data</code> Docker volume across restarts.</p>
+            </div>
+          </div>
+        </div>
+        <div class="requirements-note">
+          <strong>Requirements:</strong> Docker 20+ &bull; 4 GB RAM minimum
+        </div>
+      </div>
+
+      <!-- Cloudera Manager -->
+      <div class="install-content" id="tab-cloudera">
+        <div class="cm-intro">
+          <p>Deploy Query Pulse as a managed Cloudera Manager service with full lifecycle management, Auto-TLS integration, and centralized configuration. Download the CSD and Parcel, then install through CM.</p>
+        </div>
+        <div class="cm-downloads">
+          <div class="cm-download-card">
+            <div class="cm-download-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+            </div>
+            <h4>CSD (Service Descriptor)</h4>
+            <p>Defines the service type, configuration parameters, roles, and health checks in Cloudera Manager.</p>
+            <a href="#" class="btn btn-sm btn-primary cm-download-btn">Download CSD JAR</a>
+            <span class="cm-file-detail">QUERY_PULSE-1.4.0.jar &bull; Install to <code>/opt/cloudera/csd/</code></span>
+          </div>
+          <div class="cm-download-card">
+            <div class="cm-download-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </div>
+            <h4>Parcel</h4>
+            <p>Contains the application runtime. Distributed and activated across cluster hosts by Cloudera Manager.</p>
+            <div class="cm-parcel-select">
+              <label>Select your OS:</label>
+              <select id="parcelDistro" onchange="updateParcelLink()">
+                <option value="el9">RHEL / Rocky 9 (el9)</option>
+                <option value="el8">RHEL / Rocky 8 (el8)</option>
+                <option value="el7">RHEL / CentOS 7 (el7)</option>
+              </select>
+            </div>
+            <a href="#" id="parcelDownloadBtn" class="btn btn-sm btn-primary cm-download-btn">Download Parcel</a>
+            <span class="cm-file-detail" id="parcelFileDetail">QUERY_PULSE-1.4.0-el9.parcel &bull; Install to <code>/opt/cloudera/parcel-repo/</code></span>
+          </div>
+        </div>
+
+        <div class="install-steps cm-steps">
+          <h4 class="cm-steps-title">Installation Steps</h4>
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>Upload Artifacts</h4>
+              <p>Copy the CSD JAR to <code>/opt/cloudera/csd/</code> and the Parcel + SHA to <code>/opt/cloudera/parcel-repo/</code> on your CM server host.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>Restart Cloudera Manager Server</h4>
+              <div class="code-block">
+                <div class="code-header">
+                  <span>Shell (CM Host)</span>
+                  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code>sudo systemctl restart cloudera-scm-server</code></pre>
+              </div>
+              <p class="step-note">Required for CM to detect the new CSD. Wait ~60 seconds for the server to restart.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>Distribute &amp; Activate Parcel</h4>
+              <p>In Cloudera Manager, go to <strong>Parcels</strong> &rarr; find <strong>QUERY_PULSE</strong> &rarr; <strong>Distribute</strong> &rarr; <strong>Activate</strong>.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h4>Add the Service</h4>
+              <p>Go to your cluster &rarr; <strong>Add Service</strong> &rarr; select <strong>Query Pulse</strong> &rarr; assign a host &rarr; configure settings &rarr; <strong>Start</strong>.</p>
+              <p class="step-note">Auto-TLS certificates are automatically detected and configured when enabled on your cluster.</p>
+            </div>
+          </div>
+        </div>
+        <div class="requirements-note">
+          <strong>Requirements:</strong> Cloudera Manager 7.x+ &bull; CDP Private Cloud Base &bull; Java JDK 17+ on service host
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Enterprise -->
+  <section class="enterprise section-reveal" id="enterprise">
+    <div class="container">
+      <div class="section-header light">
+        <h2>Built for the Enterprise</h2>
+        <p>Deploy with confidence. Query Pulse meets the security, compliance, and operational requirements of production Hadoop environments.</p>
+      </div>
+
+      <div class="enterprise-grid stagger-children">
+        <div class="ent-card" data-animate>
+          <h4>Three Deployment Modes</h4>
+          <p>Standalone JAR for edge nodes, Docker for containerized environments, or Cloudera Manager with CSD + Parcel for centralized cluster management.</p>
+        </div>
+        <div class="ent-card" data-animate>
+          <h4>Complete Auth Stack</h4>
+          <p>Local accounts, LDAP/Active Directory, or OIDC/SSO. Role-based access control with admin and user roles. JWT-based stateless sessions.</p>
+        </div>
+        <div class="ent-card" data-animate>
+          <h4>Zero External Dependencies</h4>
+          <p>Embedded RocksDB for persistence. No PostgreSQL, no Redis, no message queue. A single JAR file is the entire application.</p>
+        </div>
+        <div class="ent-card" data-animate>
+          <h4>Encryption at Rest</h4>
+          <p>AES-256-GCM encryption for credentials, keytabs, and sensitive configuration. Secrets never stored in plaintext.</p>
+        </div>
+        <div class="ent-card" data-animate>
+          <h4>Platform Coverage</h4>
+          <p>Tested with CDP 7.x, HDP 2/3, CDH 5/6, Apache Hive, Trino, and EMR 6/7. Bring your own JDBC drivers for any platform.</p>
+        </div>
+        <div class="ent-card" data-animate>
+          <h4>Operational Visibility</h4>
+          <p>Health check endpoints, RocksDB management console, JVM tuning, and scheduled backups.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screenshots -->
+  <section class="screenshots section-reveal" id="screenshots">
+    <div class="container">
+      <div class="section-header">
+        <h2>See It in Action</h2>
+        <p>Every screenshot is from the real application. What you see is what you get.</p>
+      </div>
+      <div class="screenshot-gallery">
+        <div class="gallery-item" data-animate>
+          <div class="screenshot-placeholder large" id="gallery-editor">
+            <img src="images/full_window_with_git_panel.png" alt="Full workspace view with SQL editor, file browser, query results, and Git version control panel">
+          </div>
+          <p class="gallery-caption">Full workspace with SQL editor, results grid, file browser, and Git version control</p>
+        </div>
+        <div class="gallery-row">
+          <div class="gallery-item" data-animate>
+            <div class="screenshot-placeholder" id="gallery-explain">
+              <img src="images/hive_graphical_explain_plan.png" alt="Visual Explain Plan with DOT graph rendering">
+            </div>
+            <p class="gallery-caption">DOT graph visualization of query execution plans</p>
+          </div>
+          <div class="gallery-item" data-animate>
+            <div class="screenshot-placeholder" id="gallery-realtime">
+              <img src="images/hive_realtime_feedback.png" alt="Real-time Hive query progress with DAG stage tracking">
+            </div>
+            <p class="gallery-caption">Real-time query progress with stage-level detail for Hive workloads</p>
+          </div>
+        </div>
+        <div class="gallery-row">
+          <div class="gallery-item" data-animate>
+            <div class="screenshot-placeholder" id="gallery-details">
+              <img src="images/hive_detailed_stats.png" alt="Execution details showing query metadata, timing, and stage summary">
+            </div>
+            <p class="gallery-caption">Execution details with query metadata, timing, and stage-level summary</p>
+          </div>
+          <div class="gallery-item" data-animate>
+            <div class="screenshot-placeholder" id="gallery-cm">
+              <img src="images/cm_connection_import.png" alt="Cloudera Manager endpoint discovery and import">
+            </div>
+            <p class="gallery-caption">One-click endpoint import from Cloudera Manager</p>
+          </div>
+        </div>
+        <div class="gallery-row">
+          <div class="gallery-item" data-animate>
+            <div class="screenshot-placeholder" id="gallery-completion">
+              <img src="images/intelligent_code_completion.png" alt="Intelligent code completion filtering columns to referenced tables">
+            </div>
+            <p class="gallery-caption">Intelligent code completion aware of tables in your query</p>
+          </div>
+          <div class="gallery-item" data-animate>
+            <div class="screenshot-placeholder" id="gallery-connections">
+              <img src="images/hive_connection_details.png" alt="Connection configuration with Kerberos authentication and SSL">
+            </div>
+            <p class="gallery-caption">Connection configuration with Kerberos, SSL, and platform-specific settings</p>
+          </div>
+        </div>
+        <div class="gallery-row">
+          <div class="gallery-item" data-animate>
+            <div class="screenshot-placeholder" id="gallery-day">
+              <img src="images/full_window_with_git_panel_day.png" alt="Full workspace in day theme with Git panel, results grid, and file browser">
+            </div>
+            <p class="gallery-caption">Day theme with Git version control, results grid, and file browser</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta section-reveal">
+    <div class="container">
+      <h2>Ready to Simplify Your SQL Workflow?</h2>
+      <p>Download Query Pulse and start running queries in minutes. No credit card. No sign-up. Just a JAR file and your Hadoop cluster.</p>
+      <div class="hero-actions">
+        <a href="#quickstart" class="btn btn-lg btn-white">Get Started</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <svg class="logo-icon" viewBox="0 0 40 40" width="28" height="28">
+            <rect x="2" y="2" width="36" height="36" rx="8" fill="url(#logo-grad)"/>
+            <ellipse cx="20" cy="14" rx="10" ry="4" fill="none" stroke="white" stroke-width="1.5" opacity="0.9"/>
+            <path d="M10 14v6c0 2.2 4.5 4 10 4s10-1.8 10-4v-6" fill="none" stroke="white" stroke-width="1.5" opacity="0.7"/>
+            <polyline points="8,26 14,26 17,20 20,30 23,22 26,26 32,26" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="logo-text">Query<span class="logo-accent">Pulse</span></span>
+        </a>
+        <p class="footer-tagline">Enterprise SQL IDE for the Modern Data Lakehouse</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#quickstart">Download</a>
+          <a href="#enterprise">Enterprise</a>
+          <a href="#screenshots">Screenshots</a>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="#">Documentation</a>
+          <a href="#">Release Notes</a>
+          <a href="#">API Reference</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; 2024&ndash;2026 David W. Streever. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
