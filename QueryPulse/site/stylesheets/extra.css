@@ -1,0 +1,83 @@
+/*
+ * Query Pulse — MkDocs Material Theme Overrides
+ * Matches the application palette: #667eea (indigo) → #764ba2 (purple)
+ */
+
+/* ---- Color scheme overrides ---- */
+:root,
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #667eea;
+  --md-primary-fg-color--light: #8899ef;
+  --md-primary-fg-color--dark: #5a6fd6;
+  --md-accent-fg-color: #764ba2;
+  --md-typeset-a-color: #667eea;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #a5b4fc;
+  --md-primary-fg-color--light: #c7d0f9;
+  --md-primary-fg-color--dark: #8899ef;
+  --md-accent-fg-color: #c4b5fd;
+  --md-typeset-a-color: #a5b4fc;
+}
+
+/* ---- Header gradient ---- */
+.md-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* ---- Logo sizing ---- */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 28px;
+  width: 28px;
+}
+
+/* ---- Navigation active indicator ---- */
+.md-nav__link--active {
+  font-weight: 600;
+}
+
+/* ---- Tabs gradient underline ---- */
+.md-tabs {
+  background: linear-gradient(135deg, #5a6fd6 0%, #6a3d91 100%);
+}
+
+/* ---- Admonition accent colors ---- */
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  border-color: #667eea;
+}
+.md-typeset .note > .admonition-title,
+.md-typeset .note > summary {
+  background-color: rgba(102, 126, 234, 0.1);
+}
+.md-typeset .note > .admonition-title::before,
+.md-typeset .note > summary::before {
+  background-color: #667eea;
+}
+
+/* ---- Code block styling ---- */
+.md-typeset code {
+  border-radius: 4px;
+}
+
+/* ---- Footer branding ---- */
+.md-footer-meta {
+  background: #0f1225;
+}
+
+/* ---- Search bar styling ---- */
+.md-search__input {
+  border-radius: 8px;
+}
+
+/* ---- Smooth scrollbar ---- */
+.md-sidebar__scrollwrap::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+}
+
+/* ---- Content max-width for readability ---- */
+.md-content {
+  max-width: 960px;
+}
