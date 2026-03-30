@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F96702"/>
+      <stop offset="100%" stop-color="#E8350F"/>
+    </linearGradient>
+    <linearGradient id="a" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.7"/>
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="8" fill="url(#g)"/>
+  <!-- Left database (source) -->
+  <ellipse cx="14" cy="14" rx="6" ry="2.5" fill="url(#a)"/>
+  <path d="M8 14 v6 a6 2.5 0 0 0 12 0 v-6" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+  <ellipse cx="14" cy="20" rx="6" ry="2.5" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+  <!-- Right database (target) -->
+  <ellipse cx="26" cy="20" rx="6" ry="2.5" fill="url(#a)"/>
+  <path d="M20 20 v6 a6 2.5 0 0 0 12 0 v-6" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+  <ellipse cx="26" cy="26" rx="6" ry="2.5" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+  <!-- Arrow -->
+  <path d="M20 16 L23 18" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+  <polygon points="23,16 23,20 26,18" fill="white" opacity="0.9"/>
+</svg>

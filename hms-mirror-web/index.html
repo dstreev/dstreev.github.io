@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HMS-Mirror - Hive Metastore Migration at Enterprise Scale</title>
+  <meta name="description" content="HMS-Mirror is Cloudera's enterprise Hive Metastore migration utility. Transfer metadata and data between HDP, CDH, CDP, and cloud environments with 9 data strategies and a modern web UI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="nav" id="nav">
+  <div class="container nav-inner">
+    <a href="#" class="logo">
+      <svg class="logo-icon" viewBox="0 0 40 40" width="36" height="36">
+        <defs>
+          <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#F96702"/>
+            <stop offset="100%" style="stop-color:#E8350F"/>
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="8" fill="url(#logo-grad)"/>
+        <ellipse cx="14" cy="14" rx="6" ry="2.5" fill="white" opacity="0.9"/>
+        <path d="M8 14 v6 a6 2.5 0 0 0 12 0 v-6" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+        <ellipse cx="14" cy="20" rx="6" ry="2.5" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+        <ellipse cx="26" cy="20" rx="6" ry="2.5" fill="white" opacity="0.9"/>
+        <path d="M20 20 v6 a6 2.5 0 0 0 12 0 v-6" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+        <ellipse cx="26" cy="26" rx="6" ry="2.5" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+        <path d="M20 16 L23 18" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        <polygon points="23,16 23,20 26,18" fill="white" opacity="0.9"/>
+      </svg>
+      <span class="logo-text">HMS-<span class="logo-accent">Mirror</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#platforms">Platforms</a>
+      <a href="#strategies">Strategies</a>
+      <a href="#features">Features</a>
+      <a href="#enterprise">Enterprise</a>
+      <a href="#quickstart" class="btn btn-sm btn-primary">Get Started</a>
+    </div>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#platforms" onclick="closeMobileMenu()">Platforms</a>
+    <a href="#strategies" onclick="closeMobileMenu()">Strategies</a>
+    <a href="#features" onclick="closeMobileMenu()">Features</a>
+    <a href="#enterprise" onclick="closeMobileMenu()">Enterprise</a>
+    <a href="#quickstart" onclick="closeMobileMenu()">Get Started</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-particles" id="heroParticles"></div>
+    <div class="hero-glow hero-glow-1"></div>
+    <div class="hero-glow hero-glow-2"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-engines hero-fade-in" style="--delay:0.1s">
+      <span class="hero-engine-label">Built for</span>
+      <span class="hero-engine-name">HDP</span>
+      <span class="hero-engine-amp">&amp;</span>
+      <span class="hero-engine-name">CDP</span>
+    </div>
+
+    <h1 class="hero-fade-in" style="--delay:0.25s">
+      Hive Metastore Migration<br>
+      <span class="gradient-text">at Enterprise Scale.</span>
+    </h1>
+    <p class="hero-sub hero-fade-in" style="--delay:0.4s">
+      9 data strategies. 14 platform versions. ACID table handling. Iceberg conversion.
+      Location translation. All from a modern web UI.
+    </p>
+    <div class="hero-actions hero-fade-in" style="--delay:0.55s">
+      <a href="#quickstart" class="btn btn-lg btn-primary btn-pulse">Deploy in 5 Minutes</a>
+      <a href="#strategies" class="btn btn-lg btn-ghost">Explore Strategies</a>
+    </div>
+    <div class="hero-screenshot hero-fade-in" style="--delay:0.7s">
+      <div class="screenshot-placeholder hero-img" style="min-height:340px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px;">
+        <svg viewBox="0 0 120 60" width="200" opacity="0.3">
+          <ellipse cx="30" cy="20" rx="18" ry="8" fill="none" stroke="#FFB088" stroke-width="1.5"/>
+          <path d="M12 20 v16 a18 8 0 0 0 36 0 v-16" fill="none" stroke="#FFB088" stroke-width="1.5"/>
+          <ellipse cx="30" cy="36" rx="18" ry="8" fill="none" stroke="#FFB088" stroke-width="1.5"/>
+          <path d="M12 28 a18 8 0 0 0 36 0" fill="none" stroke="#FFB088" stroke-width="0.8" opacity="0.5"/>
+          <ellipse cx="90" cy="20" rx="18" ry="8" fill="none" stroke="#4DC7AA" stroke-width="1.5"/>
+          <path d="M72 20 v16 a18 8 0 0 0 36 0 v-16" fill="none" stroke="#4DC7AA" stroke-width="1.5"/>
+          <ellipse cx="90" cy="36" rx="18" ry="8" fill="none" stroke="#4DC7AA" stroke-width="1.5"/>
+          <path d="M72 28 a18 8 0 0 0 36 0" fill="none" stroke="#4DC7AA" stroke-width="0.8" opacity="0.5"/>
+          <path d="M50 26 C56 22 64 22 70 26" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <polygon points="68,23 72,26 68,29" fill="white" opacity="0.9"/>
+        </svg>
+        <span style="color:#8888aa; font-size:0.85rem; letter-spacing:1px; text-transform:uppercase;">Web UI &bull; MCP Integration</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PLATFORM CARDS ===== -->
+<section class="engines section-reveal" id="platforms">
+  <div class="container">
+    <div class="engines-header" data-animate>
+      <h2>Every Hadoop Distribution. One Tool.</h2>
+      <p>HMS-Mirror speaks native Hive across 14 platform versions, from legacy HDP 2 clusters to the latest CDP 7.3 with Hive 4 and Iceberg support.</p>
+    </div>
+    <div class="engines-grid stagger-children">
+      <div class="engine-card" data-animate>
+        <div class="engine-logo">
+          <svg viewBox="0 0 48 48" width="48" height="48">
+            <rect width="48" height="48" rx="12" fill="#F96702" opacity="0.15"/>
+            <text x="24" y="32" text-anchor="middle" font-size="22" font-weight="800" fill="#F96702">H</text>
+          </svg>
+        </div>
+        <h3>On-Premises Sources</h3>
+        <p class="engine-tagline">HDP, CDH, and legacy Hive clusters</p>
+        <ul class="engine-features">
+          <li><strong>HDP 2.x &amp; 3.x</strong> &mdash; Full ACID table migration with format conversion</li>
+          <li><strong>CDH 5.x &amp; 6.x</strong> &mdash; Legacy Sentry-secured clusters with Hive 2</li>
+          <li><strong>Apache Hive 2/3/4</strong> &mdash; Standalone distributions with native protocol support</li>
+          <li><strong>Artificial bucket removal</strong> &mdash; Automatic Hive 2 to Hive 3 bucket translation</li>
+        </ul>
+      </div>
+      <div class="engine-card" data-animate>
+        <div class="engine-logo">
+          <svg viewBox="0 0 48 48" width="48" height="48">
+            <rect width="48" height="48" rx="12" fill="#4DC7AA" opacity="0.15"/>
+            <text x="24" y="32" text-anchor="middle" font-size="22" font-weight="800" fill="#4DC7AA">C</text>
+          </svg>
+        </div>
+        <h3>Cloud &amp; Modern Targets</h3>
+        <p class="engine-tagline">CDP, EMR, and cloud-native storage</p>
+        <ul class="engine-features">
+          <li><strong>CDP 7.1.x &ndash; 7.3.x</strong> &mdash; Full Hive 3/4 support with Iceberg table conversion</li>
+          <li><strong>EMR 6.x &amp; 7.x</strong> &mdash; AWS-managed Hive with S3A storage integration</li>
+          <li><strong>Cloud storage</strong> &mdash; HDFS to S3, ADLS, and GCS location translation</li>
+          <li><strong>Iceberg conversion</strong> &mdash; In-place table format migration (v1 &amp; v2)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STANDOUT CALLOUT: DATA STRATEGIES ===== -->
+<section class="realtime section-reveal" id="strategies">
+  <div class="container">
+    <div class="realtime-content" data-animate>
+      <div class="realtime-badge">The Right Strategy for Every Migration</div>
+      <h2>9 Data Strategies. Zero Guesswork.</h2>
+      <p>From <strong>schema-only metadata sync</strong> to <strong>full SQL-based data movement</strong>, HMS-Mirror selects the optimal migration path based on your table types, cluster topology, and storage configuration. The <strong>HYBRID</strong> strategy even auto-selects based on table size and complexity.</p>
+      <div class="realtime-stats stagger-children">
+        <div class="realtime-stat">
+          <div class="stat-value">9</div>
+          <div class="stat-label">Data Strategies</div>
+        </div>
+        <div class="realtime-stat">
+          <div class="stat-value">14</div>
+          <div class="stat-label">Platform Versions</div>
+        </div>
+        <div class="realtime-stat">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Auth Methods</div>
+        </div>
+        <div class="realtime-stat">
+          <div class="stat-value">5</div>
+          <div class="stat-label">Deploy Options</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VALUE PROPOSITIONS ===== -->
+<section class="value-props section-reveal">
+  <div class="container">
+    <div class="props-grid stagger-children">
+      <div class="prop" data-animate>
+        <div class="prop-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>Enterprise Security</h3>
+        <p>PKCS12 keystore encryption, JWT authentication, Kerberos cluster access, and LDAP/OIDC integration out of the box.</p>
+      </div>
+      <div class="prop" data-animate>
+        <div class="prop-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <h3>Location Translation</h3>
+        <p>Automatic warehouse directory mapping with ALIGNED and RELATIVE modes. Longest-match-wins semantics for overlapping path translations.</p>
+      </div>
+      <div class="prop" data-animate>
+        <div class="prop-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <h3>Modern Web UI</h3>
+        <p>React 19 interface with real-time job monitoring via WebSocket, wizard-driven workflows, and 153 components for complete migration control.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURE SHOWCASE ===== -->
+<section class="features section-reveal" id="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Built for Real-World Migrations</h2>
+      <p>Every feature designed for the complexity of enterprise Hive environments.</p>
+    </div>
+
+    <!-- Feature 1: Data Strategies -->
+    <div class="feature-row" data-animate>
+      <div class="feature-text">
+        <div class="feature-label">Data Strategies</div>
+        <h3>Pick the Right Migration Path</h3>
+        <p>Each strategy handles location translation, table type conversion, partition management, and view migration independently. Mix and match across jobs.</p>
+        <ul class="feature-list">
+          <li><strong>SCHEMA_ONLY</strong> &mdash; Transfer DDL without data movement; external tools handle the copy</li>
+          <li><strong>SQL</strong> &mdash; Data movement via INSERT...SELECT using shadow tables as bridges</li>
+          <li><strong>HYBRID</strong> &mdash; Auto-selects strategy based on table size and complexity</li>
+          <li><strong>STORAGE_MIGRATION</strong> &mdash; Move data to new HDFS/cloud namespaces within a cluster</li>
+          <li><strong>EXPORT_IMPORT</strong> &mdash; Native Hive export/import for robust cross-cluster transfer</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <div class="screenshot-placeholder" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; width:100%;">
+            <div style="background:rgba(249,103,2,0.15); border:1px solid rgba(249,103,2,0.3); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#FFB088; font-weight:700; font-size:0.8rem;">SCHEMA_ONLY</div>
+            </div>
+            <div style="background:rgba(249,103,2,0.15); border:1px solid rgba(249,103,2,0.3); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#FFB088; font-weight:700; font-size:0.8rem;">LINKED</div>
+            </div>
+            <div style="background:rgba(249,103,2,0.15); border:1px solid rgba(249,103,2,0.3); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#FFB088; font-weight:700; font-size:0.8rem;">SQL</div>
+            </div>
+            <div style="background:rgba(77,199,170,0.15); border:1px solid rgba(77,199,170,0.3); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#4DC7AA; font-weight:700; font-size:0.8rem;">EXPORT_IMPORT</div>
+            </div>
+            <div style="background:rgba(77,199,170,0.15); border:1px solid rgba(77,199,170,0.3); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#4DC7AA; font-weight:700; font-size:0.8rem;">HYBRID</div>
+            </div>
+            <div style="background:rgba(77,199,170,0.15); border:1px solid rgba(77,199,170,0.3); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#4DC7AA; font-weight:700; font-size:0.8rem;">STORAGE</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#8888aa; font-weight:700; font-size:0.8rem;">COMMON</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#8888aa; font-weight:700; font-size:0.8rem;">DUMP</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:12px; text-align:center;">
+              <div style="color:#8888aa; font-weight:700; font-size:0.8rem;">ICEBERG</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2: ACID & Iceberg -->
+    <div class="feature-row reverse" data-animate>
+      <div class="feature-text">
+        <div class="feature-label">Table Modernization</div>
+        <h3>ACID Tables &amp; Iceberg Conversion</h3>
+        <p>Handle the hardest part of Hive migration: transactional tables. HMS-Mirror manages ACID version incompatibilities, format conversion, and in-place Iceberg upgrades.</p>
+        <ul class="feature-list">
+          <li><strong>ACID downgrade</strong> &mdash; Convert transactional tables to external with EXTERNAL_TABLE_PURGE</li>
+          <li><strong>Bucket removal</strong> &mdash; Automatic artificial bucket translation from Hive 2 to Hive 3</li>
+          <li><strong>Iceberg v1 &amp; v2</strong> &mdash; In-place table format conversion without data movement</li>
+          <li><strong>Format translation</strong> &mdash; ORC, Parquet, and Avro format handling during migration</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <div class="screenshot-placeholder" style="display:flex; align-items:center; justify-content:center; padding:40px;">
+          <div style="text-align:center;">
+            <div style="display:flex; align-items:center; gap:24px; justify-content:center;">
+              <div style="border:2px solid rgba(249,103,2,0.4); border-radius:12px; padding:16px 24px;">
+                <div style="color:#FFB088; font-weight:700; font-size:0.9rem;">Hive 2 ACID</div>
+                <div style="color:#6c6c8a; font-size:0.75rem; margin-top:4px;">ORC Bucketed</div>
+              </div>
+              <svg width="40" height="20" viewBox="0 0 40 20">
+                <path d="M0 10 L30 10" stroke="#FFB088" stroke-width="2" stroke-linecap="round"/>
+                <polygon points="28,6 36,10 28,14" fill="#FFB088"/>
+              </svg>
+              <div style="border:2px solid rgba(77,199,170,0.4); border-radius:12px; padding:16px 24px;">
+                <div style="color:#4DC7AA; font-weight:700; font-size:0.9rem;">Iceberg v2</div>
+                <div style="color:#6c6c8a; font-size:0.75rem; margin-top:4px;">Parquet Native</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3: Web UI -->
+    <div class="feature-row" data-animate>
+      <div class="feature-text">
+        <div class="feature-label">Web Interface</div>
+        <h3>Complete Migration Control</h3>
+        <p>A full-featured React 19 web application with Ant Design components, Redux state management, and real-time job progress via Socket.IO.</p>
+        <ul class="feature-list">
+          <li><strong>Connection management</strong> &mdash; Configure HS2 URIs, metastore direct, and HCFS namespaces</li>
+          <li><strong>Dataset scoping</strong> &mdash; Target databases with include/exclude regex and warehouse overrides</li>
+          <li><strong>Job orchestration</strong> &mdash; Combine connections, configs, and datasets into executable jobs</li>
+          <li><strong>Live progress</strong> &mdash; WebSocket-powered real-time status for running migrations</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <div class="screenshot-placeholder" style="display:flex; align-items:center; justify-content:center; padding:32px; flex-direction:column; gap:16px;">
+          <div style="width:100%; background:rgba(255,255,255,0.04); border-radius:8px; padding:12px 16px; border:1px solid rgba(255,255,255,0.08);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:#e2e8f0; font-size:0.85rem; font-weight:600;">Dashboard</span>
+              <div style="display:flex; gap:8px;">
+                <span style="background:rgba(34,197,94,0.2); color:#22c55e; padding:2px 8px; border-radius:4px; font-size:0.7rem;">Running</span>
+              </div>
+            </div>
+          </div>
+          <div style="width:100%; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div style="background:rgba(255,255,255,0.04); border-radius:8px; padding:10px 14px; border:1px solid rgba(255,255,255,0.06);">
+              <span style="color:#8888aa; font-size:0.7rem;">Connections</span>
+              <div style="color:#e2e8f0; font-weight:700; font-size:1.1rem; margin-top:2px;">4</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04); border-radius:8px; padding:10px 14px; border:1px solid rgba(255,255,255,0.06);">
+              <span style="color:#8888aa; font-size:0.7rem;">Jobs</span>
+              <div style="color:#e2e8f0; font-weight:700; font-size:1.1rem; margin-top:2px;">12</div>
+            </div>
+          </div>
+          <div style="width:100%; background:rgba(249,103,2,0.08); border:1px solid rgba(249,103,2,0.2); border-radius:8px; padding:10px 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:#FFB088; font-size:0.8rem; font-weight:500;">prod-cdp-migration</span>
+              <span style="color:#4DC7AA; font-size:0.7rem;">87%</span>
+            </div>
+            <div style="width:100%; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:6px;">
+              <div style="width:87%; height:100%; background:linear-gradient(90deg, #F96702, #4DC7AA); border-radius:2px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 4: Location Translation -->
+    <div class="feature-row reverse" data-animate>
+      <div class="feature-text">
+        <div class="feature-label">Storage</div>
+        <h3>Intelligent Location Translation</h3>
+        <p>Automatically remap table and partition locations from source to target namespaces. Supports HDFS-to-cloud migrations with intelligent path resolution.</p>
+        <ul class="feature-list">
+          <li><strong>ALIGNED mode</strong> &mdash; Warehouse plan-based restructuring for modern data layouts</li>
+          <li><strong>RELATIVE mode</strong> &mdash; Namespace swap while preserving directory structure</li>
+          <li><strong>Custom mappings</strong> &mdash; User-defined path translations with longest-match semantics</li>
+          <li><strong>Cloud targets</strong> &mdash; S3A, ADLS (abfs://), and GCS (gs://) native support</li>
+        </ul>
+      </div>
+      <div class="feature-visual">
+        <div class="screenshot-placeholder" style="display:flex; align-items:center; justify-content:center; padding:32px;">
+          <div style="width:100%; font-family:'JetBrains Mono',monospace; font-size:0.75rem; line-height:2;">
+            <div style="color:#6c6c8a;">// Source (HDFS)</div>
+            <div style="color:#FFB088;">hdfs://hdp-nn:8020/warehouse/sales</div>
+            <div style="color:#6c6c8a; margin-top:8px;">// Target (S3)</div>
+            <div style="color:#4DC7AA;">s3a://cdp-bucket/warehouse/sales</div>
+            <div style="color:#6c6c8a; margin-top:12px; border-top:1px solid rgba(255,255,255,0.08); padding-top:12px;">// Auto-translated partitions</div>
+            <div style="color:#e2e8f0; opacity:0.6;">/year=2024/month=01 <span style="color:#4DC7AA;">&#10003;</span></div>
+            <div style="color:#e2e8f0; opacity:0.6;">/year=2024/month=02 <span style="color:#4DC7AA;">&#10003;</span></div>
+            <div style="color:#e2e8f0; opacity:0.6;">/year=2024/month=03 <span style="color:#4DC7AA;">&#10003;</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MINI FEATURES GRID ===== -->
+<section class="more-features section-reveal">
+  <div class="container">
+    <h2>And There's More</h2>
+    <div class="mini-features-grid stagger-children">
+      <div class="mini-feature" data-animate>
+        <div class="mini-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <h4>Integrated Documentation</h4>
+        <p>MkDocs Material-powered docs served in-app with strategy guides, workflow tutorials, and quick-start references.</p>
+      </div>
+      <div class="mini-feature" data-animate>
+        <div class="mini-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </div>
+        <h4>Auto Driver Downloads</h4>
+        <p>One-click JDBC driver downloads from the web UI. MySQL, PostgreSQL, Oracle, and MariaDB drivers from Maven Central.</p>
+      </div>
+      <div class="mini-feature" data-animate>
+        <div class="mini-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <h4>Kerberos Native</h4>
+        <p>Full Kerberos authentication for cluster access with keytab management, ticket lifecycle, and credential storage.</p>
+      </div>
+      <div class="mini-feature" data-animate>
+        <div class="mini-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <h4>REST API</h4>
+        <p>Full OpenAPI/Swagger-documented REST API for programmatic access to connections, configurations, datasets, and job execution.</p>
+      </div>
+      <div class="mini-feature" data-animate>
+        <div class="mini-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h4>AI Assistant <span class="coming-soon">Optional</span></h4>
+        <p>MCP-powered AI analysis for configuration optimization, job planning, and migration report insights via Claude, OpenAI, or Ollama.</p>
+      </div>
+      <div class="mini-feature" data-animate>
+        <div class="mini-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <h4>Rich Reports</h4>
+        <p>Generated SQL statements, DistCp work plans, partition management details, execution statistics, and error analysis for every job.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUICK START ===== -->
+<section class="quickstart section-reveal" id="quickstart">
+  <div class="container">
+    <div class="section-header">
+      <h2>Deploy in 5 Minutes</h2>
+      <p>Choose your deployment method. From a single JAR to Cloudera Manager integration.</p>
+    </div>
+
+    <div class="install-tabs">
+      <button class="install-tab active" onclick="switchTab('jar')">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+        Standalone JAR
+      </button>
+      <button class="install-tab" onclick="switchTab('docker')">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="6" width="20" height="12" rx="2"/>
+          <line x1="6" y1="10" x2="6" y2="14"/>
+          <line x1="10" y1="10" x2="10" y2="14"/>
+          <line x1="14" y1="10" x2="14" y2="14"/>
+        </svg>
+        Docker
+      </button>
+      <button class="install-tab" onclick="switchTab('cm')">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4"/>
+        </svg>
+        Cloudera Manager
+      </button>
+    </div>
+
+    <!-- Standalone JAR -->
+    <div class="install-content active" id="tab-jar">
+      <div class="install-steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Download the server JAR</h4>
+            <div class="code-block">
+              <div class="code-header">
+                <span>Shell</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <pre><code>curl -L -o hmsm-server.jar \
+  https://github.com/cloudera-labs/hms-mirror/releases/latest/download/hmsm-server.jar</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Start the server</h4>
+            <div class="code-block">
+              <div class="code-header">
+                <span>Shell</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <pre><code>java -jar hmsm-server.jar</code></pre>
+            </div>
+            <p class="step-note">Web UI available at <code>http://localhost:8090/hms-mirror</code></p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Create your first connection and run a migration</h4>
+            <p class="step-note">Use the web UI wizard to configure source/target connections, scope your dataset, and execute.</p>
+          </div>
+        </div>
+      </div>
+      <div class="requirements-note">
+        <strong>Requirements:</strong> Java 17+ &bull; 4 GB RAM minimum &bull; Network access to source and target clusters
+      </div>
+    </div>
+
+    <!-- Docker -->
+    <div class="install-content" id="tab-docker">
+      <div class="install-steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Pull and run the Docker image</h4>
+            <div class="code-block">
+              <div class="code-header">
+                <span>Shell</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <pre><code>docker run -d --name hms-mirror \
+  -p 8090:8090 \
+  -v hms-data:/data/hms-mirror \
+  -v hms-logs:/var/log/hms-mirror \
+  cloudera/hmsm-server:latest</code></pre>
+            </div>
+            <p class="step-note">Rocky Linux 9 base with Java 17 and all dependencies included.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Open the web UI</h4>
+            <div class="code-block">
+              <div class="code-header">
+                <span>Shell</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <pre><code>open http://localhost:8090/hms-mirror</code></pre>
+            </div>
+            <p class="step-note">Health check: <code>/hms-mirror/actuator/health</code></p>
+          </div>
+        </div>
+      </div>
+      <div class="requirements-note">
+        <strong>Requirements:</strong> Docker 20+ &bull; 8 GB RAM recommended &bull; Ports 8090 available
+      </div>
+    </div>
+
+    <!-- Cloudera Manager -->
+    <div class="install-content" id="tab-cm">
+      <div class="install-steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Upload the CSD to Cloudera Manager</h4>
+            <div class="code-block">
+              <div class="code-header">
+                <span>Shell</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <pre><code>scp HMS_MIRROR-*.jar admin@cm-host:/opt/cloudera/csd/
+systemctl restart cloudera-scm-server</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Distribute and activate the Parcel</h4>
+            <p class="step-note">Upload the <code>.parcel</code> and <code>.parcel.sha</code> files, then distribute and activate through CM UI. Supports EL7, EL8, EL9, and Ubuntu.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Add the HMS-Mirror service</h4>
+            <p class="step-note">Add Service &rarr; HMS-Mirror. Configure Kerberos principal, TLS, and heap settings through CM. Min CDH version: 7.0.0.</p>
+          </div>
+        </div>
+      </div>
+      <div class="requirements-note">
+        <strong>Requirements:</strong> Cloudera Manager 7.0+ &bull; CDP cluster &bull; Admin access to CM
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ENTERPRISE ===== -->
+<section class="enterprise section-reveal" id="enterprise">
+  <div class="container">
+    <div class="section-header light">
+      <h2>Built for the Enterprise</h2>
+      <p>Security, compliance, and operational features for production deployments.</p>
+    </div>
+    <div class="enterprise-grid stagger-children">
+      <div class="ent-card" data-animate>
+        <h4>PKCS12 Keystore Encryption</h4>
+        <p>Master keys stored in a hardware-grade PKCS12 keystore. All sensitive configuration values encrypted at rest.</p>
+      </div>
+      <div class="ent-card" data-animate>
+        <h4>JWT Authentication</h4>
+        <p>15-minute access tokens with 7-day refresh tokens. Configurable secrets with auto-generation fallback.</p>
+      </div>
+      <div class="ent-card" data-animate>
+        <h4>LDAP &amp; OIDC SSO</h4>
+        <p>Active Directory, IPA, and custom LDAP integration. OpenID Connect for browser-based SSO with Okta and Azure AD.</p>
+      </div>
+      <div class="ent-card" data-animate>
+        <h4>Role-Based Access</h4>
+        <p>Admin and user roles with group mapping from LDAP/OIDC. Admin account always uses local auth as failsafe.</p>
+      </div>
+      <div class="ent-card" data-animate>
+        <h4>TLS/SSL Everywhere</h4>
+        <p>Certificate management for cluster connections, StartTLS for LDAP, and configurable SSL for the web UI.</p>
+      </div>
+      <div class="ent-card" data-animate>
+        <h4>Cloudera Manager Native</h4>
+        <p>CSD and Parcel deployment with CM health checks, external links, Kerberos principal support, and auto-configuration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta section-reveal">
+  <div class="container">
+    <h2>Start Your Migration Today</h2>
+    <p>From HDP to CDP, from HDFS to cloud storage. HMS-Mirror handles the complexity so you don't have to.</p>
+    <div class="hero-actions">
+      <a href="#quickstart" class="btn btn-lg btn-white">Get Started</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" width="28" height="28">
+          <rect width="40" height="40" rx="8" fill="url(#logo-grad)"/>
+          <ellipse cx="14" cy="14" rx="6" ry="2.5" fill="white" opacity="0.9"/>
+          <path d="M8 14 v6 a6 2.5 0 0 0 12 0 v-6" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+          <ellipse cx="26" cy="20" rx="6" ry="2.5" fill="white" opacity="0.9"/>
+          <path d="M20 20 v6 a6 2.5 0 0 0 12 0 v-6" fill="none" stroke="white" stroke-width="1.2" opacity="0.8"/>
+          <polygon points="23,16 23,20 26,18" fill="white" opacity="0.9"/>
+        </svg>
+        <span class="logo-text">HMS-<span class="logo-accent">Mirror</span></span>
+      </a>
+      <p class="footer-tagline">Enterprise Hive Metastore migration for Hadoop and cloud environments.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#strategies">Strategies</a>
+        <a href="#features">Features</a>
+        <a href="#enterprise">Enterprise</a>
+        <a href="#quickstart">Get Started</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="https://github.com/cloudera-labs/hms-mirror" target="_blank" rel="noopener">GitHub</a>
+        <a href="#quickstart">Documentation</a>
+        <a href="https://github.com/cloudera-labs/hms-mirror/releases" target="_blank" rel="noopener">Releases</a>
+      </div>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; 2021&ndash;2026 Cloudera, Inc. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
