@@ -38,6 +38,7 @@
     </a>
     <div class="nav-links">
       <a href="#platforms">Platforms</a>
+      <a href="#assistant">Assistant</a>
       <a href="#strategies">Strategies</a>
       <a href="#features">Features</a>
       <a href="#enterprise">Enterprise</a>
@@ -49,6 +50,7 @@
   </div>
   <div class="mobile-menu" id="mobileMenu">
     <a href="#platforms" onclick="closeMobileMenu()">Platforms</a>
+    <a href="#assistant" onclick="closeMobileMenu()">Assistant</a>
     <a href="#strategies" onclick="closeMobileMenu()">Strategies</a>
     <a href="#features" onclick="closeMobileMenu()">Features</a>
     <a href="#enterprise" onclick="closeMobileMenu()">Enterprise</a>
@@ -143,6 +145,108 @@
           <li><strong>Iceberg conversion</strong> &mdash; In-place table format migration (v1 &amp; v2)</li>
         </ul>
       </div>
+    </div>
+
+    <div class="engine-approach" data-animate>
+      <div class="engine-approach-lead">
+        <div class="feature-label">Engine-Based Architecture</div>
+        <h3>Your engines do the heavy lifting. No backdoors.</h3>
+        <p>HMS-Mirror moves data through <strong>public interfaces</strong> &mdash; HiveServer2, JDBC, and the metastore &mdash; never proprietary agents or backdoors into your clusters. Transfers run on your <strong>SQL engine</strong> (<strong>Hive today, Trino coming</strong>), so even environments without a classic YARN cluster can migrate at scale.</p>
+      </div>
+      <div class="engine-approach-points stagger-children">
+        <div class="eap">
+          <div class="eap-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </div>
+          <h4>SQL Engine Transfers</h4>
+          <p>Standard <code>INSERT&hellip;SELECT</code> over HiveServer2. Your engine handles the compute &mdash; no dedicated YARN or MapReduce cluster required.</p>
+        </div>
+        <div class="eap">
+          <div class="eap-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </div>
+          <h4>DistCp When You Want It</h4>
+          <p>Prefer file-level bulk copy? Switch any storage migration to DistCp and let Hadoop move the bytes instead.</p>
+        </div>
+        <div class="eap">
+          <div class="eap-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+            </svg>
+          </div>
+          <h4>No Direct Line of Sight</h4>
+          <p>Clusters can't reach each other? Stage through <strong>intermediate</strong> cloud storage both sides can access &mdash; S3, ADLS, or GCS.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONVERSATIONAL ASSISTANT ===== -->
+<section class="assistant section-reveal" id="assistant">
+  <div class="container">
+    <div class="assistant-header" data-animate>
+      <div class="assistant-badge"><span class="dot"></span>New &middot; Conversational Migration</div>
+      <h2>Migrate by Conversation</h2>
+      <p>A new way to migrate: <strong>describe what you want in plain language</strong> and the agent plans, validates, and runs it for you. One of the first conversational migration agents in the data space &mdash; no deep Hive expertise required to get started.</p>
+    </div>
+
+    <div class="assistant-grid">
+      <div class="assistant-text" data-animate>
+        <h3>An expert migration engineer, on call.</h3>
+        <p>The Assistant drives the full HMS-Mirror engine through chat. Ask it to move a database and it handles the connections, datasets, jobs, and reports &mdash; checking its work with a dry-run before anything moves.</p>
+        <ul class="feature-list">
+          <li><strong>Plan &amp; configure</strong> &mdash; describe the migration; the agent builds the connection, dataset, and job for you</li>
+          <li><strong>Discover</strong> &mdash; list databases and tables and summarize ACID vs. external at a glance</li>
+          <li><strong>Validate first</strong> &mdash; every job is dry-run validated before a single byte moves</li>
+          <li><strong>Execute &amp; monitor</strong> &mdash; run the migration and watch live status stream back in the chat</li>
+          <li><strong>Diagnose &amp; explain</strong> &mdash; troubleshoot connection or Kerberos issues and explain generated SQL, DistCp plans, and reports</li>
+        </ul>
+        <div class="assistant-meta">
+          <span class="powered-by"><span class="spark">&#10022;</span> Powered by Claude</span>
+          <span class="assistant-note">Optional feature, enabled by your administrator.</span>
+        </div>
+      </div>
+
+      <div class="assistant-chat" data-animate>
+        <div class="chat-window">
+          <div class="chat-titlebar">
+            <div class="chat-dots"><span></span><span></span><span></span></div>
+            <span class="chat-title">HMS-Mirror Assistant</span>
+          </div>
+          <div class="chat-body">
+            <div class="chat-msg user">Migrate the <code>sales</code> database from our HDP cluster to CDP on S3.</div>
+            <div class="chat-msg agent">On it &mdash; let me check the source connection and see what we're working with.</div>
+            <div class="chat-tools">
+              <div class="chat-tool"><span class="tname">test-connection</span> &middot; hdp-prod <span class="tcheck">&#10003;</span></div>
+              <div class="chat-tool"><span class="tname">list-tables</span> &middot; sales <span class="tcheck">12 tables &#10003;</span></div>
+            </div>
+            <div class="chat-msg agent">Found <strong>12 tables</strong> &mdash; 3 ACID, 9 external. I'll use the <strong>SQL</strong> strategy with Iceberg conversion and run a dry-run first.</div>
+            <div class="chat-tools">
+              <div class="chat-tool"><span class="tname">validate-job</span> &middot; dry-run <span class="tcheck">0 issues &#10003;</span></div>
+            </div>
+            <div class="chat-msg agent">Validation passed. Ready to move the data &mdash; shall I proceed?</div>
+            <div class="chat-msg user">Go ahead.</div>
+            <div class="chat-tools">
+              <div class="chat-tool"><span class="tname">execute-job</span> &middot; sales &rarr; cdp <span class="tcheck">&#10003;</span></div>
+            </div>
+            <div class="chat-msg agent">&#9989; Done &mdash; <strong>12/12 tables</strong> migrated to <code>s3a://cdp-bucket/warehouse/sales</code>. Want the full report?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="assistant-chips" data-animate>
+      <span class="assistant-chip"><strong>42</strong> MCP tools</span>
+      <span class="assistant-chip"><strong>67+</strong> starter prompts</span>
+      <span class="assistant-chip">Streaming, tool-aware responses</span>
+      <span class="assistant-chip">Dry-run before every run</span>
     </div>
   </div>
 </section>
@@ -437,8 +541,8 @@
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
         </div>
-        <h4>AI Assistant <span class="coming-soon">Optional</span></h4>
-        <p>MCP-powered AI analysis for configuration optimization, job planning, and migration report insights via Claude, OpenAI, or Ollama.</p>
+        <h4>MCP-Native API</h4>
+        <p>The full HMS-Mirror engine is exposed as 42 Model Context Protocol tools, so the in-app Assistant &mdash; and any MCP client &mdash; can drive connections, jobs, and reports directly.</p>
       </div>
       <div class="mini-feature" data-animate>
         <div class="mini-icon">
