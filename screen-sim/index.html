@@ -1,0 +1,2962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ski Commander — 800×480 screen sim</title>
+<style>
+  :root {
+    --bg: #062028;
+    --sky: #16324a;
+    --sky-lit: #7aa0b8;
+    --water: #1c6a78;
+    --panel: rgba(6, 22, 30, 0.62);
+    --status: #16324a;
+    --tab: #1d4560;
+    --sub: rgba(6, 22, 30, 0.45);
+    --primary: #ffb020;
+    --ok: #3dde6a;
+    --warn: #ffb020;
+    --line: rgba(215, 228, 236, 0.28);
+    --text: #e8f2f6;
+    --dim: #8aa0ac;
+    --muted: #b7c9d4;
+    --green: #7CFF6B;
+    --cyan: #d7e4ec;
+    --yellow: #ffb020;
+    --ink: #102028;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #12141c; color: #d7dbe7; }
+  body {
+    font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+    min-height: 100vh;
+  }
+  .bench {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: #f2f4f8;
+  }
+  .lead { margin: 0 0 14px; color: #9aa3b5; font-size: 14px; line-height: 1.45; }
+  .bezel {
+    background: linear-gradient(180deg, #2a2e38, #1a1d24);
+    border: 1px solid #3c4250;
+    border-radius: 18px;
+    padding: 16px 16px 22px;
+    box-shadow: 0 16px 40px rgba(0,0,0,.45);
+  }
+  .bezel-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    letter-spacing: .04em;
+    color: #8b93a3;
+    margin-bottom: 8px;
+  }
+  .glass {
+    position: relative;
+    width: 800px;
+    height: 480px;
+    margin: 0 auto;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.15;
+    user-select: none;
+  }
+  button, input { font: inherit; color: inherit; }
+  .status {
+    position: absolute; left: 0; top: 0; width: 800px; height: 40px;
+    background: linear-gradient(180deg, #16324a, #1d4560); display: flex; align-items: center; padding: 0 6px;
+  }
+  .status span { position: absolute; top: 12px; white-space: nowrap; }
+  .status .title { left: 4px; color: var(--text); font-weight: 700; letter-spacing: 0; }
+  .status .gps { left: 158px; color: var(--yellow); }
+  .status .lora { left: 0; right: 0; text-align: center; color: var(--cyan); }
+  .tabbar {
+    position: absolute; left: 0; top: 40px; width: 800px; height: 48px;
+    background: linear-gradient(180deg, #1d4560, #6f97ad); display: flex;
+    border-bottom: 2px solid #d7e6ee;
+  }
+  .tabbar button {
+    flex: 1; background: transparent; border: 0; border-bottom: 3px solid transparent;
+    color: #e7eef2; cursor: pointer;
+  }
+  .tabbar button.on { color: #fff; border-bottom-color: var(--primary); background: rgba(6, 22, 30, 0.18); }
+  .page {
+    position: absolute; left: 0; top: 88px; width: 800px; height: 392px;
+    background: linear-gradient(180deg, #1c6a78 0%, #0a3038 42%, #062028 100%);
+    display: none;
+  }
+  .page.on { display: block; }
+  .home { padding: 5px; }
+  .panel {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text); padding: 4px 6px; white-space: pre-line;
+  }
+  .home-top { display: flex; gap: 8px; }
+  .home-top .panel { flex: 1; height: 45px; min-width: 0; }
+  .course-panel { height: 45px; }
+  .buoy-panel { height: 45px; display: flex; align-items: center; }
+  .buoy-panel.is-off { visibility: hidden; }
+  .rope-box {
+    margin: 8px 5px 0;
+    background: rgba(12, 40, 48, 0.92);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 2px 8px 4px;
+  }
+  .rope-head { display: flex; align-items: center; justify-content: space-between; min-height: 24px; }
+  .rope-label { color: var(--dim); font-size: 14px; line-height: 18px; }
+  .rope-shorten {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--text); font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .rope-shorten.is-off { visibility: hidden; }
+  .sw.mini { width: 44px; height: 22px; border-radius: 11px; }
+  .sw.mini i { top: 2px; left: 2px; width: 18px; height: 18px; }
+  .sw.mini.on i { left: 24px; }
+  .rope-line { display: flex; margin-top: 30px; }
+  .rope-line .mark {
+    flex: 1; position: relative; height: 52px;
+    background: transparent; border: 0; padding: 0; cursor: pointer; color: var(--text);
+  }
+  .rope-line .seg { position: absolute; left: 0; right: 0; top: 8px; height: 8px; }
+  .rope-line .seg.split { display: flex; }
+  .rope-line .seg.split b { flex: 1; height: 8px; }
+  .rope-line .seg.split b:first-child { background: #ff7a00; }
+  .rope-line .seg.split b:last-child { background: #f4f7fa; }
+  .rope-line .dot {
+    position: absolute; left: 50%; top: 1px; width: 22px; height: 22px; margin-left: -11px;
+    border-radius: 50%; box-sizing: border-box;
+    background: #f4f7fa; border: 2px solid #102028;
+  }
+  .rope-line .mark.on .dot { background: #102028; border-color: #f4f7fa; }
+  .rope-line .cap {
+    position: absolute; left: 0; right: 0; top: 28px;
+    text-align: center; font-size: 13px; font-weight: 700; color: var(--text);
+  }
+  .pos { text-align: center; color: var(--dim); margin-top: 6px; }
+  .home-actions {
+    position: absolute; left: 5px; right: 5px; bottom: 5px; top: 5px; pointer-events: none;
+  }
+  .home-actions button { pointer-events: auto; border: 0; border-radius: 8px; cursor: pointer; font-weight: 700; letter-spacing: .04em; }
+  .btn-drive {
+    position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+    width: 200px; height: 42px; background: var(--primary); color: var(--ink);
+  }
+  .btn-drive:active { background: #ffc14d; }
+  .btn-fleet {
+    width: 220px; height: 36px; background: var(--ok); color: var(--ink);
+    border: 0; border-radius: 8px; font-weight: 700; letter-spacing: .04em; cursor: pointer;
+  }
+  .btn-fleet:active { background: #7CFF6B; }
+  .crew-stack {
+    margin: 8px 5px 0;
+    display: flex; flex-direction: column; gap: 28px;
+  }
+  .crew-row { display: flex; justify-content: space-between; align-items: center; }
+  .btn-role {
+    width: 220px; height: 36px;
+    background: #d7e4ec; color: var(--ink);
+    border: 2px solid var(--primary); border-radius: 8px;
+    text-align: left; padding: 0 10px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-weight: 700; letter-spacing: .04em; cursor: pointer;
+  }
+  .btn-role:active { background: #b7c9d4; }
+  .subbar { height: 24px; background: rgba(6, 22, 30, 0.35); display: flex; }
+  .subbar button {
+    flex: 1; border: 0; background: transparent; color: #d5e2ea; cursor: pointer; font-size: 13px;
+  }
+  .subbar button.on { color: #fff; background: rgba(6, 22, 30, 0.35); box-shadow: inset 0 -2px 0 var(--primary); }
+  .subpage { display: none; height: calc(100% - 24px); position: relative; overflow: hidden; }
+  .subpage.on { display: block; }
+  .list {
+    width: 780px; height: 100px; margin: 4px auto 0; overflow: auto;
+    background: transparent; border-radius: 8px;
+  }
+  .add {
+    display: block; width: 100%; text-align: left; background: rgba(61, 222, 106, 0.18); color: var(--text);
+    border: 1px solid rgba(61, 222, 106, 0.45); border-radius: 8px; padding: 8px 10px; cursor: pointer;
+  }
+  .row {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 32px; margin-top: 2px; padding: 0 4px; background: rgba(6, 22, 30, 0.45); border-radius: 8px;
+  }
+  .row .name { flex: 1; background: none; border: 0; text-align: left; cursor: pointer; padding: 0 4px; color: var(--text); }
+  .row .name.blocked { color: var(--dim); }
+  .row .name.active { color: var(--green); }
+  .gear {
+    width: 28px; height: 24px; background: rgba(215, 228, 236, 0.16); border: 0; border-radius: 4px; cursor: pointer; color: var(--text);
+  }
+  .gear:active { background: rgba(215, 228, 236, 0.32); }
+  .buoy-wrap { padding: 5px; }
+  .buoy-title { text-align: center; color: var(--text); letter-spacing: .04em; }
+  .buoy-count { color: var(--muted); margin: 4px 0 6px 5px; }
+  .buoy-list {
+    width: 780px; height: 286px; margin: 0 auto; overflow: auto;
+    background: rgba(6, 22, 30, 0.28); border: 1px solid var(--line); border-radius: 8px; padding: 2px;
+  }
+  .buoy-item {
+    display: block; width: 100%; text-align: left; border: 0; color: var(--text);
+    padding: 8px 8px; margin-bottom: 2px; cursor: pointer; border-radius: 6px;
+  }
+  .empty { color: var(--muted); text-align: center; padding: 28px 8px; white-space: pre-line; }
+  .setup-sheet {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px 48px 6px;
+  }
+  .cfg-row {
+    display: grid;
+    grid-template-columns: 168px minmax(180px, 1fr) 132px;
+    align-items: center;
+    gap: 14px;
+    width: min(680px, 100%);
+    height: 36px;
+    padding: 0 16px;
+    background: rgba(6, 32, 40, 0.72);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+  }
+  .sw {
+    position: relative; width: 54px; height: 28px; border-radius: 14px; border: 0;
+    background: rgba(6, 22, 30, 0.55); cursor: pointer; justify-self: start;
+  }
+  .sw i {
+    position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #e8f2f6;
+    transition: left .12s;
+  }
+  .sw.on { background: var(--primary); }
+  .sw.on i { left: 29px; }
+  .setup-sheet .slider { position: static; width: 100%; height: 20px; accent-color: var(--primary); }
+  .setup-sheet .ext { position: static; color: var(--green); font-variant-numeric: tabular-nums; }
+  .setup-sheet .mode { color: var(--text); font-weight: 700; }
+  .unit-ctrl { display: flex; align-items: center; gap: 12px; }
+  .cal {
+    width: 220px; height: 36px; margin-top: 4px;
+    background: rgba(26, 58, 68, 0.9); color: var(--text);
+    border: 1px solid var(--line); border-radius: 8px; cursor: pointer;
+  }
+  .timing-sheet {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 4px 18px 6px;
+  }
+  .rate-note, .rate-row {
+    display: grid;
+    grid-template-columns: 28px 118px minmax(120px, 1fr) 132px;
+    align-items: center;
+    gap: 10px;
+    width: min(740px, 100%);
+    margin: 0 auto;
+    padding: 0 10px;
+  }
+  .rate-note {
+    height: 28px;
+    color: var(--dim);
+    font-size: 13px;
+    grid-template-columns: 28px 1fr;
+  }
+  .rate-row {
+    height: 34px;
+    background: rgba(6, 32, 40, 0.72);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .rate-row .slider { position: static; width: 100%; height: 16px; accent-color: var(--primary); }
+  .rate-row .ext { color: var(--green); font-variant-numeric: tabular-nums; font-size: 13px; }
+  .help {
+    width: 26px; height: 26px; border-radius: 13px; padding: 0;
+    border: 1px solid var(--line); background: rgba(26, 58, 68, 0.95);
+    color: var(--text); font-weight: 700; cursor: pointer; line-height: 24px;
+  }
+  .mbox.help { width: 560px; }
+  .mbox.help p { font-size: 14px; line-height: 1.35; max-height: 280px; overflow: auto; }
+  .inst-grid {
+    height: 100%;
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 32px;
+  }
+  .inst-grid.gps { grid-template-columns: repeat(3, 220px); }
+  .inst-grid.lora { grid-template-columns: repeat(2, 320px); }
+  .inst-grid.imu { grid-template-columns: repeat(6, 108px); gap: 10px; }
+  .inst {
+    min-height: 86px;
+    padding: 12px 14px 10px;
+    background: rgba(6, 32, 40, 0.72);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+  }
+  .inst.span2 { grid-column: span 2; }
+  .inst.span3 { grid-column: span 3; }
+  .inst.wide { grid-column: 1 / -1; min-height: 78px; }
+  .inst-grid.gps .inst, .inst-grid.lora .inst { min-height: 96px; }
+  .inst-grid.imu .inst { min-height: 70px; padding: 8px 12px 6px; gap: 2px; }
+  .inst .k { color: var(--muted); font-size: 12px; letter-spacing: .03em; }
+  .inst .v { color: var(--green); font-size: 18px; font-weight: 600; letter-spacing: 0; }
+  .overlay {
+    position: absolute; inset: 0; display: none; background: #000;
+  }
+  .overlay.on { display: block; }
+  .drive { position: absolute; inset: 0; }
+  .hud-copy {
+    position: absolute; left: 16px; top: 10px; right: 16px; z-index: 2; pointer-events: none;
+  }
+  .hud-copy .course { color: #e8f2f6; font-size: 16px; }
+  .hud-copy .verdict { font-size: 26px; font-weight: 700; line-height: 1.1; margin-top: 2px; }
+  .hud-copy .dev { font-size: 16px; margin-top: 2px; }
+  .hud-copy .dir { font-size: 15px; color: #e8f2f6; margin-top: 1px; }
+  .fleet {
+    position: absolute; top: 6px; right: 16px; width: 252px; max-height: 94px; z-index: 3;
+    font-size: 44px; font-weight: 800; line-height: 47px; text-align: right;
+    white-space: pre-line; overflow: hidden; pointer-events: none;
+  }
+  .drive-speed {
+    position: absolute; top: 4px; left: 50%; width: 250px; margin-left: -125px; z-index: 4;
+    text-align: center; color: #8aa0ac; font-size: 44px; font-weight: 800; line-height: 47px;
+    pointer-events: none;
+  }
+  .drive-rope {
+    position: absolute; top: 51px; left: 50%; width: 220px; margin-left: -110px; z-index: 4;
+    text-align: center; color: #8aa0ac; font-size: 36px; font-weight: 800; line-height: 28px;
+    pointer-events: none;
+  }
+  #hud { position: absolute; left: 0; top: 0; width: 800px; height: 336px; }
+  .cols { position: absolute; left: 12px; right: 12px; top: 348px; height: 62px; display: flex; gap: 2px; z-index: 2; }
+  .cols i {
+    flex: 1; height: 62px; border: 1px solid #333; border-radius: 2px; background: #111;
+  }
+  .cols i.center { background: #444; }
+  .scale { position: absolute; left: 12px; right: 12px; top: 332px; height: 16px; color: var(--muted); font-size: 12px; z-index: 2; }
+  .scale span { position: absolute; top: 0; }
+  .scale .c { left: 0; right: 0; text-align: center; }
+  .scale .r { right: 0; }
+  .scale .note { top: 0; left: 210px; right: 210px; text-align: center; color: var(--dim); }
+  .back {
+    position: absolute; left: 50%; bottom: 15px; transform: translateX(-50%);
+    width: 120px; height: 40px; background: rgba(215, 228, 236, 0.16); color: var(--text);
+    border: 1px solid var(--line); border-radius: 8px; cursor: pointer;
+  }
+  .back:active { background: rgba(215, 228, 236, 0.28); }
+  .shade { position: absolute; inset: 0; background: rgba(4, 16, 22, .72); }
+  .mbox {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 340px; background: #0c2830; border: 1px solid var(--line); border-radius: 8px; padding: 14px 14px 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5); color: var(--text);
+  }
+  .mbox h3 { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
+  .mbox p { margin: 0 0 12px; white-space: pre-line; color: var(--text); }
+  .mbox .btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .mbox .btns button {
+    min-width: 72px; height: 32px; border: 0; border-radius: 6px;
+    background: var(--primary); color: var(--ink); font-weight: 700; cursor: pointer;
+  }
+  .dialog {
+    position: absolute; background: #0c2830; border: 1px solid rgba(215, 228, 236, 0.4); border-radius: 8px; padding: 10px;
+    color: var(--text);
+  }
+  .dialog.course { left: 10px; top: 20px; width: 780px; height: 440px; }
+  .dialog.small { left: 20px; top: 150px; width: 760px; height: 180px; }
+  .dialog.buoy { left: 10px; top: 20px; width: 780px; height: 440px; border-color: #4444aa; }
+  .dialog.role { left: 50%; top: 50%; transform: translate(-50%, -50%); width: 360px; }
+  .role-list { max-height: 250px; overflow: auto; display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
+  .role-list button {
+    text-align: left; background: rgba(6, 22, 30, 0.65); color: var(--text);
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-weight: 700;
+  }
+  .dialog.role .cancel-role {
+    display: block; margin-left: auto; min-width: 88px; height: 32px; border: 0; border-radius: 6px;
+    background: #1a3a44; color: var(--text); font-weight: 700; cursor: pointer;
+  }
+  .dialog.user {
+    left: 50%; top: 50%; transform: translate(-50%, -50%); width: 460px; padding: 16px;
+  }
+  .dialog.user label { display: flex; align-items: center; gap: 10px; margin: 14px 0; }
+  .dialog.user select {
+    margin-left: auto; min-width: 120px; height: 32px;
+    background: #062028; color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+  }
+  .dialog.user .btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .dialog.user .btns button {
+    min-width: 88px; height: 32px; border: 0; border-radius: 6px;
+    background: #1a3a44; color: var(--text); font-weight: 700; cursor: pointer;
+  }
+  .dialog.user .btns [data-act="save"] { background: #3dde6a; color: #102028; }
+  .dialog h3 { margin: 0; text-align: center; font-size: 16px; font-weight: 700; color: var(--text); }
+  .x {
+    position: absolute; right: 10px; top: 5px; width: 30px; height: 24px;
+    background: transparent; color: var(--hot, #ff5a3c); border: 1px solid #ff5a3c; border-radius: 4px; cursor: pointer;
+  }
+  .kv { position: absolute; left: 15px; right: 15px; }
+  .kv .k { position: absolute; color: var(--muted); }
+  .kv .v { position: absolute; }
+  .dactions { position: absolute; left: 0; right: 0; bottom: 40px; text-align: center; }
+  .dactions button, .sactions button {
+    height: 32px; border: 0; border-radius: 6px; margin: 0 5px; cursor: pointer; color: var(--ink); font-weight: 700;
+  }
+  .act-go { background: #3dde6a; }
+  .act-rename { background: #ffb020; }
+  .dactions .act-stop, .sactions .act-stop { background: #ff5a3c; color: #1a100c; }
+  .sactions { position: absolute; left: 15px; bottom: 12px; }
+  .sactions button { height: 28px; }
+  .keys { background: rgba(6, 22, 30, .94); }
+  .ta {
+    display: block; width: 780px; height: 35px; margin: 10px auto 0;
+    background: rgba(6, 22, 30, 0.8); border: 1px solid var(--line); color: var(--text); padding: 6px 8px; border-radius: 6px;
+  }
+  .kb {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 140px;
+    display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; padding: 4px;
+    background: #062028;
+  }
+  .kb button { background: rgba(215, 228, 236, 0.14); color: var(--text); border: 0; border-radius: 4px; cursor: pointer; }
+  .kb button.wide { grid-column: span 2; }
+  .kb button.ok { background: #3dde6a; color: var(--ink); }
+  .kb button.cancel { background: #ff5a3c; color: #1a100c; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+    margin-top: 14px; font-size: 13px;
+  }
+  .controls label { display: flex; align-items: center; gap: 6px; }
+  .controls button, .controls select {
+    background: rgba(215, 228, 236, 0.1); color: #e8f2f6; border: 1px solid rgba(215, 228, 236, 0.28);
+    border-radius: 6px; padding: 4px 8px;
+  }
+  .controls input[type="range"] { accent-color: #ffb020; }
+  .notes { margin-top: 12px; color: #8b93a3; font-size: 13px; line-height: 1.45; }
+  .notes code { color: #c9d1e0; }
+  .pass-head { display: flex; align-items: center; gap: 10px; height: 32px; padding: 4px 8px 0; }
+  .pass-head button {
+    height: 28px; min-width: 72px; border: 0; border-radius: 6px; cursor: pointer;
+    background: #1a3a44; color: var(--text);
+  }
+  #passTitle { color: var(--text); font-weight: 700; }
+  #passRec { margin-left: auto; color: var(--warn); }
+  .pass-filters {
+    display: flex; gap: 18px; align-items: center; padding: 4px 12px 0;
+    color: var(--text); font-size: 14px; font-weight: 700;
+  }
+  .pass-filters select {
+    margin-left: 6px; min-width: 140px; height: 28px;
+    background: #0c2830; color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+  }
+  .pass-list { width: 780px; height: 276px; margin: 8px auto 0; overflow: auto; }
+  .users-sheet { padding: 8px 14px; }
+  .users-bar { display: flex; align-items: center; justify-content: space-between; color: var(--dim); margin-bottom: 8px; }
+  .users-bar button {
+    background: rgba(61, 222, 106, 0.18); color: var(--text);
+    border: 1px solid rgba(61, 222, 106, 0.45); border-radius: 8px;
+    padding: 6px 12px; cursor: pointer; font-weight: 700;
+  }
+  .user-list { height: 280px; overflow: auto; }
+  .user-row {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(12, 40, 48, 0.9); border-radius: 8px; margin-bottom: 6px; padding: 6px 8px; color: var(--text);
+  }
+  .user-row .who { font-weight: 700; }
+  .user-row .meta { color: var(--dim); margin-right: auto; }
+  .user-row button {
+    background: transparent; color: #ff5a3c; border: 1px solid #ff5a3c; border-radius: 6px;
+    padding: 4px 8px; cursor: pointer; font-weight: 700;
+  }
+  .user-row button[data-edit] { color: var(--text); border-color: rgba(138, 160, 172, 0.7); }
+  .pass-list button {
+    display: block; width: 100%; text-align: left; margin-top: 4px; padding: 8px 10px;
+    background: rgba(6, 22, 30, 0.55); color: var(--text);
+    border: 1px solid rgba(138, 160, 172, 0.45); border-radius: 6px; cursor: pointer;
+  }
+  .pass-empty { color: var(--dim); margin: 16px 12px; }
+  #passPlot { width: 780px; margin: 8px auto 0; }
+  #passSvg { width: 780px; height: 250px; background: #062028; border: 1px solid var(--line); border-radius: 4px; display: block; }
+  #passStats { color: var(--text); margin-top: 6px; font-size: 14px; }
+  #selftest { white-space: pre-wrap; background: #0d0f14; padding: 8px; }
+  @media (max-width: 860px) {
+    .bezel { overflow: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="bench">
+  <h1>Ski Commander screen</h1>
+  <p class="lead">800×480 layout from <code>Ski_Commander/LVGL_UI.cpp</code> on the ER-TFTM070-5V4. Sample data, not a live GPS fix. The glass is the firmware UI. Controls under the bezel are the simulator.</p>
+  <div class="bezel">
+    <div class="bezel-label"><span>SKI COMMANDER</span><span>ER-TFTM070-5V4 · RA8875 · 800×480</span></div>
+    <div class="glass" id="glass">
+      <div class="status">
+        <span class="title">Ski Commander</span>
+        <span class="gps" id="lblGPS">GPS:--</span>
+        <span class="lora" id="lblLoRa">LoRa:--</span>
+      </div>
+      <div class="tabbar" id="tabbar">
+        <button data-tab="home" class="on">⌂</button>
+        <button data-tab="course">Course</button>
+        <button data-tab="buoys">Buoys</button>
+        <button data-tab="passes">Passes</button>
+        <button data-tab="settings">⚙</button>
+      </div>
+      <div class="page home on" data-page="home">
+        <div class="home-top">
+          <div class="panel course-panel" id="lblCourseInfo">Course: None
+Retrieval: None</div>
+          <div class="panel buoy-panel" id="lblBuoyInfo">Buoys: 0/24 deployed</div>
+        </div>
+        <div class="pos" id="lblPositionInfo">Lat: --  Lon: --</div>
+        <div class="crew-stack">
+          <div class="crew-row">
+            <button class="btn-role" id="btnDriver" type="button">Driver: -</button>
+            <button class="btn-fleet" id="btnDeploy" type="button">▶ DEPLOY</button>
+          </div>
+          <div class="crew-row">
+            <button class="btn-role" id="btnSkier" type="button">Skier: -</button>
+            <button class="btn-fleet" id="btnRetrieve" type="button">↑ RETRIEVE</button>
+          </div>
+        </div>
+        <div class="rope-box" id="ropeBox">
+          <div class="rope-head">
+            <div class="rope-label">Rope Length (off)</div>
+            <div class="rope-shorten is-off" id="ropeShorten">
+              <span>Shorten after each pass</span>
+              <button class="sw mini" id="swShorten" type="button"><i></i></button>
+            </div>
+          </div>
+          <div class="rope-line" id="ropeLine"></div>
+        </div>
+        <div class="home-actions">
+          <button class="btn-drive" id="btnDrive">⊕ DRIVE</button>
+        </div>
+      </div>
+      <div class="page" data-page="course">
+        <div class="subbar" data-group="courseSub">
+          <button data-sub="courses" class="on">Courses</button>
+          <button data-sub="retrieval">Retrieval</button>
+          <button data-sub="waypts">Waypoints</button>
+        </div>
+        <div class="subpage on" data-subpage="courses"><div class="list" id="courseList"></div></div>
+        <div class="subpage" data-subpage="retrieval"><div class="list" id="retrievalList"></div></div>
+        <div class="subpage" data-subpage="waypts"><div class="list" id="waypointList"></div></div>
+      </div>
+      <div class="page" data-page="buoys">
+        <div class="buoy-wrap">
+          <div class="buoy-title">Registered Buoys</div>
+          <div class="buoy-count" id="lblBuoyDetail">Active: 0 buoys</div>
+          <div class="buoy-list" id="buoyList"></div>
+        </div>
+      </div>
+      <div class="page" data-page="passes">
+        <div class="pass-head">
+          <button id="passBack" type="button" style="display:none">Back</button>
+          <span id="passTitle">Passes</span>
+          <span id="passRec"></span>
+        </div>
+        <div class="pass-filters" id="passFilters">
+          <label>Driver <select id="filterDriver"></select></label>
+          <label>Skier <select id="filterSkier"></select></label>
+        </div>
+        <div id="passEmpty" class="pass-empty" style="display:none"></div>
+        <div id="passDates" class="pass-list"></div>
+        <div id="passRuns" class="pass-list" style="display:none"></div>
+        <div id="passPlot" style="display:none">
+          <svg id="passSvg" viewBox="0 0 760 250" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div id="passStats"></div>
+        </div>
+      </div>
+      <div class="page" data-page="settings">
+        <div class="subbar" data-group="settingsSub">
+          <button data-sub="users" class="on">Users</button>
+          <button data-sub="config">Config</button>
+          <button data-sub="gps">GPS</button>
+          <button data-sub="lora">LoRa</button>
+          <button data-sub="imu">IMU</button>
+          <button data-sub="timing">Timing</button>
+        </div>
+        <div class="subpage on" data-subpage="users">
+          <div class="users-sheet">
+            <div class="users-bar">
+              <span>Name, preferred rope, and shorten after each pass.</span>
+              <button id="btnAddUser" type="button">+ Add user</button>
+            </div>
+            <div id="userList" class="user-list"></div>
+          </div>
+        </div>
+        <div class="subpage" data-subpage="config">
+          <div class="setup-sheet">
+            <div class="cfg-row"><span>Units</span>
+              <span class="unit-ctrl"><button class="sw on" id="swUnits" type="button"><i></i></button>
+              <span class="mode" id="lblUnitsMode">MPH</span></span>
+              <span></span></div>
+            <div class="cfg-row"><span>Course width</span>
+              <input class="slider" id="sliderWidth" type="range" min="0" max="8" step="1" value="8">
+              <span class="ext" id="lblWidth">11.5 m full</span></div>
+            <div class="cfg-row"><span>Extension</span>
+              <input class="slider" id="sliderExt" type="range" min="0" max="5" step="1" value="0">
+              <span class="ext" id="lblExt">1.0x</span></div>
+            <div class="cfg-row"><span>Antenna fore</span>
+              <input class="slider" id="sliderAntFore" type="range" min="-20" max="30" step="1" value="0">
+              <span class="ext" id="lblAntFore">0.0 m</span></div>
+            <div class="cfg-row"><span>Antenna starboard</span>
+              <input class="slider" id="sliderAntSide" type="range" min="-20" max="20" step="1" value="0">
+              <span class="ext" id="lblAntSide">0.0 m</span></div>
+            <div class="cfg-row"><span>Bow</span>
+              <input class="slider" id="sliderBow" type="range" min="10" max="60" step="1" value="35">
+              <span class="ext" id="lblBow">3.5 m</span></div>
+            <div class="cfg-row"><span>Set reset</span>
+              <input class="slider" id="sliderSetReset" type="range" min="0" max="12" step="1" value="3">
+              <span class="ext" id="lblSetReset">15 min</span></div>
+            <button class="cal" id="btnCal" type="button">Calibrate Touch</button>
+          </div>
+        </div>
+        <div class="subpage" data-subpage="gps"><div class="inst-grid gps" id="gpsFields"></div></div>
+        <div class="subpage" data-subpage="lora"><div class="inst-grid lora" id="loraFields"></div></div>
+        <div class="subpage" data-subpage="imu"><div class="inst-grid imu" id="imuFields"></div></div>
+        <div class="subpage" data-subpage="timing">
+          <div class="timing-sheet" id="timingSheet">
+            <div class="rate-note">
+              <button class="help" type="button" data-help="fixed">?</button>
+              <span>Slower is left. GPS and LoRa stay every pass.</span>
+            </div>
+            <div class="rate-row"><button class="help" type="button" data-help="glass">?</button><span>Glass</span>
+              <input class="slider" id="sliderRateGlass" data-rate="glass" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRateGlass">1.0x  30 ms</span></div>
+            <div class="rate-row"><button class="help" type="button" data-help="touch">?</button><span>Touch</span>
+              <input class="slider" id="sliderRateTouch" data-rate="touch" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRateTouch">1.0x  30 ms</span></div>
+            <div class="rate-row"><button class="help" type="button" data-help="drive">?</button><span>Drive</span>
+              <input class="slider" id="sliderRateDrive" data-rate="drive" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRateDrive">1.0x  200 ms</span></div>
+            <div class="rate-row"><button class="help" type="button" data-help="readout">?</button><span>Readouts</span>
+              <input class="slider" id="sliderRateReadout" data-rate="readout" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRateReadout">1.0x  1.0 s</span></div>
+            <div class="rate-row"><button class="help" type="button" data-help="hull">?</button><span>Hull lights</span>
+              <input class="slider" id="sliderRateHull" data-rate="hull" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRateHull">1.0x  50 ms</span></div>
+            <div class="rate-row"><button class="help" type="button" data-help="imu">?</button><span>IMU</span>
+              <input class="slider" id="sliderRateImu" data-rate="imu" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRateImu">1.0x  250 ms</span></div>
+            <div class="rate-row"><button class="help" type="button" data-help="pass">?</button><span>Pass sample</span>
+              <input class="slider" id="sliderRatePass" data-rate="pass" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRatePass">1.0x  200 ms</span></div>
+            <div class="rate-row"><button class="help" type="button" data-help="buoy">?</button><span>Buoy save</span>
+              <input class="slider" id="sliderRateBuoy" data-rate="buoy" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRateBuoy">1.0x  2.0 s</span></div>
+            <div class="rate-row"><button class="help" type="button" data-help="serial">?</button><span>USB status</span>
+              <input class="slider" id="sliderRateSerial" data-rate="serial" type="range" min="0" max="20" step="1" value="10">
+              <span class="ext" id="lblRateSerial">1.0x  5.0 s</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="overlay" id="drive">
+        <div class="drive">
+          <svg id="hud" viewBox="0 0 800 336" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="hud-copy">
+            <div class="course" id="lblDriveStatus">No Active Course</div>
+            <div class="verdict" id="lblDriveVerdict">HOLD HEADING</div>
+            <div class="dev" id="lblDriveDeviation">ON COURSE</div>
+            <div class="dir" id="lblDriveDirection">Direction: --</div>
+          </div>
+          <div class="fleet" id="lblDriveFleet"></div>
+          <div class="drive-speed" id="lblDriveSpeed">-- mph</div>
+          <div class="drive-rope" id="lblDriveRope">15 off</div>
+          <div class="cols" id="cols"></div>
+          <div class="scale"><span>LEFT</span><span class="c">CENTER</span><span class="r">RIGHT</span></div>
+          <button class="back" id="btnBack">← BACK</button>
+        </div>
+      </div>
+      <div class="overlay keys" id="keys">
+        <input class="ta" id="kbText" maxlength="20">
+        <div class="kb" id="kb"></div>
+      </div>
+      <div class="overlay" id="modal"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <label>Scenario
+      <select id="scenario">
+        <option value="water">On the water</option>
+        <option value="cold">Cold start</option>
+      </select>
+    </label>
+    <label>Cross-track
+      <input id="devSlider" type="range" min="-30" max="30" step="0.1" value="0">
+      <span id="devReadout">live</span>
+    </label>
+    <label>Heading off course
+      <input id="hdgSlider" type="range" min="-40" max="40" step="1" value="0">
+      <span id="hdgReadout">0°</span>
+    </label>
+    <label>Along the course
+      <input id="alongSlider" type="range" min="-80" max="270" step="1" value="-40">
+      <span id="alongReadout">40 m short</span>
+    </label>
+    <label>Drive
+      <select id="driveMode">
+        <option value="marked">Marked course</option>
+        <option value="hold">Virtual, not locked</option>
+        <option value="locked">Virtual, locked</option>
+      </select>
+    </label>
+    <label><input type="checkbox" id="liveDrift" checked> Drift the boat</label>
+    <button id="presetOpen" type="button">Opening</button>
+    <button id="presetMeet" type="button">Meets ahead</button>
+    <button id="presetOver" type="button">Overshoot</button>
+    <button id="nudge" type="button">Nudge boat +80 m north</button>
+    <button id="endPass" type="button">Pass finished</button>
+  </div>
+  <div class="notes">
+    Course and retrieval lists are 100 px tall because that is the size set in <code>createCourseTab()</code>.
+    The top-right state word is gone. The buoy-status box hides with Deploy and Retrieve while Virtual Course is active.
+    <code>Calibrate Touch</code> has no click handler in the firmware. The LoRa tab stays at placeholder RSSI; the status bar is the only place that shows <code>LoRa:OK</code>.
+    Drive is the water HUD: horizon, dashed gate lines, heading path, buoys, and the off-course meter. Fifteen blocks each side: eight at 6 in, four at 1 ft, three at 3 ft. Inside 1 ft the lit blocks are green, inside 2 ft yellow, inside 4 ft orange, and farther out red. Heading off course is positive to the right. Opening, Meets ahead, and Overshoot park the boat 2.1 m left. Virtual, not locked, is heading-hold with no buoys.
+    Width runs from 7.5 m mini to 11.5 m full in half-meter steps and scales the skier buoys only. Extension runs from 1.0x to 1.5x in tenths and stretches buoy stations along the course from the anchor. It does not change width. The 55s, gates, and boat guides keep their official offsets from centerline. Ant fore, Ant stbd, and Bow are the hull-LED boat measurements. They do not move the picture. The pass plot stays on official spacing.
+    A buoy joins when it is turned on and registers. On a plotted course the sky names the registered buoys that are not on station.
+    Center Line is the default retrieval point. Retrieve sends each buoy to the closest point on that course's centerline. Rename and delete do not apply to it. An active waypoint is still the recall destination when one is set.
+    Setup Timing sets each live interval from one tenth to ten times the shipped rate. The middle is today's rate. GPS and LoRa stay on every pass. The 14:32 pass plot stays at 5 samples a second.
+    Users is the first Setup section. Each person has a preferred rope and a choice to shorten that rope after a pass that reaches the exit. Home shows Driver beside Deploy and Skier beside Retrieve, with a gap between the rows. Drive sits at the bottom. Retrieve uses the same green face as Deploy. Driver and Skier stay on screen when Virtual Course hides Deploy and Retrieve. Picking a skier sets the rope line and the Home shorten switch from that person's preference. The switch overrides shortening for this set and does not rewrite the user. Pass finished, under the bezel, stands in for the boat reaching the exit gates and shortens the line when the switch is on. Config, Set reset, is how long a break with no pass waits before the rope and the switch return to that skier's preference. The left end is Off. The default is 15 minutes. Each new pass keeps the names that were selected. Passes can filter by driver, skier, or both. Deleting a user asks first: saved passes keep the stored name, and a later feature that points at that user will no longer find them. The sim remembers the list in this browser.
+    Course and buoy status share the top row, course on the left. Rope Length is a left-to-right line of radio marks under Skier. MPH shows feet off (15 through 41, with 39.5). Metric shows meters. The live choice stays in this browser and is written on each pass. Drive shows speed at the top center in grey, in mph or kph.
+    Passes lists recorded hull passes, newest date and newest time first, then plots the boat left to right. The center line is where the boat should be. The outside lines are the boat guides at 1.15 m, with a 0.5 m scale. Small circles mark the 55s (green), gates and skier balls (red), and boat guides (yellow). Skier balls sit in the margin so the 1.15 m scale stays readable. The 14:32 pass is 34 mph at 5 samples a second. Driver and skier for that pass are David and Beth.
+  </div>
+  <pre id="selftest" hidden></pre>
+</div>
+<script>
+const FT = 3.280839895;
+const state = {
+  scenario: "water",
+  tab: "home",
+  passView: "dates",
+  passDate: 0,
+  passRun: 0,
+  courseSub: "courses",
+  settingsSub: "users",
+  useMPH: true,
+  courseWidth: 11.5,
+  antFore: 0,
+  antSide: 0,
+  bowM: 3.5,
+  extension: 1,
+  cadence: { glass: 10, touch: 10, drive: 10, readout: 10, hull: 10, imu: 10, pass: 10, buoy: 10, serial: 10 },
+  users: [],
+  driver: "",
+  skier: "",
+  filterDriver: "",
+  filterSkier: "",
+  ropeOff: 15,
+  shortenSet: false,
+  setResetMin: 15,
+  setArmed: false,
+  passOpen: false,
+  lastPassAt: 0,
+  sys: "Ready to Deploy",
+  loraOk: true,
+  gps: null,
+  courses: [],
+  retrievals: [],
+  waypoints: [],
+  buoys: [],
+  imu: null,
+  dev: 0,
+  hdg: 0,
+  along: -40,
+  driveMode: "marked",
+  dir: 1,
+  live: true,
+  kbMode: null,
+  pendingName: "",
+  marking: null,
+  point1: null
+};
+
+function water() {
+  state.sys = "Ready to Deploy";
+  state.loraOk = true;
+  state.gps = {
+    fix: true, rtk: true, sats: 18,
+    lat: 34.164120, lon: -84.728450,
+    alt: 258, speed: 14.5, hdop: 0.6,
+    moved: 2.4, movedBrg: 42
+  };
+  state.courses = [
+    { name: "Virtual Course", virtual: true, active: false },
+    { name: "Sample East", lat1: 34.163200, lon1: -84.729800, lat2: 34.165400, lon2: -84.727600, bearing: 48.0, active: true },
+    { name: "Cove Practice", lat1: 34.160100, lon1: -84.731200, lat2: 34.161800, lon2: -84.729900, bearing: 62.0, active: false }
+  ];
+  state.retrievals = [
+    { name: "Center Line", centerLine: true, lat: 0, lon: 0, active: true },
+    { name: "Dock", lat: 34.162400, lon: -84.730100, active: false },
+    { name: "Ramp", lat: 34.161100, lon: -84.732000, active: false }
+  ];
+  state.waypoints = [
+    { name: "Staging", lat: 34.163000, lon: -84.729200, active: false }
+  ];
+  state.buoys = [
+    { id: 1, st: "On Course", onTarget: true, lat: 34.163210, lon: -84.729790, bat: 86, age: 2, tgt: [34.163200, -84.729800] },
+    { id: 2, st: "On Course", onTarget: false, lat: 34.163900, lon: -84.729100, bat: 81, age: 3, tgt: [34.163880, -84.729050] },
+    { id: 3, st: "Deploying", lat: 34.164400, lon: -84.728600, bat: 74, age: 4, tgt: [34.164700, -84.728300] },
+    { id: 4, st: "Adjusting", lat: 34.165050, lon: -84.727950, bat: 69, age: 6, tgt: [34.165100, -84.727900] },
+    { id: 5, st: "Waiting", lat: 34.162500, lon: -84.730000, bat: 90, age: 8 },
+    { id: 8, st: "Low Power", lat: 34.164800, lon: -84.728100, bat: 14, age: 45 },
+    { id: 12, st: "Comms Lost", lat: 34.165200, lon: -84.727700, bat: 55, age: 70 }
+  ];
+  state.imu = { status: "Calibrated", temp: 31.4, ax: 0.12, ay: -0.04, az: 9.78, gx: 0.01, gy: -0.02, gz: 0.00, pitch: 1.2, roll: -0.6 };
+  state.dir = 1;
+  state.courseWidth = 11.5;
+  state.antFore = 0;
+  state.antSide = 0;
+  state.bowM = 3.5;
+}
+
+function cold() {
+  state.sys = "Waiting for RTK";
+  state.loraOk = false;
+  state.gps = { fix: false, rtk: false, sats: 0, lat: 0, lon: 0, alt: 0, speed: 0, hdop: 0, moved: null, movedBrg: null };
+  state.courses = [{ name: "Virtual Course", virtual: true, active: true }];
+  state.retrievals = [
+    { name: "Center Line", centerLine: true, lat: 0, lon: 0, active: true }
+  ];
+  state.waypoints = [];
+  state.buoys = [];
+  state.imu = null;
+  state.dir = 0;
+  state.courseWidth = 11.5;
+  state.antFore = 0;
+  state.antSide = 0;
+  state.bowM = 3.5;
+  state.dev = 0;
+}
+
+function activeCourse() { return state.courses.find(c => c.active) || null; }
+function haveBuoys() { return state.buoys.length > 0; }
+function buoysOut() {
+  return state.sys === "Deploying" || state.sys === "Deployed" ||
+    state.sys === "Retrieving" || state.sys === "Resetting";
+}
+function selectCourse(name) {
+  const c = state.courses.find(x => x.name === name);
+  if (!c) return;
+  if (c.virtual && buoysOut()) {
+    msgbox("Virtual Course", "Cannot use this course while buoys are deployed.", ["OK"], () => {});
+    return;
+  }
+  if (!c.virtual && !haveBuoys()) {
+    msgbox("No Buoys", "With no buoys, Virtual Course is the only course.", ["OK"], () => {});
+    return;
+  }
+  state.courses.forEach(x => x.active = x === c);
+  savePicks();
+  if (c.virtual && state.driveMode === "marked") state.driveMode = "hold";
+  if (!c.virtual) state.driveMode = "marked";
+  const mode = document.getElementById("driveMode");
+  if (mode) mode.value = state.driveMode;
+  renderHome();
+  renderLists();
+  if (document.getElementById("drive").classList.contains("on")) paintDrive();
+}
+function activeRetrieval() { return state.retrievals.find(r => r.active) || null; }
+function activeWaypoint() { return state.waypoints.find(w => w.active) || null; }
+
+function distM(a, b, c, d) {
+  const R = 6371000;
+  const p1 = a * Math.PI / 180, p2 = c * Math.PI / 180;
+  const dp = (c - a) * Math.PI / 180, dl = (d - b) * Math.PI / 180;
+  const h = Math.sin(dp / 2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(dl / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function brg(a, b, c, d) {
+  const p1 = a * Math.PI / 180, p2 = c * Math.PI / 180, dl = (d - b) * Math.PI / 180;
+  const y = Math.sin(dl) * Math.cos(p2);
+  const x = Math.cos(p1) * Math.sin(p2) - Math.sin(p1) * Math.cos(p2) * Math.cos(dl);
+  let v = Math.atan2(y, x) * 180 / Math.PI;
+  if (v < 0) v += 360;
+  return v;
+}
+function fmtPair(lat, lon, withFrom) {
+  let s = lat.toFixed(6) + ", " + lon.toFixed(6);
+  if (withFrom && state.gps && state.gps.fix) {
+    const m = distM(state.gps.lat, state.gps.lon, lat, lon);
+    const b = brg(state.gps.lat, state.gps.lon, lat, lon);
+    s += state.useMPH ? ` (${Math.round(m * FT)}ft @ ${Math.round(b)}°)` : ` (${Math.round(m)}m @ ${Math.round(b)}°)`;
+  }
+  return s;
+}
+function lenText(c) {
+  const m = distM(c.lat1, c.lon1, c.lat2, c.lon2);
+  return state.useMPH ? Math.round(m * FT) + " ft" : Math.round(m) + " m";
+}
+
+function stateColor(name) {
+  if (name === "Ready") return "#00ff00";
+  if (name === "Deploying" || name === "Retrieving") return "#ffff00";
+  return "#ff8800";
+}
+function buoyBg(b) {
+  const signal = b.age < 30;
+  if (!signal || b.st === "Error/Fault" || b.st === "Low Power") return "#3a1c18";
+  if (b.st === "On Course") return "#143028";
+  if (b.st === "Deploying" || b.st === "Adjusting") return "#3a3018";
+  if (b.st === "Comms Lost") return "#3a2818";
+  return "rgba(6, 22, 30, 0.55)";
+}
+function buoyStateColor(st) {
+  if (st === "On Course") return "#7CFF6B";
+  if (st === "Deploying" || st === "Adjusting") return "#ffb020";
+  if (st === "Error/Fault" || st === "Low Power") return "#ff5a3c";
+  if (st === "Comms Lost") return "#ff8800";
+  if (st === "Unregistered") return "#8aa0ac";
+  return "#e8f2f6";
+}
+
+function renderStatus() {
+  const g = state.gps;
+  const gps = document.getElementById("lblGPS");
+  if (!g || (!g.fix && g.sats <= 0)) { gps.textContent = "GPS:--"; gps.style.color = "#ff5a3c"; }
+  else if (!g.fix) { gps.textContent = "GPS:" + g.sats; gps.style.color = "#ffb020"; }
+  else { gps.textContent = "GPS:" + g.sats + (g.rtk ? "R" : ""); gps.style.color = "#7CFF6B"; }
+  document.getElementById("lblLoRa").textContent = state.loraOk ? "LoRa:OK" : "LoRa:--";
+}
+function renderHome() {
+  const c = activeCourse(), r = activeRetrieval();
+  document.getElementById("lblCourseInfo").textContent =
+    "Course: " + (c ? c.name : "None") + "\nRetrieval: " + (r ? r.name : "None");
+  document.getElementById("lblBuoyInfo").textContent = "Buoys: " + state.buoys.length + "/24 deployed";
+  const g = state.gps;
+  document.getElementById("lblPositionInfo").textContent =
+    g && g.fix ? `Lat: ${g.lat.toFixed(6)}  Lon: ${g.lon.toFixed(6)}` : "Lat: --  Lon: --";
+  const showFleet = !!(c && !c.virtual);
+  document.getElementById("btnDeploy").hidden = !showFleet;
+  document.getElementById("btnRetrieve").hidden = !showFleet;
+  document.getElementById("lblBuoyInfo").classList.toggle("is-off", !showFleet);
+  document.getElementById("btnDriver").textContent = "Driver: " + (state.driver || "-");
+  document.getElementById("btnSkier").textContent = "Skier: " + (state.skier || "-");
+  renderRope();
+  renderShorten();
+}
+const ROPE_OFFS = [15, 22, 25, 28, 32, 35, 38, 39.5, 41];
+const ROPE_FT = ["15", "22", "25", "28", "32", "35", "38", "39.5", "41"];
+const ROPE_M = ["18.25", "16", "15", "14.25", "13", "12", "11.25", "10.75", "10.25"];
+const ROPE_COLORS = ["#e0232a", "#ff7a00", "", "#f0d000", "#3dde6a", "#2f6bff", "#9b4dff", "#f4f7fa", "#ff4f9a"];
+const ROPE_KEY = "ski-cmd-rope";
+const SET_KEY = "ski-cmd-set";
+function ropeIndex(n) {
+  const x = Number(n);
+  if (!Number.isFinite(x)) return -1;
+  let best = -1;
+  let err = 0.26;
+  ROPE_OFFS.forEach((v, i) => {
+    const d = Math.abs(v - x);
+    if (d < err) { err = d; best = i; }
+  });
+  if (best < 0 && Math.abs(x - 39) <= 0.2) return 7;
+  return best;
+}
+function ropeReview(rope) {
+  const i = ropeIndex(rope);
+  if (i < 0) return "rope -";
+  return state.useMPH ? `rope ${ROPE_FT[i]} off` : `rope ${ROPE_M[i]} m`;
+}
+function driveRopeText() {
+  const i = ropeIndex(state.ropeOff);
+  if (i < 0) return "-";
+  return state.useMPH ? `${ROPE_FT[i]} off` : `${ROPE_M[i]} m`;
+}
+function renderRope() {
+  const label = document.querySelector(".rope-label");
+  if (label) label.textContent = state.useMPH ? "Rope Length (off)" : "Rope Length (m)";
+  const driveRope = document.getElementById("lblDriveRope");
+  if (driveRope) driveRope.textContent = driveRopeText();
+  const box = document.getElementById("ropeLine");
+  const picked = ropeIndex(state.ropeOff);
+  box.innerHTML = ROPE_OFFS.map((n, i) => {
+    const text = state.useMPH ? ROPE_FT[i] : ROPE_M[i];
+    const seg = i === 2
+      ? `<i class="seg split"><b></b><b></b></i>`
+      : `<i class="seg" style="background:${ROPE_COLORS[i]}"></i>`;
+    return `<button type="button" class="mark${i === picked ? " on" : ""}" data-rope="${n}">${seg}<i class="dot"></i><span class="cap">${text}</span></button>`;
+  }).join("");
+}
+function saveRope() {
+  localStorage.setItem(ROPE_KEY, String(state.ropeOff));
+}
+function loadRope() {
+  const i = ropeIndex(localStorage.getItem(ROPE_KEY));
+  state.ropeOff = i < 0 ? 15 : ROPE_OFFS[i];
+}
+const USER_MAX = 16;
+const CREW_KEY = "ski-cmd-users";
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
+function foldName(s) { return String(s || "").trim().toLowerCase(); }
+function findUser(name) {
+  const key = foldName(name);
+  if (!key) return -1;
+  return state.users.findIndex(u => foldName(u.name) === key);
+}
+function addUser(name, persist, ropeOff, progress) {
+  const text = String(name || "").trim().slice(0, 20);
+  if (!text) return "empty";
+  if (foldName(text) === "all") return "all";
+  if (findUser(text) >= 0) return "dup";
+  if (state.users.length >= USER_MAX) return "full";
+  const i = ropeIndex(ropeOff == null ? 15 : ropeOff);
+  state.users.push({ name: text, ropeOff: i < 0 ? 15 : ROPE_OFFS[i], progress: !!progress });
+  if (persist !== false) saveCrew();
+  return "ok";
+}
+function removeUser(name) {
+  const i = findUser(name);
+  if (i < 0) return;
+  const stored = state.users[i].name;
+  state.users.splice(i, 1);
+  if (state.driver === stored) state.driver = "";
+  if (state.skier === stored) state.skier = "";
+  if (state.filterDriver === stored) state.filterDriver = "";
+  if (state.filterSkier === stored) state.filterSkier = "";
+  saveCrew();
+  renderHome();
+  renderUsers();
+  renderPasses();
+}
+function setRole(which, name, persist) {
+  const u = name ? state.users[findUser(name)] : null;
+  state[which] = u ? u.name : "";
+  if (which === "skier" && persist !== false && u) {
+    state.ropeOff = u.ropeOff;
+    state.shortenSet = !!u.progress;
+    saveRope();
+    disarmSet();
+    saveSet();
+  }
+  if (persist !== false) saveCrew();
+  renderHome();
+}
+function snapSetReset(minutes) {
+  const n = Number(minutes);
+  if (!Number.isFinite(n) || n < 0) return 15;
+  if (n === 0) return 0;
+  let step = Math.round(n / 5);
+  if (step < 1) step = 1;
+  if (step > 12) step = 12;
+  return step * 5;
+}
+function setResetLabel(minutes) {
+  return minutes <= 0 ? "Off" : minutes + " min";
+}
+function saveSet() {
+  localStorage.setItem(SET_KEY, JSON.stringify({
+    shortenSet: !!state.shortenSet,
+    setResetMin: state.setResetMin
+  }));
+}
+function loadSet() {
+  let doc = null;
+  try { doc = JSON.parse(localStorage.getItem(SET_KEY) || ""); } catch (e) { doc = null; }
+  state.setResetMin = snapSetReset(doc && doc.setResetMin != null ? doc.setResetMin : 15);
+  state.setArmed = false;
+  state.passOpen = false;
+  state.lastPassAt = 0;
+  if (doc && typeof doc.shortenSet === "boolean") state.shortenSet = doc.shortenSet;
+  else {
+    const u = state.users[findUser(state.skier)];
+    state.shortenSet = !!(u && u.progress);
+  }
+}
+function disarmSet() {
+  state.setArmed = false;
+  state.passOpen = false;
+}
+function notePassEnded(now) {
+  state.passOpen = false;
+  state.setArmed = true;
+  state.lastPassAt = now;
+}
+function renderShorten() {
+  const row = document.getElementById("ropeShorten");
+  const sw = document.getElementById("swShorten");
+  if (!row || !sw) return;
+  row.classList.toggle("is-off", !state.skier);
+  sw.classList.toggle("on", !!state.shortenSet);
+}
+function applySetGap(now) {
+  if (!state.setArmed || state.passOpen) return false;
+  if (!state.setResetMin || !state.skier) return false;
+  if (now - state.lastPassAt < state.setResetMin * 60 * 1000) return false;
+  state.setArmed = false;
+  state.passOpen = false;
+  const u = state.users[findUser(state.skier)];
+  if (!u) return false;
+  const sameRope = ropeIndex(state.ropeOff) === ropeIndex(u.ropeOff);
+  const sameFlag = !!state.shortenSet === !!u.progress;
+  if (sameRope && sameFlag) return false;
+  state.ropeOff = u.ropeOff;
+  state.shortenSet = !!u.progress;
+  saveRope();
+  saveSet();
+  renderHome();
+  return true;
+}
+function saveCrew() {
+  localStorage.setItem(CREW_KEY, JSON.stringify({
+    users: state.users, driver: state.driver, skier: state.skier
+  }));
+}
+function loadCrew() {
+  state.users = [];
+  state.driver = "";
+  state.skier = "";
+  let doc = null;
+  try { doc = JSON.parse(localStorage.getItem(CREW_KEY) || ""); } catch (e) { doc = null; }
+  const seed = !doc || !Array.isArray(doc.users);
+  const names = seed ? ["David", "Beth", "Sam"] : doc.users;
+  names.forEach(n => {
+    if (typeof n === "string") addUser(n, false);
+    else if (n && n.name) addUser(n.name, false, n.ropeOff, n.progress);
+  });
+  setRole("driver", seed ? "David" : (doc.driver || ""), false);
+  setRole("skier", seed ? "Beth" : (doc.skier || ""), false);
+  saveCrew();
+}
+function ropeChoiceText(off) {
+  const i = ropeIndex(off);
+  const n = i < 0 ? 0 : i;
+  return state.useMPH ? ROPE_FT[n] : ROPE_M[n];
+}
+function userLine(u) {
+  const text = state.useMPH ? `${ropeChoiceText(u.ropeOff)} off` : `${ropeChoiceText(u.ropeOff)} m`;
+  return u.progress ? `${text} · shortens` : text;
+}
+let pendingNewUser = "";
+function openUserEditor(existing) {
+  const isNew = !existing;
+  const name = isNew ? pendingNewUser : existing.name;
+  const rope = isNew ? 15 : existing.ropeOff;
+  const progress = isNew ? false : !!existing.progress;
+  const picked = ropeIndex(rope);
+  const opts = ROPE_OFFS.map((n, i) =>
+    `<option value="${n}"${picked === i ? " selected" : ""}>${state.useMPH ? ROPE_FT[i] : ROPE_M[i]}</option>`
+  ).join("");
+  openDialog(`<div class="dialog user"><h3>${esc(name)}</h3>
+    <label>Preferred rope <select id="userRope">${opts}</select></label>
+    <label><input type="checkbox" id="userProgress"${progress ? " checked" : ""}> Shorten the rope after each pass</label>
+    <div class="btns"><button type="button" data-act="save">Save</button><button type="button" data-act="cancel">Cancel</button></div>
+  </div>`);
+  const box = document.querySelector("#modal .dialog");
+  box.querySelector('[data-act="cancel"]').onclick = closeModal;
+  box.querySelector('[data-act="save"]').onclick = () => {
+    const off = Number(box.querySelector("#userRope").value);
+    const prog = box.querySelector("#userProgress").checked;
+    if (isNew) addUser(name, true, off, prog);
+    else {
+      existing.ropeOff = ropeIndex(off) < 0 ? 15 : ROPE_OFFS[ropeIndex(off)];
+      existing.progress = prog;
+      saveCrew();
+    }
+    closeModal();
+    renderUsers();
+    renderPasses();
+    renderHome();
+  };
+}
+function finishPass(reason) {
+  const why = reason || "exit";
+  notePassEnded(Date.now());
+  if (why !== "exit") return false;
+  if (!state.skier || !state.shortenSet) return false;
+  const u = state.users[findUser(state.skier)];
+  if (!u) return false;
+  const i = ropeIndex(state.ropeOff);
+  if (i < 0 || i >= ROPE_OFFS.length - 1) return false;
+  state.ropeOff = ROPE_OFFS[i + 1];
+  saveRope();
+  renderHome();
+  return true;
+}
+const PICK_KEY = "ski-cmd-picks";
+function savePicks() {
+  const course = activeCourse();
+  const retrieval = activeRetrieval();
+  const waypoint = activeWaypoint();
+  localStorage.setItem(PICK_KEY, JSON.stringify({
+    course: course ? course.name : "",
+    retrieval: retrieval ? retrieval.name : "",
+    waypoint: waypoint ? waypoint.name : ""
+  }));
+}
+function applyPick(list, name) {
+  if (!name || !list.some(x => x.name === name)) return;
+  list.forEach(x => x.active = x.name === name);
+}
+function loadPicks() {
+  let doc = null;
+  try { doc = JSON.parse(localStorage.getItem(PICK_KEY) || ""); } catch (e) { doc = null; }
+  if (!doc) return;
+  applyPick(state.courses, doc.course);
+  applyPick(state.retrievals, doc.retrieval);
+  if (doc.waypoint) applyPick(state.waypoints, doc.waypoint);
+  else state.waypoints.forEach(w => w.active = false);
+}
+function renderUsers() {
+  const box = document.getElementById("userList");
+  if (!state.users.length) {
+    box.innerHTML = `<div class="pass-empty">No users yet.</div>`;
+    return;
+  }
+  box.innerHTML = state.users.map(u =>
+    `<div class="user-row"><span class="who">${esc(u.name)}</span><span class="meta">${esc(userLine(u))}</span><button type="button" data-edit="${esc(u.name)}">Edit</button><button type="button" data-del="${esc(u.name)}">Delete</button></div>`
+  ).join("");
+}
+function openRole(which) {
+  const title = which === "driver" ? "Driver" : "Skier";
+  const rows = [`<button type="button" data-user="">None</button>`]
+    .concat(state.users.map(u => `<button type="button" data-user="${esc(u.name)}">${esc(u.name)}</button>`));
+  openDialog(`<div class="dialog role"><h3>${title}</h3><div class="role-list">${rows.join("")}</div><button class="cancel-role" type="button" data-act="close">Cancel</button></div>`);
+  const box = document.querySelector("#modal .dialog");
+  box.querySelector('[data-act="close"]').onclick = closeModal;
+  box.querySelectorAll("[data-user]").forEach(btn => btn.addEventListener("click", () => {
+    setRole(which, btn.dataset.user);
+    closeModal();
+  }));
+}
+function rowHtml(item, active, kind) {
+  const star = active ? "* " : "";
+  const blocked = kind === "course" && ((item.virtual && buoysOut()) || (!item.virtual && !haveBuoys()));
+  const cls = "name" + (active ? " active" : "") + (blocked ? " blocked" : "");
+  return `<div class="row"><button class="${cls}" data-kind="${kind}" data-name="${item.name}">${star}${item.name}</button><button class="gear" data-kind="${kind}-detail" data-name="${item.name}">⚙</button></div>`;
+}
+function renderLists() {
+  const cl = document.getElementById("courseList");
+  const ordered = state.courses.filter(c => c.virtual).concat(state.courses.filter(c => !c.virtual));
+  cl.innerHTML = `<button class="add" data-add="course">+ Add New Course</button>` +
+    ordered.map(c => rowHtml(c, c.active, "course")).join("");
+  const retrievals = state.retrievals.filter(r => r.centerLine).concat(state.retrievals.filter(r => !r.centerLine));
+  document.getElementById("retrievalList").innerHTML =
+    `<button class="add" data-add="retrieval">+ Add Retrieval Point</button>` +
+    retrievals.map(r => rowHtml(r, r.active, "retrieval")).join("");
+  document.getElementById("waypointList").innerHTML =
+    `<button class="add" data-add="waypoint">+ Add Waypoint</button>` +
+    state.waypoints.map(w => rowHtml(w, w.active, "waypoint")).join("");
+}
+function renderBuoys() {
+  const signal = state.buoys.filter(b => b.age < 30).length;
+  document.getElementById("lblBuoyDetail").textContent =
+    `Active: ${state.buoys.length} buoys (signal: ${signal})`;
+  const list = document.getElementById("buoyList");
+  if (!state.buoys.length) {
+    list.innerHTML = `<div class="empty">No buoys registered.\n\nBuoys will appear here\nwhen they connect.</div>`;
+    return;
+  }
+  list.innerHTML = state.buoys.map(b => {
+    const tag = b.age < 30 ? "" : " [NO SIGNAL]";
+    return `<button class="buoy-item" style="background:${buoyBg(b)}" data-buoy="${b.id}">Buoy ${b.id}: ${b.st}${tag}</button>`;
+  }).join("");
+}
+function inst(k, v, color, extra) {
+  const c = color || "#7CFF6B";
+  const cls = extra ? "inst " + extra : "inst";
+  return `<div class="${cls}"><span class="k">${k}</span><span class="v" style="color:${c}">${v}</span></div>`;
+}
+function renderSettings() {
+  const g = state.gps || {};
+  const fixLabel = !g.fix && !(g.sats > 0) ? "No Fix" : g.rtk ? "RTK" : g.fix ? "3D Fix" : "Acquiring";
+  const fixColor = fixLabel === "No Fix" ? "#ff5a3c" : fixLabel === "Acquiring" ? "#ffb020" : "#7CFF6B";
+  const latColor = g.fix ? "#7CFF6B" : "#ff5a3c";
+  let alt = "-- m", spd = state.useMPH ? "-- mph" : "-- kph";
+  if (g.fix) {
+    alt = state.useMPH ? Math.round(g.alt * FT) + " ft" : g.alt.toFixed(1) + " m";
+    spd = state.useMPH ? (g.speed * 2.236936).toFixed(1) + " mph" : (g.speed * 3.6).toFixed(1) + " kph";
+  }
+  let from = g.fix ? "(no prior)" : (state.useMPH ? "-- ft" : "-- m");
+  let fromBrg = "--";
+  let fromColor = "#888";
+  if (g.fix && g.moved != null) {
+    if (state.useMPH) {
+      const inches = g.moved * FT * 12;
+      from = inches < 120 ? inches.toFixed(1) + " in" : (g.moved * FT).toFixed(1) + " ft";
+    } else {
+      from = g.moved < 1 ? (g.moved * 100).toFixed(1) + " cm" : g.moved.toFixed(2) + " m";
+    }
+    fromBrg = Math.round(g.movedBrg) + " deg";
+    fromColor = "#ff8800";
+  }
+  const satColor = g.sats >= 6 ? "#7CFF6B" : g.sats >= 3 ? "#ffb020" : "#ff5a3c";
+  document.getElementById("gpsFields").innerHTML = [
+    inst("Latitude", g.fix ? g.lat.toFixed(6) : "--", latColor),
+    inst("Longitude", g.fix ? g.lon.toFixed(6) : "--", latColor),
+    inst("Altitude", alt),
+    inst("Speed", spd),
+    inst("Satellites", String(g.sats || 0), satColor),
+    inst("Fix", fixLabel, fixColor),
+    inst("HDOP", g.fix ? g.hdop.toFixed(1) : "--"),
+    inst("From last", from, fromColor),
+    inst("Bearing", g.fix && g.moved != null ? fromBrg : "-- deg", fromColor)
+  ].join("");
+  document.getElementById("loraFields").innerHTML = [
+    inst("Status", "Ready", "#7CFF6B", "wide"),
+    inst("RSSI", "-- dBm"),
+    inst("SNR", "-- dB"),
+    inst("RX/TX", "0 / 0"),
+    inst("Errors", "0")
+  ].join("");
+  const imu = document.getElementById("imuFields");
+  const im = state.imu;
+  const blank = "--";
+  imu.innerHTML = [
+    inst("Status", im ? im.status : "No Manager", im ? "#7CFF6B" : "#ff0000", "span3"),
+    inst("Temperature", im ? im.temp.toFixed(1) + " C" : "-- C", "#7CFF6B", "span3"),
+    inst("Accel X", im ? im.ax.toFixed(2) : blank, "#7CFF6B", "span2"),
+    inst("Accel Y", im ? im.ay.toFixed(2) : blank, "#7CFF6B", "span2"),
+    inst("Accel Z", im ? im.az.toFixed(2) : blank, "#7CFF6B", "span2"),
+    inst("Gyro X", im ? im.gx.toFixed(2) : blank, "#7CFF6B", "span2"),
+    inst("Gyro Y", im ? im.gy.toFixed(2) : blank, "#7CFF6B", "span2"),
+    inst("Gyro Z", im ? im.gz.toFixed(2) : blank, "#7CFF6B", "span2"),
+    inst("Pitch", im ? im.pitch.toFixed(1) + " deg" : "-- deg", "#7CFF6B", "span3"),
+    inst("Roll", im ? im.roll.toFixed(1) + " deg" : "-- deg", "#7CFF6B", "span3")
+  ].join("");
+  document.getElementById("swUnits").classList.toggle("on", state.useMPH);
+  document.getElementById("lblUnitsMode").textContent = state.useMPH ? "MPH" : "km/h";
+  const widthSteps = Math.round((state.courseWidth - 7.5) / 0.5);
+  document.getElementById("sliderWidth").value = String(Math.max(0, Math.min(8, widthSteps)));
+  document.getElementById("lblWidth").textContent = widthLabel(state.courseWidth);
+  document.getElementById("sliderAntFore").value = String(Math.round(state.antFore * 10));
+  document.getElementById("lblAntFore").textContent = foreLabel(state.antFore);
+  document.getElementById("sliderAntSide").value = String(Math.round(state.antSide * 10));
+  document.getElementById("lblAntSide").textContent = sideLabel(state.antSide);
+  document.getElementById("sliderBow").value = String(Math.round(state.bowM * 10));
+  document.getElementById("lblBow").textContent = state.bowM.toFixed(1) + " m";
+  document.getElementById("sliderExt").value = Math.round((state.extension - 1) / 0.1);
+  document.getElementById("lblExt").textContent = state.extension.toFixed(1) + "x";
+  const setStep = state.setResetMin <= 0 ? 0 : state.setResetMin / 5;
+  document.getElementById("sliderSetReset").value = String(setStep);
+  document.getElementById("lblSetReset").textContent = setResetLabel(state.setResetMin);
+  Object.keys(state.cadence).forEach(paintRate);
+}
+
+function widthLabel(w) {
+  if (w <= 7.75) return "7.5 m mini";
+  if (w >= 11.25) return "11.5 m full";
+  return w.toFixed(1) + " m";
+}
+function foreLabel(m) {
+  if (m > 0.05) return m.toFixed(1) + " m ahead";
+  if (m < -0.05) return (-m).toFixed(1) + " m behind";
+  return "0.0 m";
+}
+const RATE_THOU = [100,126,158,200,251,316,398,501,631,794,1000,1259,1585,1995,2512,3162,3981,5012,6310,7943,10000];
+const RATES = {
+  glass: { ms: 30, title: "Glass", help: "How often the display redraws. Shipped gap is 30 ms, about 33 times a second. The 7 inch panel is the heaviest draw on the board. Slow this first if the processor is falling behind. Only the parts of the screen that changed are sent." },
+  touch: { ms: 30, title: "Touch", help: "How often the touch panel is read. Shipped gap is 30 ms. A faster rate spends more time on that read. A slower rate makes a tap feel late. It does not redraw the glass." },
+  drive: { ms: 200, title: "Drive", help: "How often the drive words, the meter, and the water picture are rebuilt. Shipped gap is 200 ms, 5 times a second. The water is drawn after that rebuild. A slower rate leaves the same picture up longer." },
+  readout: { ms: 1000, title: "Readouts", help: "How often the status line, Home, the buoy list, the Passes recording mark, and the GPS, LoRa, and IMU numbers are refreshed. Shipped gap is 1 second, the same pace as a GPS sentence. This does not change how often those sensors are read." },
+  hull: { ms: 50, title: "Hull lights", help: "How often hull-light colors are recalculated and pushed to the strips. Shipped gap is 50 ms, 20 times a second, which divides the two-flashes-a-second blink. One push takes about 24 ms on the wire, so a faster setting still waits on that push and can fill the processor. Pass start and pass end are still checked every loop, so a slower light rate does not miss the lock or the exit." },
+  imu: { ms: 250, title: "IMU", help: "How often the motion chip is read over I2C. Shipped gap is 250 ms, 4 times a second. Pitch, roll, and the IMU page use this reading. Heading for a pass still comes from GPS." },
+  pass: { ms: 200, title: "Pass sample", help: "How often a pass file stores a boat sample. Shipped gap is 200 ms, 5 times a second. A faster rate stores a denser plot and fills the 900-sample buffer sooner. That buffer is about 3 minutes at the shipped rate. A pass already on the card is not rewritten." },
+  buoy: { ms: 2000, title: "Buoy save", help: "How often the buoy list is written to the card. Shipped gap is 2 seconds. If a pass file just wrote the card, this write waits until the next pass. This is bookkeeping. Radio messages are still read every pass." },
+  serial: { ms: 5000, title: "USB status", help: "How often GPS, IMU, LoRa, and light health are printed on the USB serial port. Shipped gap is 5 seconds. Slowing this only quiets that print." },
+  fixed: { ms: 0, title: "What stays fixed", help: "GPS characters and LoRa packets are still taken on every pass. Slowing those would drop fixes and buoy messages. The 10 second lost-comms deadline and the 5 second gap between buoy deploy commands stay fixed. The hull waiting blink stays two flashes a second.\nEach slider starts at the rate the board uses today. Left is one tenth of that rate. Right is ten times that rate." }
+};
+function rateText(defMs, step) {
+  const thou = RATE_THOU[step];
+  const ms = Math.floor((defMs * 1000 + Math.floor(thou / 2)) / thou);
+  const tenths = Math.floor((thou + 50) / 100);
+  const mul = tenths >= 100 ? "10x" : (tenths >= 10 ? (Math.floor(tenths / 10) + "." + (tenths % 10) + "x") : ("0." + tenths + "x"));
+  if (ms >= 1000) return mul + "  " + Math.floor(ms / 1000) + "." + Math.floor((ms % 1000) / 100) + " s";
+  return mul + "  " + ms + " ms";
+}
+function paintRate(id) {
+  const spec = RATES[id];
+  const step = state.cadence[id];
+  const slider = document.querySelector(`[data-rate="${id}"]`);
+  const label = document.getElementById("lblRate" + id.charAt(0).toUpperCase() + id.slice(1));
+  if (slider) slider.value = String(step);
+  if (label) label.textContent = rateText(spec.ms, step);
+}
+function sideLabel(m) {
+  if (m > 0.05) return m.toFixed(1) + " m stbd";
+  if (m < -0.05) return (-m).toFixed(1) + " m port";
+  return "0.0 m";
+}
+function fleetLine() {
+  const c = activeCourse();
+  const plotted = state.driveMode === "marked" && c && !c.virtual;
+  if (!plotted) return { text: "", color: "" };
+  const ids = [];
+  let outN = 0;
+  let anyFault = false;
+  state.buoys.slice().sort((a, b) => a.id - b.id).forEach(b => {
+    const fault = b.st === "Error" || b.st === "Error/Fault" || b.st === "Low Power" || b.st === "Comms Lost";
+    const moving = b.st === "Deploying" || b.st === "Adjusting" || b.st === "On Course";
+    if (!fault && !moving) return;
+    outN++;
+    const inPos = !fault && b.st === "On Course" && b.onTarget === true;
+    if (!inPos) {
+      if (fault) anyFault = true;
+      ids.push(String(b.id));
+    }
+  });
+  if (outN === 0) return { text: "", color: "" };
+  if (!ids.length) return { text: "BUOYS SET", color: "#7CFF6B" };
+  const line = ids.join(" ");
+  if (anyFault) return { text: "NOT READY\n" + line, color: "#ff5a3c" };
+  return { text: "NOT IN POSITION\n" + line, color: "#ffb020" };
+}
+
+const HUD_HORIZON = 108;
+const HUD_BOW = 318;
+const HUD_F = 8;
+const HUD_SPREAD = 480;
+const HUD_LANE_SPREAD = 2000;
+const HUD_GATE_LAT = 1.25;
+const HUD_SKIER_RATIO = 2.15;
+const HUD_SKIER_MIN_GAP = 64;
+
+function boatFrame(lat, sMark) {
+  const psi = state.hdg * Math.PI / 180;
+  const dCross = lat - state.dev;
+  const dAlong = sMark - state.along;
+  return {
+    right: dCross * Math.cos(psi) - dAlong * Math.sin(psi),
+    fwd: dCross * Math.sin(psi) + dAlong * Math.cos(psi)
+  };
+}
+
+function project(fwd, right) {
+  const depth = fwd + HUD_F;
+  if (depth < 2) return null;
+  return {
+    x: 400 + right * HUD_SPREAD / depth,
+    y: HUD_HORIZON + (HUD_BOW - HUD_HORIZON) * (HUD_F / depth)
+  };
+}
+
+function projectLane(fwd, right, rightCenter) {
+  const depth = fwd + HUD_F;
+  if (depth < 2) return null;
+  let half = (right - rightCenter) * HUD_LANE_SPREAD / depth;
+  let center = rightCenter * HUD_LANE_SPREAD / depth;
+  const maxHalf = 160;
+  if (Math.abs(half) > maxHalf) half = Math.sign(half) * maxHalf;
+  const room = 360 - Math.abs(half);
+  if (Math.abs(center) > room) center = Math.sign(center) * room;
+  return {
+    x: 400 + center + half,
+    y: HUD_HORIZON + (HUD_BOW - HUD_HORIZON) * (HUD_F / depth)
+  };
+}
+
+// Gate marks sit on the dashes. Ski buoys use that same screen shape, set
+// further out, so they bend with the lane and stay off it as the boat passes.
+function projectMark(fwd, right, rightCenter, courseLat) {
+  const onGate = Math.abs(courseLat) <= HUD_GATE_LAT + 0.5;
+  if (onGate) return projectLane(fwd, right, rightCenter);
+  let side = right - rightCenter;
+  if (Math.abs(side) < 0.05) side = courseLat;
+  const sign = side < 0 ? -1 : 1;
+  const path = projectLane(fwd, rightCenter, rightCenter);
+  const dash = projectLane(fwd, rightCenter + sign * HUD_GATE_LAT, rightCenter);
+  if (!path || !dash) return path;
+  const laneHalf = dash.x - path.x;
+  const outward = Math.abs(laneHalf) >= 1 ? Math.sign(laneHalf) : sign;
+  let x = path.x + laneHalf * HUD_SKIER_RATIO;
+  const gap = (x - dash.x) * outward;
+  if (gap < HUD_SKIER_MIN_GAP) x = dash.x + outward * HUD_SKIER_MIN_GAP;
+  if (x < 28) x = 28;
+  if (x > 772) x = 772;
+  return { x, y: dash.y };
+}
+
+function pathVerdict(dev, hdg) {
+  if (Math.abs(dev) < 1 && Math.abs(hdg) < 3) {
+    return { name: "ON THE LINE", color: "#7CFF6B" };
+  }
+  if (Math.abs(hdg) < 1.5) return { name: "PARALLELING", color: "#ffb020" };
+  const psi = hdg * Math.PI / 180;
+  const ahead = (-dev * Math.cos(psi)) / Math.sin(psi);
+  if (ahead < 0) return { name: "OPENING", color: "#ffb020" };
+  if (ahead < 8) return { name: "OVERSHOOT", color: "#ff5a3c" };
+  if (ahead <= 80) return { name: "MEETS AHEAD", color: "#7CFF6B" };
+  return { name: "CLOSING", color: "#ffb020" };
+}
+
+function paintDrive() {
+  const hold = state.driveMode === "hold";
+  const c = activeCourse();
+  const haveCourse = !hold && (state.driveMode === "locked" || !!c);
+  const status = document.getElementById("lblDriveStatus");
+  const verdictEl = document.getElementById("lblDriveVerdict");
+  const dir = document.getElementById("lblDriveDirection");
+  const label = document.getElementById("lblDriveDeviation");
+  const dev = state.dev;
+  const abs = Math.abs(dev);
+
+  if (hold) {
+    status.textContent = "VIRTUAL";
+    status.style.color = "#ffb020";
+    verdictEl.textContent = "HOLD HEADING";
+    verdictEl.style.color = "#ffb020";
+    label.textContent = "No course yet";
+    label.style.color = "#e8f2f6";
+    dir.textContent = "Settle 3 s inside 1 mph and 5°";
+    dir.style.color = "#e8f2f6";
+  } else if (!haveCourse) {
+    status.textContent = "No Active Course";
+    status.style.color = "#ffff00";
+    verdictEl.textContent = "NO COURSE";
+    verdictEl.style.color = "#888";
+    label.textContent = "--";
+    label.style.color = "#888";
+    dir.textContent = "Direction: --";
+    dir.style.color = "#888";
+  } else {
+    const entry = -state.along;
+    const where = entry > 1 ? `${Math.round(entry)} m to entry` : (state.along < 259 ? "on the pass" : "past the exit");
+    status.textContent = (state.driveMode === "locked" ? "VIRTUAL" : c.name) + " · " + where;
+    status.style.color = "#e8f2f6";
+    const v = pathVerdict(dev, state.hdg);
+    verdictEl.textContent = v.name;
+    verdictEl.style.color = v.color;
+    if (abs < 1) {
+      label.textContent = "ON COURSE";
+      label.style.color = "#00ff00";
+    } else if (state.useMPH) {
+      const inches = abs * FT * 12;
+      label.textContent = inches < 120
+        ? `${inches.toFixed(1)} in ${dev < 0 ? "LEFT" : "RIGHT"}`
+        : `${(abs * FT).toFixed(1)} ft ${dev < 0 ? "LEFT" : "RIGHT"}`;
+      label.style.color = "#ffff00";
+    } else {
+      label.textContent = `${abs.toFixed(2)} m ${dev < 0 ? "LEFT" : "RIGHT"}`;
+      label.style.color = "#ffff00";
+    }
+    const side = state.hdg < 0 ? "LEFT" : "RIGHT";
+    dir.textContent = Math.abs(state.hdg) < 1
+      ? "Parallel to the course"
+      : `${Math.abs(state.hdg)}° ${side} of the course`;
+    dir.style.color = "#e8f2f6";
+  }
+
+  const fleet = fleetLine();
+  const fleetEl = document.getElementById("lblDriveFleet");
+  fleetEl.textContent = fleet.text;
+  fleetEl.style.color = fleet.color;
+  const g = state.gps;
+  const speedEl = document.getElementById("lblDriveSpeed");
+  if (g && g.fix) {
+    speedEl.textContent = state.useMPH
+      ? (g.speed * 2.236936).toFixed(1) + " mph"
+      : (g.speed * 3.6).toFixed(1) + " kph";
+  } else {
+    speedEl.textContent = state.useMPH ? "-- mph" : "-- kph";
+  }
+  const ropeEl = document.getElementById("lblDriveRope");
+  if (ropeEl) ropeEl.textContent = driveRopeText();
+
+  const cols = document.querySelectorAll("#cols i");
+  const showMeter = haveCourse;
+  const n = meterCount(dev);
+  const band = meterBand(dev);
+  cols.forEach((el, i) => {
+    el.style.background = meterColumn(i, dev, showMeter, n, band);
+  });
+  paintHud(haveCourse, hold);
+}
+
+function paintHud(haveCourse, hold) {
+  const hud = document.getElementById("hud");
+  const v = haveCourse ? pathVerdict(state.dev, state.hdg) : { name: "", color: "#ffb020" };
+  const pathColor = hold ? "#ffb020" : (haveCourse ? v.color : "#555");
+  const parts = [];
+  parts.push(`<defs><linearGradient id="hudSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#16324a"/><stop offset="100%" stop-color="#7aa0b8"/></linearGradient><linearGradient id="hudWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1c6a78"/><stop offset="100%" stop-color="#062028"/></linearGradient><clipPath id="hudWaterClip"><rect x="0" y="${HUD_HORIZON}" width="800" height="${HUD_BOW - HUD_HORIZON + 8}"/></clipPath></defs>`);
+  parts.push(`<rect width="800" height="${HUD_HORIZON}" fill="url(#hudSky)"/>`);
+  parts.push(`<rect y="${HUD_HORIZON}" width="800" height="${336 - HUD_HORIZON}" fill="url(#hudWater)"/>`);
+  parts.push(`<line x1="0" y1="${HUD_HORIZON}" x2="800" y2="${HUD_HORIZON}" stroke="#d7e6ee" stroke-width="2"/>`);
+
+  if (haveCourse) {
+    const edge = (lat) => {
+      const pts = [];
+      for (let s = state.along - 15; s <= state.along + 180; s += 4) {
+        const f = boatFrame(lat, s);
+        const mid = boatFrame(0, s);
+        if (f.fwd < 1) continue;
+        const p = projectLane(f.fwd, f.right, mid.right);
+        if (!p || p.y < HUD_HORIZON - 1 || p.y > HUD_BOW + 6) continue;
+        pts.push(p);
+      }
+      return pts;
+    };
+    const left = edge(-1.25);
+    const right = edge(1.25);
+    const fmt = pts => pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+    const dashes = (pts) => {
+      if (pts.length < 2) return;
+      parts.push(`<polyline points="${fmt(pts)}" fill="none" stroke="#d7e4ec" stroke-width="3" stroke-linecap="butt" stroke-dasharray="18 12" opacity="0.9" clip-path="url(#hudWaterClip)"/>`);
+    };
+    dashes(left);
+    dashes(right);
+    const half = (state.courseWidth >= 7.5 && state.courseWidth <= 11.5) ? state.courseWidth : 11.5;
+    const ext = (state.extension >= 1 && state.extension <= 1.5) ? state.extension : 1;
+    const along = (s) => (s - 129.5) * ext + 129.5;
+    const marks = [
+      [along(-55), -1.15, "#3dde6a"], [along(-55), 1.15, "#3dde6a"],
+      [along(0), -1.25, "#ffb020"], [along(0), 1.25, "#ffb020"],
+      [along(27), half, "#ff5a3c"], [along(68), -half, "#ff5a3c"], [along(109), half, "#ff5a3c"],
+      [along(150), -half, "#ff5a3c"], [along(191), half, "#ff5a3c"], [along(232), -half, "#ff5a3c"],
+      [along(259), -1.25, "#e8f2f6"], [along(259), 1.25, "#e8f2f6"]
+    ];
+    const ahead = marks
+      .map(([s, lat, color]) => ({ s, lat, color, f: boatFrame(lat, s) }))
+      .filter(m => m.s >= state.along - 4 && m.f.fwd > 2)
+      .sort((a, b) => a.s - b.s || a.lat - b.lat)
+      .slice(0, 2);
+    const buoys = [];
+    ahead.forEach(m => {
+      const mid = boatFrame(0, m.s);
+      const p = projectMark(m.f.fwd, m.f.right, mid.right, m.lat);
+      if (!p || p.y < HUD_HORIZON || p.y > HUD_BOW) return;
+      const r = Math.max(7, Math.min(34, 900 / (m.f.fwd + 10)));
+      buoys.push({ fwd: m.f.fwd, p, r, color: m.color });
+    });
+    buoys.sort((a, b) => b.fwd - a.fwd);
+    buoys.forEach(b => {
+      parts.push(`<circle data-buoy="1" cx="${b.p.x.toFixed(1)}" cy="${b.p.y.toFixed(1)}" r="${b.r.toFixed(1)}" fill="${b.color}" stroke="#04161c" stroke-width="1.5"/>`);
+    });
+    const psi = state.hdg * Math.PI / 180;
+    if (Math.abs(psi) > 0.02) {
+      const ahead = (-state.dev * Math.cos(psi)) / Math.sin(psi);
+      if (ahead > 1 && ahead < 120) {
+        const hit = project(ahead, 0);
+        if (hit) parts.push(`<circle cx="${hit.x.toFixed(1)}" cy="${hit.y.toFixed(1)}" r="7" fill="none" stroke="${pathColor}" stroke-width="3"/>`);
+      }
+    }
+  }
+
+  parts.push(`<line x1="400" y1="${HUD_BOW}" x2="400" y2="${HUD_HORIZON + 16}" stroke="${pathColor}" stroke-width="5"/>`);
+  parts.push(`<polygon points="400,${HUD_HORIZON + 8} 390,${HUD_HORIZON + 26} 410,${HUD_HORIZON + 26}" fill="${pathColor}"/>`);
+  parts.push(`<polygon points="400,${HUD_BOW - 16} 388,${HUD_BOW} 412,${HUD_BOW}" fill="#f4f7f8"/>`);
+  hud.innerHTML = parts.join("");
+}
+
+function showPage(tab) {
+  state.tab = tab;
+  document.querySelectorAll(".tabbar button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.dataset.page === tab));
+}
+function showSub(group, name) {
+  state[group] = name;
+  const bar = document.querySelector(`.subbar[data-group="${group}"]`);
+  bar.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.sub === name));
+  bar.parentElement.querySelectorAll(".subpage").forEach(p => p.classList.toggle("on", p.dataset.subpage === name));
+}
+
+function closeModal() { document.getElementById("modal").classList.remove("on"); document.getElementById("modal").innerHTML = ""; }
+function msgbox(title, message, buttons, onPick) {
+  const modal = document.getElementById("modal");
+  modal.classList.add("on");
+  modal.innerHTML = `<div class="shade"></div><div class="mbox"><h3>${title}</h3><p>${message}</p><div class="btns">${
+    buttons.map(b => `<button data-btn="${b}">${b}</button>`).join("")
+  }</div></div>`;
+  modal.querySelectorAll("[data-btn]").forEach(btn => btn.addEventListener("click", () => {
+    const which = btn.dataset.btn;
+    closeModal();
+    onPick(which);
+  }));
+}
+function openDialog(html) {
+  const modal = document.getElementById("modal");
+  modal.classList.add("on");
+  modal.innerHTML = `<div class="shade"></div>${html}`;
+}
+
+function courseDialog(name) {
+  const c = state.courses.find(x => x.name === name);
+  if (!c) return;
+  if (c.virtual) {
+    openDialog(`<div class="dialog course">
+      <h3>Course Details</h3><button class="x" data-act="close">×</button>
+      <div class="kv">
+        <span class="k" style="top:25px">Name:</span><span class="v" style="left:70px;top:25px">${c.name}</span>
+        <span class="k" style="top:47px">Start:</span><span class="v" style="left:70px;top:47px;color:#ffb020">Placed when the pass locks</span>
+        <span class="k" style="top:69px">End:</span><span class="v" style="left:70px;top:69px;color:#ffb020">No buoy positions</span>
+        <span class="k" style="top:91px">Bearing:</span><span class="v" style="left:70px;top:91px;color:#ffb020">Heading at lock</span>
+        <span class="k" style="top:113px">Length:</span><span class="v" style="left:70px;top:113px;color:#ffb020">LED course only</span>
+      </div>
+      <div class="dactions">
+        <button class="act-go" data-act="active" style="width:90px">Set Active</button>
+      </div>
+    </div>`);
+    const box = document.querySelector("#modal .dialog");
+    box.querySelector('[data-act="close"]').onclick = closeModal;
+    box.querySelector('[data-act="active"]').onclick = () => { selectCourse(c.name); closeModal(); };
+    return;
+  }
+  openDialog(`<div class="dialog course">
+    <h3>Course Details</h3><button class="x" data-act="close">×</button>
+    <div class="kv">
+      <span class="k" style="top:25px">Name:</span><span class="v" style="left:70px;top:25px">${c.name}</span>
+      <span class="k" style="top:47px">Start:</span><span class="v" style="left:70px;top:47px;color:#7CFF6B">${fmtPair(c.lat1, c.lon1, true)}</span>
+      <span class="k" style="top:69px">End:</span><span class="v" style="left:70px;top:69px;color:#7CFF6B">${fmtPair(c.lat2, c.lon2, true)}</span>
+      <span class="k" style="top:91px">Bearing:</span><span class="v" style="left:70px;top:91px;color:#ffb020">${c.bearing.toFixed(1)}°</span>
+      <span class="k" style="top:113px">Length:</span><span class="v" style="left:70px;top:113px;color:#ffb020">${lenText(c)}</span>
+    </div>
+    <div class="dactions">
+      <button class="act-go" data-act="active" style="width:90px">Set Active</button>
+      <button class="act-rename" data-act="rename" style="width:90px">Rename</button>
+      <button class="act-stop" data-act="delete" style="width:90px">Delete</button>
+    </div>
+  </div>`);
+  const box = document.querySelector("#modal .dialog");
+  box.querySelector('[data-act="close"]').onclick = closeModal;
+  box.querySelector('[data-act="active"]').onclick = () => {
+    selectCourse(c.name);
+    closeModal();
+  };
+  box.querySelector('[data-act="rename"]').onclick = () => { closeModal(); openKeyboard("rename-course", c.name, c); };
+  box.querySelector('[data-act="delete"]').onclick = () => {
+    if (c.virtual) {
+      msgbox("Virtual Course", "This course stays in the list.", ["OK"], () => {});
+      return;
+    }
+    state.courses = state.courses.filter(x => x !== c);
+    closeModal(); renderHome(); renderLists();
+    msgbox("Deleted", "Course has been deleted", ["OK"], () => {});
+  };
+}
+function smallDialog(kind, item) {
+  const title = kind === "retrieval" ? "Retrieval Details" : "Waypoint Details";
+  const titleColor = kind === "retrieval" ? "#7CFF6B" : "#ffb020";
+  const posColor = titleColor;
+  const locked = !!(item.centerLine);
+  const label = item.active ? (locked ? "Active" : "Unset") : "Set Active";
+  const labelCls = item.active ? "act-rename" : "act-go";
+  const pos = locked ? "Closest point on the course centerline" : item.lat.toFixed(6) + ", " + item.lon.toFixed(6);
+  const extra = locked ? "" : `<button class="act-rename" data-act="rename" style="width:80px">Rename</button><button class="act-stop" data-act="delete" style="width:80px">Delete</button>`;
+  openDialog(`<div class="dialog small">
+    <h3 style="color:${titleColor}">${title}</h3><button class="x" data-act="close">×</button>
+    <span class="k" style="position:absolute;left:15px;top:35px;color:#b7c9d4">Name:</span>
+    <span style="position:absolute;left:75px;top:35px">${item.name}</span>
+    <span class="k" style="position:absolute;left:15px;top:57px;color:#b7c9d4">Pos:</span>
+    <span style="position:absolute;left:75px;top:57px;color:${posColor}">${pos}</span>
+    <div class="sactions">
+      <button class="${labelCls}" data-act="active" style="width:80px">${label}</button>
+      ${extra}
+    </div>
+  </div>`);
+  const box = document.querySelector("#modal .dialog");
+  const list = kind === "retrieval" ? state.retrievals : state.waypoints;
+  box.querySelector('[data-act="close"]').onclick = closeModal;
+  box.querySelector('[data-act="active"]').onclick = () => {
+    if (item.centerLine && item.active) { closeModal(); return; }
+    if (item.active) {
+      item.active = false;
+      const home = state.retrievals.find(r => r.centerLine);
+      if (home && kind === "retrieval") home.active = true;
+    } else { list.forEach(x => x.active = x === item); }
+    savePicks();
+    closeModal(); renderHome(); renderLists();
+  };
+  const rename = box.querySelector('[data-act="rename"]');
+  if (rename) rename.onclick = () => { closeModal(); openKeyboard("rename-" + kind, item.name, item); };
+  const del = box.querySelector('[data-act="delete"]');
+  if (del) del.onclick = () => {
+    if (item.centerLine) {
+      msgbox("Center Line", "This retrieval point stays in the list.", ["OK"], () => {});
+      return;
+    }
+    if (kind === "retrieval") {
+      state.retrievals = state.retrievals.filter(x => x !== item);
+      if (item.active) {
+        const home = state.retrievals.find(r => r.centerLine);
+        if (home) home.active = true;
+      }
+    } else state.waypoints = state.waypoints.filter(x => x !== item);
+    savePicks();
+    closeModal(); renderHome(); renderLists();
+    msgbox("Deleted", kind === "retrieval" ? "Retrieval point deleted" : "Waypoint deleted", ["OK"], () => {});
+  };
+}
+function buoyDialog(id) {
+  const b = state.buoys.find(x => x.id === id);
+  if (!b) return;
+  const g = state.gps;
+  let distance = "No GPS", bearing = "No GPS", toTgt = "N/A", tgtBrg = "N/A";
+  if (g && g.fix) {
+    const m = distM(g.lat, g.lon, b.lat, b.lon);
+    distance = state.useMPH ? Math.round(m * FT) + " ft" : Math.round(m) + " m";
+    bearing = Math.round(brg(g.lat, g.lon, b.lat, b.lon)) + "°";
+  }
+  if (b.tgt && (b.st === "Deploying" || b.st === "On Course" || b.st === "Adjusting")) {
+    const m = distM(b.lat, b.lon, b.tgt[0], b.tgt[1]);
+    if (state.useMPH) toTgt = m < 0.9144 ? (m * FT).toFixed(1) + " ft" : (m * 1.0936133).toFixed(1) + " yd";
+    else toTgt = m.toFixed(1) + " m";
+    tgtBrg = Math.round(brg(b.lat, b.lon, b.tgt[0], b.tgt[1])) + "°";
+  }
+  const age = b.age < 1 ? "Just now" : b.age < 60 ? b.age + " sec ago" : Math.floor(b.age / 60) + " min ago";
+  const ageColor = b.age > 30 ? "#ff5a3c" : b.age > 10 ? "#ffb020" : "#7CFF6B";
+  const batColor = b.bat < 20 ? "#ff5a3c" : b.bat < 50 ? "#ffb020" : "#7CFF6B";
+  const mismatch = b.st === "Deploying" && b.id === 3 ? "" : "";
+  openDialog(`<div class="dialog buoy">
+    <h3>Buoy ${b.id} Details</h3><button class="x" data-act="close">×</button>
+    <div class="kv">
+      ${[
+        ["Buoy ID:", String(b.id), "#e8f2f6"],
+        ["State:", b.st, buoyStateColor(b.st)],
+        ["Position:", b.lat.toFixed(6) + ", " + b.lon.toFixed(6), "#7CFF6B"],
+        ["Distance:", distance, "#ffb020"],
+        ["Bearing:", bearing, "#ffb020"],
+        ["To Target:", toTgt, "#d7e4ec"],
+        ["Tgt Brg:", tgtBrg, "#d7e4ec"],
+        ["Battery:", b.bat + "%", batColor],
+        ["Last Seen:", age, ageColor]
+      ].map((row, i) => `<span class="k" style="top:${28 + i * 24}px">${row[0]}</span><span class="v" style="left:80px;top:${28 + i * 24}px;color:${row[2]}">${row[1]}</span>`).join("")}
+      <span class="v" style="top:${28 + 7 * 24}px;color:#ff0000">${mismatch}</span>
+    </div>
+  </div>`);
+  document.querySelector("#modal .x").onclick = closeModal;
+}
+
+function openKeyboard(mode, initial, target) {
+  state.kbMode = mode;
+  state.kbTarget = target || null;
+  document.getElementById("kbText").value = initial || "";
+  document.getElementById("keys").classList.add("on");
+  document.getElementById("kbText").focus();
+}
+function closeKeyboard() {
+  document.getElementById("keys").classList.remove("on");
+  state.kbMode = null;
+}
+function keyboardReady() {
+  const text = document.getElementById("kbText").value.trim().slice(0, 20);
+  const mode = state.kbMode;
+  const target = state.kbTarget;
+  if (!text) { msgbox("Error", "Name cannot be empty", ["OK"], () => {}); return; }
+  if (mode === "user") {
+    const result = foldName(text) === "all" ? "all" : findUser(text) >= 0 ? "dup" : state.users.length >= USER_MAX ? "full" : "ok";
+    if (result === "dup") { msgbox("Users", "That name is already in the list.", ["OK"], () => {}); return; }
+    if (result === "full") { msgbox("Users", "The list is full.", ["OK"], () => {}); return; }
+    if (result === "all") { msgbox("Users", "That name is reserved.", ["OK"], () => {}); return; }
+    closeKeyboard();
+    pendingNewUser = text;
+    openUserEditor(null);
+    return;
+  }
+  if (text === "Virtual Course") {
+    msgbox("Virtual Course", "That name is reserved.", ["OK"], () => {});
+    return;
+  }
+  if (text === "Center Line" || (target && target.centerLine)) {
+    msgbox("Center Line", target && target.centerLine ? "This retrieval point stays in the list." : "That name is reserved.", ["OK"], () => {});
+    return;
+  }
+  closeKeyboard();
+  if (mode === "course") {
+    state.pendingName = text;
+    state.marking = "start";
+    state.point1 = null;
+    msgbox("Mark Course Start", "Go to the START of the course.\n\nPress OK when at the starting position.", ["OK", "Cancel"], markPick);
+  } else if (mode === "retrieval") {
+    state.pendingName = text;
+    state.marking = "retrieval";
+    msgbox("Mark Retrieval Point", "Go to the retrieval location.\n\nPress OK when at the position.", ["OK", "Cancel"], markPick);
+  } else if (mode === "waypoint") {
+    state.pendingName = text;
+    state.marking = "waypoint";
+    msgbox("Mark Waypoint", "Go to the waypoint location.\n\nPress OK when at the position.", ["OK", "Cancel"], markPick);
+  } else if (mode && mode.startsWith("rename-") && target) {
+    target.name = text;
+    renderHome(); renderLists();
+    msgbox("Renamed", text, ["OK"], () => {});
+  }
+}
+function markPick(which) {
+  if (which !== "OK") { state.marking = null; state.pendingName = ""; return; }
+  if (!state.gps || !state.gps.fix) {
+    state.marking = null;
+    msgbox("No GPS Fix", "Cannot mark location without GPS fix.\nPlease wait for GPS signal.", ["OK"], () => {});
+    return;
+  }
+  const lat = state.gps.lat, lon = state.gps.lon;
+  if (state.marking === "start") {
+    state.point1 = { lat, lon };
+    state.marking = "end";
+    msgbox("Mark Course End", "Go to the END of the course.\n\nPress OK when at the ending position.", ["OK", "Cancel"], markPick);
+    return;
+  }
+  if (state.marking === "end" && state.point1) {
+    const bearing = brg(state.point1.lat, state.point1.lon, lat, lon);
+    state.courses.push({
+      name: state.pendingName, lat1: state.point1.lat, lon1: state.point1.lon,
+      lat2: lat, lon2: lon, bearing, active: state.courses.length === 0
+    });
+    const name = state.pendingName;
+    state.marking = null; state.pendingName = ""; state.point1 = null;
+    savePicks();
+    renderLists(); renderHome();
+    msgbox("Course Created", name, ["OK"], () => {});
+    return;
+  }
+  if (state.marking === "retrieval") {
+    state.retrievals.push({ name: state.pendingName, lat, lon, active: state.retrievals.length === 0 });
+    const name = state.pendingName;
+    state.marking = null; state.pendingName = "";
+    savePicks();
+    renderLists(); renderHome();
+    msgbox("Retrieval Created", name, ["OK"], () => {});
+    return;
+  }
+  if (state.marking === "waypoint") {
+    state.waypoints.push({ name: state.pendingName, lat, lon, active: false });
+    const name = state.pendingName;
+    state.marking = null; state.pendingName = "";
+    savePicks();
+    renderLists();
+    msgbox("Waypoint Created", name, ["OK"], () => {});
+  }
+}
+
+function buildKeyboard() {
+  const rows = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
+  const kb = document.getElementById("kb");
+  rows[0].split("").forEach(ch => kb.appendChild(key(ch)));
+  rows[1].split("").forEach(ch => kb.appendChild(key(ch)));
+  kb.appendChild(key("⌫", "wide", () => {
+    const el = document.getElementById("kbText");
+    el.value = el.value.slice(0, -1);
+  }));
+  rows[2].split("").forEach(ch => kb.appendChild(key(ch)));
+  kb.appendChild(key("space", "wide", () => type(" ")));
+  kb.appendChild(key("OK", "ok", keyboardReady));
+  kb.appendChild(key("Cancel", "cancel", closeKeyboard));
+  function type(ch) {
+    const el = document.getElementById("kbText");
+    if (el.value.length < 20) el.value += ch;
+  }
+  function key(label, cls, fn) {
+    const b = document.createElement("button");
+    b.textContent = label === "space" ? "space" : label;
+    if (cls) b.className = cls;
+    b.addEventListener("click", fn || (() => type(label)));
+    return b;
+  }
+}
+
+const PASS_BALLS = [27, 68, 109, 150, 191, 232];
+const PASS_PULL_IN = [8, 18, 6, 14, 10, 17];
+const PASS_SIGNS = [1, -1, 1, -1, 1, -1];
+const PASS_ROPE = 13 - 2 / 3;
+const PASS_SIGMA = 8.5;
+const PASS_HZ = 5;
+
+const PASS_DAYS = [
+  { date: "2026-10-08", runs: [
+    { time: "14:32:01", course: "Sample East", reason: "exit", mph: 34, s0: -85, s1: 259, shape: "pull", driver: "David", skier: "Beth", rope: 15 },
+    { time: "09:15:44", course: "Sample East", reason: "turned", mph: 34, s0: -85, s1: 120, shape: "turned", driver: "David", skier: "Sam", rope: 32 },
+    { time: "08:00:00", course: "Sample East", reason: "exit", mph: 20, s0: -85, s1: 40, shape: "wobble", driver: "", skier: "" }
+  ]},
+  { date: "2026-10-05", runs: [
+    { time: "16:02:18", course: "Virtual Course", reason: "slowed", mph: 22, s0: -85, s1: 40, shape: "wobble", driver: "Sam", skier: "Beth", rope: 28 }
+  ]}
+];
+
+function buoyPullCm(s) {
+  let cm = 0;
+  for (let i = 0; i < PASS_BALLS.length; i++) {
+    const z = (s - (PASS_BALLS[i] + PASS_ROPE)) / PASS_SIGMA;
+    cm += PASS_SIGNS[i] * PASS_PULL_IN[i] * 2.54 * Math.exp(-(z * z));
+  }
+  return cm;
+}
+function runDeviationCm(run, s) {
+  if (run.shape === "pull") return buoyPullCm(s);
+  if (run.shape === "turned") {
+    const base = buoyPullCm(s);
+    if (s <= 90) return base;
+    return base - (s - 90) * 12;
+  }
+  return 15.24 * Math.sin((s - run.s0) * 0.15);
+}
+function passSamples(run) {
+  const mps = run.mph * 0.44704;
+  const step = mps / PASS_HZ;
+  const pts = [];
+  const push = (s) => pts.push({ s, x: Math.round(runDeviationCm(run, s)) });
+  for (let s = run.s0; s < run.s1 - 1e-6; s += step) push(s);
+  push(run.s1);
+  return pts;
+}
+function passSummary(run, pts) {
+  let max = 0, min = 0, sum = 0;
+  pts.forEach(p => {
+    if (p.x > max) max = p.x;
+    if (p.x < min) min = p.x;
+    sum += p.x * p.x;
+  });
+  const rms = Math.round(Math.sqrt(sum / pts.length));
+  const dur = (run.s1 - run.s0) / (run.mph * 0.44704);
+  return { max, min, rms, n: pts.length, dur };
+}
+function passHalfCm(peak) {
+  let half = 130;
+  if (peak + 15 > half) half = peak + 15;
+  return half;
+}
+function passPoint(s, x, sMin, sMax, half, w, h) {
+  if (sMax <= sMin) sMax = sMin + 10;
+  let sy = (s - sMin) / (sMax - sMin);
+  sy = Math.max(0, Math.min(1, sy));
+  let sx = half < 1 ? 0 : x / half;
+  sx = Math.max(-1, Math.min(1, sx));
+  const insetX = 16, insetY = 14;
+  return {
+    x: insetX + sy * (w - insetX * 2),
+    y: h / 2 + sx * (h / 2 - insetY)
+  };
+}
+function formatOff(cm) {
+  const inches = Math.round(Math.abs(cm) / 2.54);
+  if (inches < 12) return `${inches} in`;
+  const tenths = Math.round((inches * 10) / 12);
+  return `${(tenths / 10).toFixed(1)} ft`;
+}
+function formatSide(maxCm, minCm) {
+  const right = Math.max(maxCm, 0);
+  const left = Math.max(-minCm, 0);
+  const peak = Math.max(right, left);
+  if (peak === 0) return "on axis";
+  return `${right >= left ? "right" : "left"} ${formatOff(peak)}`;
+}
+function runMatches(run) {
+  if (state.filterDriver && run.driver !== state.filterDriver) return false;
+  if (state.filterSkier && run.skier !== state.filterSkier) return false;
+  return true;
+}
+function fillCrewSelect(id, current) {
+  const sel = document.getElementById(id);
+  const names = [""].concat(state.users.map(u => u.name));
+  sel.innerHTML = names.map(n => `<option value="${esc(n)}">${n ? esc(n) : "All"}</option>`).join("");
+  sel.value = names.indexOf(current) >= 0 ? current : "";
+  if (sel.value !== current) {
+    if (id === "filterDriver") state.filterDriver = "";
+    else state.filterSkier = "";
+  }
+}
+function renderPasses() {
+  const show = (id, on) => { document.getElementById(id).style.display = on ? "" : "none"; };
+  const listing = state.passView !== "plot";
+  show("passBack", state.passView !== "dates");
+  show("passFilters", listing);
+  show("passDates", state.passView === "dates");
+  show("passRuns", state.passView === "runs");
+  show("passPlot", state.passView === "plot");
+  show("passEmpty", false);
+  fillCrewSelect("filterDriver", state.filterDriver);
+  fillCrewSelect("filterSkier", state.filterSkier);
+  const day = PASS_DAYS[state.passDate] || PASS_DAYS[0];
+  if (state.passView === "dates") {
+    document.getElementById("passTitle").textContent = "Passes";
+    const box = document.getElementById("passDates");
+    const dates = PASS_DAYS.map((d, i) => ({ d, i })).filter(row => row.d.runs.some(runMatches));
+    box.innerHTML = dates.map(row => `<button type="button" data-i="${row.i}">${row.d.date}</button>`).join("");
+    if (!dates.length) {
+      document.getElementById("passEmpty").textContent = "No passes for that driver and skier.";
+      show("passEmpty", true);
+    }
+  } else if (state.passView === "runs") {
+    document.getElementById("passTitle").textContent = day.date;
+    const box = document.getElementById("passRuns");
+    const runs = day.runs.map((r, i) => ({ r, i })).filter(row => runMatches(row.r));
+    box.innerHTML = runs.map(row => {
+      const st = passSummary(row.r, passSamples(row.r));
+      return `<button type="button" data-i="${row.i}">${row.r.time}   ${formatSide(st.max, st.min)}   ${row.r.reason}</button>`;
+    }).join("");
+    if (!runs.length) {
+      document.getElementById("passEmpty").textContent = "No passes for that driver and skier.";
+      show("passEmpty", true);
+    }
+  } else {
+    const run = day.runs[state.passRun] || day.runs[0];
+    document.getElementById("passTitle").textContent = `${run.time}  ${run.course}`;
+    const pts = passSamples(run);
+    const st = passSummary(run, pts);
+    let sMin = pts[0].s, sMax = pts[pts.length - 1].s;
+    if (sMax >= 250 && sMax < 314) sMax = 314;
+    const peak = Math.max(st.max, -st.min);
+    const half = passHalfCm(peak);
+    const W = 760, H = 250;
+    const guideCm = 115;
+    const scaleCm = 50;
+    const line = (xCm, stroke, width, dash) => {
+      const a = passPoint(sMin, xCm, sMin, sMax, half, W, H);
+      const b = passPoint(sMax, xCm, sMin, sMax, half, W, H);
+      const dashed = dash ? ` stroke-dasharray="${dash}"` : "";
+      return `<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="${stroke}" stroke-width="${width}"${dashed}/>`;
+    };
+    const boat = pts.map(p => {
+      const q = passPoint(p.s, p.x, sMin, sMax, half, W, H);
+      return `${q.x.toFixed(1)},${q.y.toFixed(1)}`;
+    }).join(" ");
+    const markColor = (kind) => kind === "55" ? "#3dde6a" : kind === "boat" ? "#f0d000" : "#e0232a";
+    const courseMarks = [
+      { s: -55, x: 115, kind: "55" },
+      { s: -55, x: -115, kind: "55" },
+      { s: 0, x: 125, kind: "gate" },
+      { s: 0, x: -125, kind: "gate" },
+      { s: 259, x: 125, kind: "gate" },
+      { s: 259, x: -125, kind: "gate" },
+      { s: 314, x: 115, kind: "55" },
+      { s: 314, x: -115, kind: "55" }
+    ];
+    PASS_BALLS.forEach((s, ball) => {
+      courseMarks.push({ s, x: 115, kind: "boat" });
+      courseMarks.push({ s, x: -115, kind: "boat" });
+      courseMarks.push({ s, x: PASS_SIGNS[ball] * 1150, kind: "ski" });
+    });
+    let buoys = "";
+    courseMarks.forEach(m => {
+      if (m.s < sMin || m.s > sMax) return;
+      const p = passPoint(m.s, m.x, sMin, sMax, half, W, H);
+      if (m.kind === "ski") p.y = m.x >= 0 ? H - 10 : 6;
+      buoys += `<circle data-kind="${m.kind}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="${markColor(m.kind)}" stroke="#04161c" stroke-width="1"/>`;
+    });
+    let marks = "";
+    if (run.shape === "pull") {
+      PASS_BALLS.forEach((b, i) => {
+        const s = b + PASS_ROPE;
+        const p = passPoint(s, 0, sMin, sMax, half, W, H);
+        const below = PASS_SIGNS[i] > 0;
+        const ty = below ? p.y + 18 : p.y - 8;
+        marks += `<line x1="${p.x.toFixed(1)}" y1="${(p.y - 6).toFixed(1)}" x2="${p.x.toFixed(1)}" y2="${(p.y + 6).toFixed(1)}" stroke="#8aa0ac" stroke-width="1"/>`;
+        marks += `<text x="${p.x.toFixed(1)}" y="${ty.toFixed(1)}" fill="#b7c9d4" font-size="11" text-anchor="middle">${i + 1}</text>`;
+      });
+    }
+    const boatColor = peak > 100 ? "#ff5a3c" : "#ffb020";
+    const axis = passPoint(sMin, 0, sMin, sMax, half, W, H);
+    const guideR = passPoint(sMin, guideCm, sMin, sMax, half, W, H);
+    const guideL = passPoint(sMin, -guideCm, sMin, sMax, half, W, H);
+    const scaleR = passPoint(sMin, scaleCm, sMin, sMax, half, W, H);
+    const scaleL = passPoint(sMin, -scaleCm, sMin, sMax, half, W, H);
+    document.getElementById("passSvg").innerHTML =
+      line(0, "#8aa0ac", 2) +
+      line(-guideCm, "#b7c9d4", 2) +
+      line(guideCm, "#b7c9d4", 2) +
+      line(-scaleCm, "#8aa0ac", 1, "6 4") +
+      line(scaleCm, "#8aa0ac", 1, "6 4") +
+      buoys +
+      marks +
+      `<polyline data-n="${pts.length}" points="${boat}" fill="none" stroke="${boatColor}" stroke-width="3"/>` +
+      `<text x="18" y="18" fill="#b7c9d4" font-size="13">start</text>` +
+      `<text x="742" y="12" fill="#b7c9d4" font-size="13" text-anchor="end">down course</text>` +
+      `<text x="90" y="${(guideR.y > H / 2 ? guideR.y - 16 : guideR.y + 24).toFixed(1)}" fill="#e8f2f6" font-size="18" font-weight="700">right 1.15 m</text>` +
+      `<text x="90" y="${(guideL.y > H / 2 ? guideL.y - 16 : guideL.y + 24).toFixed(1)}" fill="#e8f2f6" font-size="18" font-weight="700">left 1.15 m</text>` +
+      `<text x="8" y="${(scaleR.y > H / 2 ? scaleR.y - 14 : scaleR.y + 22).toFixed(1)}" fill="#e8f2f6" font-size="18" font-weight="700">0.5 m</text>` +
+      `<text x="8" y="${(scaleL.y > H / 2 ? scaleL.y - 14 : scaleL.y + 22).toFixed(1)}" fill="#e8f2f6" font-size="18" font-weight="700">0.5 m</text>` +
+      `<text x="72" y="${(axis.y - 8).toFixed(1)}" fill="#8aa0ac" font-size="11">should be</text>`;
+    document.getElementById("passStats").textContent =
+      `should be the center line   boat guides 1.15 m   right ${formatOff(Math.max(st.max, 0))}   left ${formatOff(Math.max(-st.min, 0))}   rms ${formatOff(st.rms)}   ${run.mph} mph   ${st.n} samples   5/s   ${st.dur.toFixed(1)} s   ${run.reason}   driver ${run.driver || "-"}   skier ${run.skier || "-"}   ${ropeReview(run.rope)}`;
+  }
+}
+
+function renderAll() {
+  renderStatus(); renderHome(); renderLists(); renderBuoys(); renderSettings(); renderUsers(); renderPasses(); paintDrive();
+}
+
+document.getElementById("passDates").addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  state.passDate = Number(btn.dataset.i);
+  state.passView = "runs";
+  renderPasses();
+});
+document.getElementById("passRuns").addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  state.passRun = Number(btn.dataset.i);
+  state.passView = "plot";
+  renderPasses();
+});
+document.getElementById("passBack").addEventListener("click", () => {
+  state.passView = state.passView === "plot" ? "runs" : "dates";
+  renderPasses();
+});
+document.getElementById("filterDriver").addEventListener("change", e => {
+  state.filterDriver = e.target.value;
+  renderPasses();
+});
+document.getElementById("filterSkier").addEventListener("change", e => {
+  state.filterSkier = e.target.value;
+  renderPasses();
+});
+document.getElementById("btnDriver").addEventListener("click", () => openRole("driver"));
+document.getElementById("btnSkier").addEventListener("click", () => openRole("skier"));
+document.getElementById("btnAddUser").addEventListener("click", () => {
+  if (state.users.length >= USER_MAX) {
+    msgbox("Users", "The list is full.", ["OK"], () => {});
+    return;
+  }
+  openKeyboard("user", "");
+});
+document.getElementById("endPass").addEventListener("click", () => finishPass("exit"));
+document.getElementById("userList").addEventListener("click", e => {
+  const edit = e.target.closest("[data-edit]");
+  if (edit) {
+    const person = state.users[findUser(edit.dataset.edit)];
+    if (person) openUserEditor(person);
+    return;
+  }
+  const btn = e.target.closest("[data-del]");
+  if (!btn) return;
+  const name = btn.dataset.del;
+  msgbox("Delete user",
+    `Delete ${name}?\n\nThis removes them from the Driver and Skier lists. Saved passes keep the name that was stored. Later features that point at this user will no longer find them.`,
+    ["Delete", "Cancel"], which => { if (which === "Delete") removeUser(name); });
+});
+document.getElementById("tabbar").addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (btn) showPage(btn.dataset.tab);
+});
+document.querySelectorAll(".subbar").forEach(bar => {
+  bar.addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if (btn) showSub(bar.dataset.group, btn.dataset.sub);
+  });
+});
+document.getElementById("glass").addEventListener("click", e => {
+  const add = e.target.closest("[data-add]");
+  if (add) { openKeyboard(add.dataset.add, ""); return; }
+  const gear = e.target.closest("[data-kind$='-detail']");
+  if (gear) {
+    const kind = gear.dataset.kind.replace("-detail", "");
+    const name = gear.dataset.name;
+    if (kind === "course") courseDialog(name);
+    else smallDialog(kind, (kind === "retrieval" ? state.retrievals : state.waypoints).find(x => x.name === name));
+    return;
+  }
+  const nameBtn = e.target.closest(".name");
+  if (nameBtn) {
+    const kind = nameBtn.dataset.kind;
+    const name = nameBtn.dataset.name;
+    if (kind === "course") { selectCourse(name); return; }
+    const list = kind === "retrieval" ? state.retrievals : state.waypoints;
+    list.forEach(x => x.active = x.name === name);
+    savePicks();
+    renderHome(); renderLists();
+    return;
+  }
+  const buoy = e.target.closest("[data-buoy]");
+  if (buoy) buoyDialog(Number(buoy.dataset.buoy));
+});
+document.getElementById("ropeLine").addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn || btn.dataset.rope == null) return;
+  const i = ropeIndex(btn.dataset.rope);
+  if (i < 0) return;
+  state.ropeOff = ROPE_OFFS[i];
+  saveRope();
+  renderRope();
+});
+document.getElementById("btnDrive").onclick = () => document.getElementById("drive").classList.add("on");
+document.getElementById("btnBack").onclick = () => document.getElementById("drive").classList.remove("on");
+document.getElementById("btnDeploy").onclick = () => {
+  const c = activeCourse();
+  if (!c) msgbox("No Course", "Please select a course first", ["OK"], () => {});
+  else if (c.virtual) msgbox("Virtual Course", "This course cannot deploy buoys.", ["OK"], () => {});
+  else msgbox("Deploy Buoys", "Start deployment sequence?", ["Yes", "No"], which => {
+    if (which === "Yes") { state.sys = "Deploying"; renderStatus(); renderLists(); }
+  });
+};
+document.getElementById("btnRetrieve").onclick = () => {
+  const c = activeCourse();
+  if (c && c.virtual) return;
+  const dest = activeWaypoint() ? "active waypoint" :
+    (activeRetrieval() && activeRetrieval().centerLine ? "the closest centerline point" : "retrieval point");
+  msgbox("Retrieve Buoys", "Recall buoys to " + dest + "?", ["Yes", "No"], which => {
+    if (which === "Yes") { state.sys = "Retrieving"; renderStatus(); }
+  });
+};
+document.getElementById("swUnits").onclick = () => { state.useMPH = !state.useMPH; renderAll(); };
+document.getElementById("sliderWidth").addEventListener("input", e => {
+  let n = Number(e.target.value);
+  if (n < 0) n = 0;
+  if (n > 8) n = 8;
+  state.courseWidth = 7.5 + n * 0.5;
+  document.getElementById("lblWidth").textContent = widthLabel(state.courseWidth);
+  paintDrive();
+});
+document.getElementById("sliderAntFore").addEventListener("input", e => {
+  state.antFore = Number(e.target.value) / 10;
+  document.getElementById("lblAntFore").textContent = foreLabel(state.antFore);
+});
+document.getElementById("sliderAntSide").addEventListener("input", e => {
+  state.antSide = Number(e.target.value) / 10;
+  document.getElementById("lblAntSide").textContent = sideLabel(state.antSide);
+});
+document.getElementById("sliderBow").addEventListener("input", e => {
+  state.bowM = Number(e.target.value) / 10;
+  document.getElementById("lblBow").textContent = state.bowM.toFixed(1) + " m";
+});
+document.getElementById("sliderSetReset").addEventListener("input", e => {
+  let step = Number(e.target.value);
+  if (step < 0) step = 0;
+  if (step > 12) step = 12;
+  state.setResetMin = step * 5;
+  document.getElementById("lblSetReset").textContent = setResetLabel(state.setResetMin);
+  saveSet();
+});
+document.getElementById("ropeShorten").addEventListener("click", () => {
+  if (!state.skier) return;
+  state.shortenSet = !state.shortenSet;
+  saveSet();
+  renderShorten();
+});
+document.getElementById("timingSheet").addEventListener("input", e => {
+  const id = e.target.dataset.rate;
+  if (!id || !RATES[id] || id === "fixed") return;
+  let n = Number(e.target.value);
+  if (n < 0) n = 0;
+  if (n > 20) n = 20;
+  state.cadence[id] = n;
+  paintRate(id);
+});
+document.getElementById("timingSheet").addEventListener("click", e => {
+  const btn = e.target.closest("[data-help]");
+  if (!btn) return;
+  const spec = RATES[btn.dataset.help];
+  if (!spec) return;
+  const modal = document.getElementById("modal");
+  modal.classList.add("on");
+  modal.innerHTML = `<div class="shade"></div><div class="mbox help"><h3>${spec.title}</h3><p>${spec.help}</p><div class="btns"><button data-btn="OK">OK</button></div></div>`;
+  modal.querySelector("[data-btn]").addEventListener("click", closeModal);
+});
+document.getElementById("sliderExt").addEventListener("input", e => {
+  let n = Number(e.target.value);
+  if (n < 0) n = 0;
+  if (n > 5) n = 5;
+  state.extension = 1 + n * 0.1;
+  document.getElementById("lblExt").textContent = state.extension.toFixed(1) + "x";
+  paintDrive();
+});
+document.getElementById("scenario").onchange = e => {
+  state.scenario = e.target.value;
+  if (state.scenario === "cold") cold(); else water();
+  renderAll();
+};
+document.getElementById("liveDrift").onchange = e => { state.live = e.target.checked; };
+document.getElementById("devSlider").addEventListener("input", e => {
+  state.live = false;
+  document.getElementById("liveDrift").checked = false;
+  state.dev = Number(e.target.value);
+  document.getElementById("devReadout").textContent = state.dev.toFixed(1) + " m";
+  paintDrive();
+});
+document.getElementById("hdgSlider").addEventListener("input", e => {
+  state.hdg = Number(e.target.value);
+  document.getElementById("hdgReadout").textContent = state.hdg + "°";
+  paintDrive();
+});
+document.getElementById("alongSlider").addEventListener("input", e => {
+  state.along = Number(e.target.value);
+  const entry = -state.along;
+  document.getElementById("alongReadout").textContent = entry > 1
+    ? Math.round(entry) + " m short"
+    : (Math.abs(entry) < 1 ? "at the entry" : Math.round(-entry) + " m past entry");
+  paintDrive();
+});
+document.getElementById("driveMode").onchange = e => {
+  state.driveMode = e.target.value;
+  paintDrive();
+};
+function parkDrive(dev, hdg) {
+  state.live = false;
+  document.getElementById("liveDrift").checked = false;
+  state.driveMode = "marked";
+  document.getElementById("driveMode").value = "marked";
+  state.dev = dev;
+  state.hdg = hdg;
+  state.along = -40;
+  document.getElementById("devSlider").value = dev;
+  document.getElementById("hdgSlider").value = hdg;
+  document.getElementById("alongSlider").value = -40;
+  document.getElementById("devReadout").textContent = dev.toFixed(1) + " m";
+  document.getElementById("hdgReadout").textContent = hdg + "°";
+  document.getElementById("alongReadout").textContent = "40 m short";
+  document.getElementById("drive").classList.add("on");
+  paintDrive();
+}
+document.getElementById("presetOpen").onclick = () => parkDrive(-2.1, -30);
+document.getElementById("presetMeet").onclick = () => parkDrive(-2.1, 8);
+document.getElementById("presetOver").onclick = () => parkDrive(-2.1, 30);
+document.getElementById("nudge").onclick = () => {
+  if (!state.gps || !state.gps.fix) return;
+  state.gps.lat += 80 / 111320;
+  state.gps.moved = 80;
+  state.gps.movedBrg = 0;
+  renderAll();
+};
+const METER_EDGE_IN = [6, 12, 18, 24, 30, 36, 42, 48, 60, 72, 84, 96, 132, 168, 204];
+const METER_CENTER = 15;
+function meterInches(dev) { return Math.abs(dev) / 0.0254; }
+function meterCount(dev) {
+  const inches = meterInches(dev);
+  let n = 0;
+  for (let i = 0; i < METER_EDGE_IN.length; i++) {
+    if (inches + 0.05 >= METER_EDGE_IN[i]) n = i + 1;
+    else break;
+  }
+  return n;
+}
+function meterBand(dev) {
+  const inches = meterInches(dev);
+  if (inches <= 12.05) return "#00ff00";
+  if (inches <= 24.05) return "#ffff00";
+  if (inches <= 48.05) return "#ff7a00";
+  return "#ff0000";
+}
+function meterColumn(i, dev, showMeter, n, band) {
+  if (!showMeter) return i === METER_CENTER ? "#444444" : "#111111";
+  if (i === METER_CENTER) return band === "#00ff00" ? "#00ff00" : "#444444";
+  let lit = false;
+  if (dev < 0 && i < METER_CENTER) lit = (METER_CENTER - 1 - i) < n;
+  else if (dev > 0 && i > METER_CENTER) lit = (i - METER_CENTER - 1) < n;
+  return lit ? band : "#111111";
+}
+const cols = document.getElementById("cols");
+for (let i = 0; i < 31; i++) {
+  const el = document.createElement("i");
+  if (i === METER_CENTER) el.className = "center";
+  cols.appendChild(el);
+}
+buildKeyboard();
+water();
+loadCrew();
+loadPicks();
+loadRope();
+loadSet();
+renderAll();
+
+setInterval(() => {
+  if (!state.live) return;
+  state.dev = 5.2 * Math.sin(Date.now() / 900);
+  document.getElementById("devReadout").textContent = "live";
+  if (document.getElementById("drive").classList.contains("on")) paintDrive();
+}, 250);
+
+const q = new URLSearchParams(location.search);
+if (q.get("scenario") === "cold") { document.getElementById("scenario").value = "cold"; cold(); renderAll(); }
+const view = q.get("view");
+if (view === "course" || view === "buoys" || view === "settings" || view === "home" || view === "passes") showPage(view);
+if (view === "drive") {
+  showPage("home");
+  document.getElementById("drive").classList.add("on");
+  state.live = false;
+  state.driveMode = q.get("mode") || "marked";
+  document.getElementById("driveMode").value = state.driveMode;
+  state.dev = q.get("dev") != null ? Number(q.get("dev")) : -2.1;
+  state.hdg = q.get("hdg") != null ? Number(q.get("hdg")) : 8;
+  state.along = q.get("along") != null ? Number(q.get("along")) : -40;
+  document.getElementById("devSlider").value = state.dev;
+  document.getElementById("hdgSlider").value = state.hdg;
+  document.getElementById("alongSlider").value = state.along;
+  document.getElementById("devReadout").textContent = state.dev.toFixed(1) + " m";
+  document.getElementById("hdgReadout").textContent = state.hdg + "°";
+  paintDrive();
+}
+if (view === "settings-gps" || view === "settings-lora" || view === "settings-imu" || view === "settings-timing" || view === "settings-users") {
+  showPage("settings");
+  showSub("settingsSub", view.slice("settings-".length));
+}
+if (view === "pass") {
+  showPage("passes");
+  state.passDate = 0;
+  state.passRun = 0;
+  state.passView = "plot";
+  renderPasses();
+}
+if (view === "course-detail") { showPage("course"); courseDialog("Sample East"); }
+if (view === "buoy") { showPage("buoys"); buoyDialog(3); }
+if (q.get("selftest") === "1") {
+  const out = [];
+  const ok = (name, cond) => out.push((cond ? "PASS " : "FAIL ") + name);
+  localStorage.removeItem(CREW_KEY);
+  localStorage.removeItem(PICK_KEY);
+  localStorage.removeItem(ROPE_KEY);
+  localStorage.removeItem(SET_KEY);
+  water();
+  loadCrew();
+  loadPicks();
+  loadRope();
+  loadSet();
+  renderAll();
+  ok("home course", document.getElementById("lblCourseInfo").textContent.includes("Sample East"));
+  ok("center line default", document.getElementById("lblCourseInfo").textContent.indexOf("Retrieval: Center Line") >= 0);
+  ok("center line listed", document.getElementById("retrievalList").textContent.indexOf("Center Line") >= 0);
+  smallDialog("retrieval", state.retrievals.find(r => r.centerLine));
+  ok("center line detail", document.body.textContent.indexOf("Closest point on the course centerline") >= 0 && !document.querySelector("#modal [data-act='delete']"));
+  closeModal();
+  ok("deploy retrieve shown", !document.getElementById("btnDeploy").hidden && !document.getElementById("btnRetrieve").hidden);
+  const driver0 = document.getElementById("btnDriver").getBoundingClientRect();
+  const skier0 = document.getElementById("btnSkier").getBoundingClientRect();
+  const deploy0 = document.getElementById("btnDeploy").getBoundingClientRect();
+  const retrieve0 = document.getElementById("btnRetrieve").getBoundingClientRect();
+  const drive0 = document.getElementById("btnDrive").getBoundingClientRect();
+  const deployFace = getComputedStyle(document.getElementById("btnDeploy"));
+  const retrieveFace = getComputedStyle(document.getElementById("btnRetrieve"));
+  ok("fleet aligns with crew", Math.abs(deploy0.top - driver0.top) < 2 && Math.abs(retrieve0.top - skier0.top) < 2 && deploy0.left > driver0.right && retrieve0.left > skier0.right);
+  ok("crew row gap", skier0.top - driver0.bottom >= 20 && retrieve0.top - deploy0.bottom >= 20);
+  ok("drive at bottom", drive0.top > skier0.bottom + 40);
+  ok("retrieve matches deploy", deployFace.backgroundColor === retrieveFace.backgroundColor && retrieveFace.backgroundColor === "rgb(61, 222, 106)" && retrieveFace.color === "rgb(16, 32, 40)");
+  ok("gps rtk", document.getElementById("lblGPS").textContent === "GPS:18R");
+  ok("product title", document.querySelector(".status .title").textContent === "Ski Commander");
+  ok("state removed", !document.getElementById("lblState"));
+  ok("buoy box with fleet", !document.getElementById("lblBuoyInfo").classList.contains("is-off"));
+  const courseBox = document.getElementById("lblCourseInfo").getBoundingClientRect();
+  const buoyBox = document.getElementById("lblBuoyInfo").getBoundingClientRect();
+  ok("course beside buoy", Math.abs(courseBox.top - buoyBox.top) < 2 && buoyBox.left >= courseBox.right - 1 && courseBox.width > 300 && courseBox.width < 430 && Math.abs(courseBox.width - buoyBox.width) < 4);
+  showPage("settings");
+  const settingsBtns = [...document.querySelectorAll("[data-group='settingsSub'] button")];
+  ok("users tab first", settingsBtns[0] && settingsBtns[0].dataset.sub === "users" && settingsBtns[0].classList.contains("on") && document.querySelector("[data-subpage='users']").classList.contains("on"));
+  ok("full width", document.getElementById("lblWidth").textContent.indexOf("full") >= 0);
+  ok("setup sheet", !!document.querySelector(".setup-sheet") && !!document.querySelector(".inst-grid.gps") && document.body.textContent.indexOf("Course width") >= 0 && document.body.textContent.indexOf("Latitude") >= 0);
+  ok("antenna centered", document.getElementById("lblAntFore").textContent.indexOf("0.0") === 0 && document.getElementById("lblAntSide").textContent.indexOf("0.0") === 0);
+  ok("bow default", document.getElementById("lblBow").textContent.indexOf("3.5") === 0);
+  const extSlider = document.getElementById("sliderExt");
+  ok("extension range", extSlider.min === "0" && extSlider.max === "5" && extSlider.step === "1");
+  ok("extension default", document.getElementById("lblExt").textContent === "1.0x");
+  showSub("settingsSub", "timing");
+  ok("timing section", document.querySelectorAll(".rate-row").length === 9 && document.getElementById("lblRateHull").textContent === "1.0x  50 ms");
+  ok("timing defaults", document.getElementById("lblRateGlass").textContent === "1.0x  30 ms" && document.getElementById("lblRateTouch").textContent === "1.0x  30 ms" && document.getElementById("lblRateDrive").textContent === "1.0x  200 ms" && document.getElementById("lblRateReadout").textContent === "1.0x  1.0 s" && document.getElementById("lblRateImu").textContent === "1.0x  250 ms" && document.getElementById("lblRatePass").textContent === "1.0x  200 ms" && document.getElementById("lblRateBuoy").textContent === "1.0x  2.0 s" && document.getElementById("lblRateSerial").textContent === "1.0x  5.0 s");
+  const hullSlider = document.getElementById("sliderRateHull");
+  ok("timing range", hullSlider.min === "0" && hullSlider.max === "20" && hullSlider.value === "10");
+  hullSlider.value = "0";
+  hullSlider.dispatchEvent(new Event("input", { bubbles: true }));
+  ok("timing slow", document.getElementById("lblRateHull").textContent === "0.1x  500 ms");
+  hullSlider.value = "20";
+  hullSlider.dispatchEvent(new Event("input", { bubbles: true }));
+  ok("timing fast", document.getElementById("lblRateHull").textContent === "10x  5 ms");
+  hullSlider.value = "10";
+  hullSlider.dispatchEvent(new Event("input", { bubbles: true }));
+  document.querySelector("[data-help='hull']").click();
+  ok("timing help", document.querySelector(".mbox h3") && document.querySelector(".mbox h3").textContent === "Hull lights" && document.querySelector(".mbox p").textContent.indexOf("24 ms") >= 0);
+  closeModal();
+  document.querySelector("[data-help='fixed']").click();
+  ok("timing fixed help", document.querySelector(".mbox p") && document.querySelector(".mbox p").textContent.indexOf("LoRa") >= 0 && document.querySelector(".mbox p").textContent.indexOf("one tenth") >= 0);
+  closeModal();
+  showSub("settingsSub", "config");
+  extSlider.value = "1";
+  extSlider.dispatchEvent(new Event("input"));
+  ok("extension tenth", document.getElementById("lblExt").textContent === "1.1x");
+  extSlider.value = "5";
+  extSlider.dispatchEvent(new Event("input"));
+  ok("extension 1.5", document.getElementById("lblExt").textContent === "1.5x");
+  extSlider.value = "0";
+  extSlider.dispatchEvent(new Event("input"));
+  ok("no deploy grid", !document.getElementById("deployToggles"));
+  const widthSlider = document.getElementById("sliderWidth");
+  widthSlider.value = "0";
+  widthSlider.dispatchEvent(new Event("input"));
+  ok("mini width", document.getElementById("lblWidth").textContent.indexOf("mini") >= 0);
+  widthSlider.value = "1";
+  widthSlider.dispatchEvent(new Event("input"));
+  ok("half meter step", document.getElementById("lblWidth").textContent.indexOf("8.0") === 0);
+  widthSlider.value = "8";
+  widthSlider.dispatchEvent(new Event("input"));
+  showPage("home");
+  showPage("buoys");
+  ok("buoy count", document.getElementById("lblBuoyDetail").textContent === "Active: 7 buoys (signal: 5)");
+  showPage("course");
+  document.querySelector("[data-add='course']").click();
+  ok("keyboard", document.getElementById("keys").classList.contains("on"));
+  closeKeyboard();
+  document.getElementById("btnDeploy").click();
+  ok("deploy confirm", document.querySelector(".mbox h3") && document.querySelector(".mbox h3").textContent === "Deploy Buoys");
+  closeModal();
+  document.getElementById("drive").classList.add("on");
+  state.live = false;
+  state.driveMode = "marked";
+  state.hdg = 0;
+  state.along = -40;
+  state.dev = -3.4;
+  paintDrive();
+  const fleetEl = document.getElementById("lblDriveFleet");
+  const readyParts = fleetEl.textContent.split("\n");
+  const readyIds = (readyParts[1] || "").split(" ").filter(Boolean);
+  ok("not ready", readyParts[0] === "NOT READY" && readyParts[1] === "2 3 4 8 12");
+  ok("on station omitted", readyIds.indexOf("1") < 0 && readyIds.indexOf("5") < 0);
+  const fleetStyle = getComputedStyle(fleetEl);
+  ok("fleet on the right", fleetStyle.textAlign === "right" && parseFloat(fleetStyle.fontSize) >= 40 && parseInt(fleetStyle.fontWeight, 10) >= 700 && parseFloat(fleetStyle.maxHeight) === 94);
+  const savedBuoys = state.buoys.map(b => Object.assign({}, b));
+  state.buoys.forEach(b => {
+    if (b.id === 8 || b.id === 12) { b.st = "On Course"; b.onTarget = true; }
+  });
+  paintDrive();
+  const moveParts = document.getElementById("lblDriveFleet").textContent.split("\n");
+  ok("not in position", moveParts[0] === "NOT IN POSITION" && moveParts[1] === "2 3 4");
+  state.buoys.forEach(b => {
+    if (b.st === "Deploying" || b.st === "Adjusting") b.st = "On Course";
+    if (b.st === "On Course") b.onTarget = true;
+  });
+  paintDrive();
+  ok("buoys set", document.getElementById("lblDriveFleet").textContent === "BUOYS SET");
+  state.buoys = savedBuoys;
+  paintDrive();
+  ok("drive left", document.getElementById("lblDriveDeviation").textContent.includes("LEFT"));
+  const meterEls = () => [...document.querySelectorAll("#cols i")];
+  const fill = (rgb) => meterEls().filter(el => el.style.background === rgb).length;
+  ok("meter blocks", meterEls().length === 31);
+  ok("3.4 m is thirteen red", fill("rgb(255, 0, 0)") === 13 && meterEls()[15].style.background === "rgb(68, 68, 68)");
+  state.dev = 0.1524; paintDrive();
+  ok("six inches green", fill("rgb(0, 255, 0)") === 2);
+  state.dev = 0.3048; paintDrive();
+  ok("one foot green", fill("rgb(0, 255, 0)") === 3);
+  state.dev = 0.4572; paintDrive();
+  ok("eighteen inches yellow", fill("rgb(255, 255, 0)") === 3 && meterEls()[15].style.background === "rgb(68, 68, 68)");
+  state.dev = 1.2192; paintDrive();
+  ok("four feet orange", fill("rgb(255, 122, 0)") === 8);
+  state.dev = 1.524; paintDrive();
+  ok("five feet red", fill("rgb(255, 0, 0)") === 9);
+  state.dev = -2.1; state.hdg = -30; paintDrive();
+  ok("opening", document.getElementById("lblDriveVerdict").textContent === "OPENING");
+  state.hdg = 30; paintDrive();
+  ok("overshoot", document.getElementById("lblDriveVerdict").textContent === "OVERSHOOT");
+  state.hdg = 8; paintDrive();
+  ok("meets", document.getElementById("lblDriveVerdict").textContent === "MEETS AHEAD");
+  const buoyEls = () => [...document.querySelectorAll("#hud circle[data-buoy]")];
+  ok("two buoys ahead", buoyEls().length === 2);
+  state.hdg = 0; state.dev = 0; state.along = -40; paintDrive();
+  const gateX = 1.25 * 2000 / 48;
+  const xs = buoyEls().map(el => Number(el.getAttribute("cx"))).sort((a, b) => a - b);
+  ok("gates on the lane", xs.length === 2 && Math.abs(xs[0] - (400 - gateX)) < 2 && Math.abs(xs[1] - (400 + gateX)) < 2);
+  state.along = 10; paintDrive();
+  const radii = buoyEls().map(el => Number(el.getAttribute("r")));
+  ok("near buoy larger", radii.length === 2 && Math.max(...radii) > Math.min(...radii) + 4);
+  state.hdg = 0; state.dev = 0; state.along = 0; paintDrive();
+  const approaching = buoyEls().slice().sort((a, b) => Number(b.getAttribute("r")) - Number(a.getAttribute("r")))[0];
+  const approachOff = approaching ? Math.abs(Number(approaching.getAttribute("cx")) - 400) : 0;
+  state.along = 24; paintDrive();
+  const passing = buoyEls().slice().sort((a, b) => Number(b.getAttribute("r")) - Number(a.getAttribute("r")))[0];
+  const passOff = passing ? Math.abs(Number(passing.getAttribute("cx")) - 400) : 0;
+  ok("skier flares outside the lane", !!passing && passOff > approachOff + 40 && passOff > 250);
+  state.driveMode = "hold"; paintDrive();
+  ok("virtual hold", document.getElementById("lblDriveVerdict").textContent === "HOLD HEADING");
+  ok("hold clears fleet", document.getElementById("lblDriveFleet").textContent === "");
+  ok("hold has no buoys", document.querySelectorAll("#hud circle[data-buoy]").length === 0);
+  selectCourse("Virtual Course");
+  ok("virtual hides fleet buttons", document.getElementById("btnDeploy").hidden && document.getElementById("btnRetrieve").hidden);
+  ok("virtual hides buoy box", document.getElementById("lblBuoyInfo").classList.contains("is-off"));
+  ok("crew stays on virtual", !document.getElementById("btnDriver").hidden && !document.getElementById("btnSkier").hidden && document.getElementById("btnDriver").textContent === "Driver: David" && document.getElementById("btnSkier").textContent === "Skier: Beth");
+  selectCourse("Sample East");
+  ok("plotted shows fleet buttons", !document.getElementById("btnDeploy").hidden && !document.getElementById("btnRetrieve").hidden);
+  cold(); renderAll();
+  ok("cold virtual", document.getElementById("lblCourseInfo").textContent.includes("Virtual Course"));
+  ok("cold hides fleet buttons", document.getElementById("btnDeploy").hidden && document.getElementById("btnRetrieve").hidden);
+  ok("cold hides buoy box", document.getElementById("lblBuoyInfo").classList.contains("is-off"));
+  document.getElementById("btnDeploy").click();
+  ok("virtual deploy blocked", document.querySelector(".mbox p").textContent === "This course cannot deploy buoys.");
+  closeModal();
+  state.courses.push({ name: "Sample East", lat1: 1, lon1: 1, lat2: 2, lon2: 2, bearing: 10, active: false });
+  showPage("course");
+  renderLists();
+  document.querySelector("[data-name='Sample East']").click();
+  ok("no plotted course without buoys", document.querySelector(".mbox h3") && document.querySelector(".mbox h3").textContent === "No Buoys");
+  showPage("passes");
+  const passDates = [...document.querySelectorAll("#passDates button")];
+  ok("passes tab", document.querySelector(".tabbar button[data-tab='passes']").textContent === "Passes");
+  ok("newest date first", passDates.length >= 2 && passDates[0].textContent === "2026-10-08" && passDates[1].textContent === "2026-10-05");
+  passDates[0].click();
+  const passRuns = [...document.querySelectorAll("#passRuns button")];
+  ok("newest pass first", passRuns.length >= 2 && passRuns[0].textContent.indexOf("14:32:01") === 0 && passRuns[1].textContent.indexOf("09:15:44") === 0);
+  passRuns[0].click();
+  const poly = document.querySelector("#passSvg polyline");
+  const svgText = document.getElementById("passSvg").textContent;
+  ok("pass plot", !!poly && svgText.indexOf("down course") >= 0 && svgText.indexOf("should be") >= 0 && svgText.indexOf("1.15 m") >= 0 && svgText.indexOf("0.5 m") >= 0);
+  const scaleLabels = [...document.querySelectorAll("#passSvg text")].filter(t => t.textContent === "0.5 m" || t.textContent.indexOf("1.15 m") >= 0);
+  ok("scale labels are large and bold", scaleLabels.length === 4 && scaleLabels.every(t => Number(t.getAttribute("font-size")) >= 16 && t.getAttribute("font-weight") === "700" && (t.getAttribute("fill") || "").toLowerCase() === "#e8f2f6"));
+  const passXs = poly.getAttribute("points").trim().split(/\s+/).map(p => Number(p.split(",")[0]));
+  const passYs = poly.getAttribute("points").trim().split(/\s+/).map(p => Number(p.split(",")[1]));
+  ok("pass runs left to right", passXs.length >= 100 && passXs[passXs.length - 1] > passXs[0] + 400);
+  const dev = Math.max(...passYs.map(y => Math.abs(y - 125)));
+  const guideYs = [...document.querySelectorAll("#passSvg line")].filter(l => {
+    return Math.abs(Number(l.getAttribute("y1")) - Number(l.getAttribute("y2"))) < 1
+      && Math.abs(Number(l.getAttribute("x2")) - Number(l.getAttribute("x1"))) > 600;
+  }).map(l => Number(l.getAttribute("y1"))).sort((a, b) => a - b);
+  ok("boat guides frame the path", guideYs.length >= 3 && guideYs[0] > 15 && guideYs[0] < 45 && guideYs[guideYs.length - 1] > 200 && guideYs[guideYs.length - 1] < 235);
+  ok("pass shows the pulls", Math.abs(passYs[0] - 125) < 8 && dev > 30 && dev < 70 && dev < (125 - guideYs[0]) - 20);
+  const dots = [...document.querySelectorAll("#passSvg circle[data-kind]")];
+  const kinds = { "55": 0, gate: 0, boat: 0, ski: 0 };
+  dots.forEach(d => { const k = d.getAttribute("data-kind"); if (kinds[k] !== undefined) kinds[k]++; });
+  ok("course buoys on the pass", dots.length === 26 && kinds["55"] === 4 && kinds.gate === 4 && kinds.boat === 12 && kinds.ski === 6);
+  const fills = new Set(dots.map(d => (d.getAttribute("fill") || "").toLowerCase()));
+  ok("buoy colors match the course", fills.has("#3dde6a") && fills.has("#e0232a") && fills.has("#f0d000"));
+  ok("buoy dots stay small", dots.every(d => Number(d.getAttribute("r")) <= 4));
+  const starSki = Math.min(...dots.filter(d => d.getAttribute("data-kind") === "ski").map(d => Number(d.getAttribute("cy"))));
+  const starGate = Math.min(...dots.filter(d => d.getAttribute("data-kind") === "gate").map(d => Number(d.getAttribute("cy"))));
+  ok("ski dots sit outside the gates", starSki + 4 < starGate);
+  const buoy1 = dots.filter(d => d.getAttribute("data-kind") === "ski")
+    .reduce((a, b) => Number(a.getAttribute("cx")) < Number(b.getAttribute("cx")) ? a : b);
+  ok("buoy 1 is on the right", Number(buoy1.getAttribute("cy")) > 125);
+  ok("gates sit just outside the guides", starGate < guideYs[0] - 4);
+  const boats = dots.filter(d => d.getAttribute("data-kind") === "boat");
+  ok("boat guides sit on the guide lines", boats.length === 12 && boats.every(d => {
+    const cy = Number(d.getAttribute("cy"));
+    return Math.abs(cy - guideYs[0]) < 3 || Math.abs(cy - guideYs[guideYs.length - 1]) < 3;
+  }));
+  const stats = document.getElementById("passStats").textContent;
+  ok("pass stats", stats.indexOf("right") >= 0 && stats.indexOf("exit") >= 0 && stats.indexOf("34 mph") >= 0 && stats.indexOf("5/s") >= 0);
+  ok("pass crew", stats.indexOf("driver David") >= 0 && stats.indexOf("skier Beth") >= 0);
+  ok("pass rope", stats.indexOf("rope 15 off") >= 0);
+  ok("pass sample count", Number(poly.getAttribute("data-n")) >= 100 && stats.indexOf(poly.getAttribute("data-n") + " samples") >= 0);
+  document.getElementById("passBack").click();
+  [...document.querySelectorAll("#passRuns button")].find(b => b.textContent.indexOf("09:15:44") === 0).click();
+  const shortDots = document.querySelectorAll("#passSvg circle[data-kind]").length;
+  ok("a short pass omits the exit buoys", shortDots > 0 && shortDots < 26);
+  ok("short pass rope", document.getElementById("passStats").textContent.indexOf("rope 32 off") >= 0);
+  document.getElementById("passBack").click();
+  [...document.querySelectorAll("#passRuns button")].find(b => b.textContent.indexOf("08:00:00") === 0).click();
+  ok("old pass has no rope", document.getElementById("passStats").textContent.indexOf("rope -") >= 0);
+  document.getElementById("passBack").click();
+  [...document.querySelectorAll("#passRuns button")].find(b => b.textContent.indexOf("14:32:01") === 0).click();
+  state.passView = "dates";
+  state.filterDriver = "";
+  state.filterSkier = "";
+  renderPasses();
+  document.getElementById("filterSkier").value = "Beth";
+  document.getElementById("filterSkier").dispatchEvent(new Event("change"));
+  let dateNames = [...document.querySelectorAll("#passDates button")].map(b => b.textContent);
+  ok("skier filter keeps both dates", dateNames[0] === "2026-10-08" && dateNames[1] === "2026-10-05");
+  document.querySelector("#passDates button").click();
+  let runBtns = [...document.querySelectorAll("#passRuns button")];
+  ok("skier filter one run", runBtns.length === 1 && runBtns[0].textContent.indexOf("14:32:01") === 0);
+  document.getElementById("passBack").click();
+  document.getElementById("filterDriver").value = "Sam";
+  document.getElementById("filterDriver").dispatchEvent(new Event("change"));
+  dateNames = [...document.querySelectorAll("#passDates button")].map(b => b.textContent);
+  ok("driver and skier filter", dateNames.length === 1 && dateNames[0] === "2026-10-05");
+  document.querySelector("#passDates button").click();
+  runBtns = [...document.querySelectorAll("#passRuns button")];
+  ok("intersection run", runBtns.length === 1 && runBtns[0].textContent.indexOf("16:02:18") === 0);
+  document.getElementById("filterDriver").value = "";
+  document.getElementById("filterDriver").dispatchEvent(new Event("change"));
+  document.getElementById("filterSkier").value = "";
+  document.getElementById("filterSkier").dispatchEvent(new Event("change"));
+  document.getElementById("passBack").click();
+  document.querySelector("#passDates button").click();
+  ok("unnamed pass on all", [...document.querySelectorAll("#passRuns button")].some(b => b.textContent.indexOf("08:00:00") === 0));
+  document.getElementById("filterDriver").value = "David";
+  document.getElementById("filterDriver").dispatchEvent(new Event("change"));
+  ok("unnamed hidden by driver", ![...document.querySelectorAll("#passRuns button")].some(b => b.textContent.indexOf("08:00:00") === 0));
+  showPage("home");
+  ok("home crew", document.getElementById("btnDriver").textContent === "Driver: David" && document.getElementById("btnSkier").textContent === "Skier: Beth");
+  const latBox = document.getElementById("lblPositionInfo").getBoundingClientRect();
+  const driverBox = document.getElementById("btnDriver").getBoundingClientRect();
+  const skierBox = document.getElementById("btnSkier").getBoundingClientRect();
+  const driverFace = getComputedStyle(document.getElementById("btnDriver"));
+  ok("crew under lat", driverBox.top >= latBox.bottom && driverBox.top - latBox.bottom < 20 && skierBox.top >= driverBox.bottom + 20);
+  ok("crew button face", driverFace.backgroundColor === "rgb(215, 228, 236)" && driverFace.color === "rgb(16, 32, 40)" && driverFace.borderTopWidth === "2px");
+  document.getElementById("btnDriver").click();
+  ok("driver dialog", document.querySelector("#modal h3") && document.querySelector("#modal h3").textContent === "Driver" && !!document.querySelector('#modal [data-user=""]') && !!document.querySelector('#modal [data-user="Sam"]'));
+  document.querySelector('#modal [data-user="Sam"]').click();
+  ok("driver set", document.getElementById("btnDriver").textContent === "Driver: Sam");
+  showPage("settings");
+  showSub("settingsSub", "users");
+  ok("users list", document.getElementById("userList").textContent.indexOf("David") >= 0 && document.getElementById("userList").textContent.indexOf("Beth") >= 0 && document.getElementById("userList").textContent.indexOf("Sam") >= 0);
+  document.getElementById("btnAddUser").click();
+  ok("add user keyboard", document.getElementById("keys").classList.contains("on"));
+  document.getElementById("kbText").value = "Riley";
+  document.querySelector("#kb .ok").click();
+  ok("user rope dialog", document.querySelector("#modal h3") && document.querySelector("#modal h3").textContent === "Riley" && document.getElementById("userRope") && document.getElementById("userRope").value === "15" && document.getElementById("userProgress") && !document.getElementById("userProgress").checked);
+  document.querySelector('#modal [data-act="save"]').click();
+  ok("user added", document.getElementById("userList").textContent.indexOf("Riley") >= 0);
+  document.getElementById("btnAddUser").click();
+  document.getElementById("kbText").value = "david";
+  document.querySelector("#kb .ok").click();
+  ok("duplicate user", document.querySelector(".mbox p") && document.querySelector(".mbox p").textContent.indexOf("already") >= 0);
+  document.querySelector('.mbox [data-btn="OK"]').click();
+  document.getElementById("btnAddUser").click();
+  document.getElementById("kbText").value = "   ";
+  document.querySelector("#kb .ok").click();
+  ok("empty user", document.querySelector(".mbox h3") && document.querySelector(".mbox h3").textContent === "Error");
+  document.querySelector('.mbox [data-btn="OK"]').click();
+  document.querySelector("#kb .cancel").click();
+  document.querySelector('#userList [data-del="Sam"]').click();
+  const warn = document.querySelector(".mbox p") ? document.querySelector(".mbox p").textContent : "";
+  ok("delete warning", warn.indexOf("no longer find them") >= 0 && warn.indexOf("Saved passes") >= 0);
+  document.querySelector('.mbox [data-btn="Cancel"]').click();
+  ok("delete cancelled", document.getElementById("userList").textContent.indexOf("Sam") >= 0 && document.getElementById("btnDriver").textContent === "Driver: Sam");
+  document.querySelector('#userList [data-del="Sam"]').click();
+  document.querySelector('.mbox [data-btn="Delete"]').click();
+  ok("delete removes user", document.getElementById("userList").textContent.indexOf("Sam") < 0);
+  ok("delete clears role", document.getElementById("btnDriver").textContent === "Driver: -");
+  const saved = localStorage.getItem(CREW_KEY) || "";
+  ok("crew saved", saved.indexOf("Riley") >= 0 && saved.indexOf("Sam") < 0);
+  state.users = [];
+  state.driver = "nope";
+  loadCrew();
+  ok("crew reloads", state.users.some(u => u.name === "Riley") && state.users.some(u => u.name === "David") && state.driver === "" && state.skier === "Beth");
+  showPage("settings");
+  showSub("settingsSub", "users");
+  document.querySelector('#userList [data-edit="Beth"]').click();
+  ok("edit user", document.querySelector("#modal h3") && document.querySelector("#modal h3").textContent === "Beth" && !!document.getElementById("userProgress"));
+  document.getElementById("userRope").value = "22";
+  document.getElementById("userProgress").checked = true;
+  document.querySelector('#modal [data-act="save"]').click();
+  ok("user rope saved", document.getElementById("userList").textContent.indexOf("22") >= 0 && document.getElementById("userList").textContent.indexOf("shortens") >= 0);
+  state.useMPH = false;
+  renderUsers();
+  ok("user rope metric", document.getElementById("userList").textContent.indexOf("16") >= 0);
+  state.useMPH = true;
+  renderUsers();
+  const bethSaved = JSON.parse(localStorage.getItem(CREW_KEY) || "{}");
+  const beth = (bethSaved.users || []).find(u => u && u.name === "Beth");
+  ok("user rope persists", !!beth && beth.ropeOff === 22 && beth.progress === true);
+  showPage("home");
+  document.getElementById("btnSkier").click();
+  document.querySelector('#modal [data-user="David"]').click();
+  ok("skier without progress", document.querySelector("#ropeLine .mark.on .cap").textContent === "15");
+  document.getElementById("endPass").click();
+  ok("no shorten", document.querySelector("#ropeLine .mark.on .cap").textContent === "15");
+  document.getElementById("btnSkier").click();
+  document.querySelector('#modal [data-user="Beth"]').click();
+  ok("skier sets rope", document.querySelector("#ropeLine .mark.on .cap").textContent === "22");
+  document.getElementById("endPass").click();
+  ok("rope shortens", document.querySelector("#ropeLine .mark.on .cap").textContent === "25");
+  ok("early pass stays", finishPass("speed") === false && document.querySelector("#ropeLine .mark.on .cap").textContent === "25");
+  const ropeCap = () => document.querySelector("#ropeLine .mark.on .cap").textContent;
+  ok("session shorten on", document.getElementById("swShorten").classList.contains("on") && getComputedStyle(document.getElementById("ropeShorten")).visibility === "visible");
+  document.getElementById("swShorten").click();
+  const bethNow = state.users.find(u => u.name === "Beth");
+  ok("session override holds", !document.getElementById("swShorten").classList.contains("on") && ropeCap() === "25");
+  ok("user preference unchanged", !!bethNow && bethNow.progress === true && bethNow.ropeOff === 22);
+  document.getElementById("endPass").click();
+  ok("override skips shorten", ropeCap() === "25");
+  document.getElementById("swShorten").click();
+  document.getElementById("endPass").click();
+  ok("override shortens", ropeCap() === "28");
+  applySetGap(state.lastPassAt + 14 * 60 * 1000);
+  ok("set holds", ropeCap() === "28");
+  state.passOpen = true;
+  applySetGap(state.lastPassAt + 15 * 60 * 1000);
+  ok("set waits mid pass", ropeCap() === "28");
+  state.passOpen = false;
+  applySetGap(state.lastPassAt + 15 * 60 * 1000);
+  ok("set reset rope", ropeCap() === "22" && document.getElementById("swShorten").classList.contains("on"));
+  document.querySelector('#ropeLine [data-rope="32"]').click();
+  applySetGap(Date.now() + 60 * 60 * 1000);
+  ok("set waits for a pass", ropeCap() === "32");
+  document.getElementById("swShorten").click();
+  document.getElementById("endPass").click();
+  state.setResetMin = 0;
+  applySetGap(state.lastPassAt + 60 * 60 * 1000);
+  ok("set reset off", ropeCap() === "32" && !document.getElementById("swShorten").classList.contains("on"));
+  state.setResetMin = 15;
+  saveSet();
+  renderSettings();
+  showPage("settings");
+  showSub("settingsSub", "config");
+  const setCal = document.getElementById("btnCal").getBoundingClientRect();
+  const setPage = document.querySelector('[data-page="settings"]').getBoundingClientRect();
+  ok("set reset default", document.getElementById("sliderSetReset").value === "3" && document.getElementById("lblSetReset").textContent === "15 min" && setCal.bottom <= setPage.bottom + 1);
+  document.getElementById("sliderSetReset").value = "0";
+  document.getElementById("sliderSetReset").dispatchEvent(new Event("input"));
+  ok("set reset off label", document.getElementById("lblSetReset").textContent === "Off" && state.setResetMin === 0);
+  document.getElementById("sliderSetReset").value = "3";
+  document.getElementById("sliderSetReset").dispatchEvent(new Event("input"));
+  showPage("home");
+  document.getElementById("btnSkier").click();
+  document.querySelector('#modal [data-user=""]').click();
+  ok("shorten hidden", getComputedStyle(document.getElementById("ropeShorten")).visibility === "hidden" && ropeCap() === "32");
+  state.ropeOff = 41;
+  renderRope();
+  ok("shortest stays", finishPass("exit") === false && ropeIndex(state.ropeOff) === 8);
+  document.getElementById("btnDriver").click();
+  document.querySelector('#modal [data-user="David"]').click();
+  ok("driver leaves rope", ropeIndex(state.ropeOff) === 8);
+  localStorage.setItem(CREW_KEY, JSON.stringify({ users: ["Ada"], driver: "", skier: "" }));
+  loadCrew();
+  ok("old user names", state.users.some(u => u.name === "Ada" && u.ropeOff === 15 && u.progress === false));
+  state.ropeOff = 15;
+  saveRope();
+  renderRope();
+  ok("waypoints label", document.querySelector("[data-sub='waypts']").textContent === "Waypoints");
+  water();
+  selectCourse("Cove Practice");
+  state.retrievals.forEach(x => x.active = x.name === "Dock");
+  state.waypoints.forEach(x => x.active = x.name === "Staging");
+  savePicks();
+  water();
+  loadPicks();
+  renderAll();
+  const picked = document.getElementById("lblCourseInfo").textContent;
+  ok("course persists", picked.indexOf("Cove Practice") >= 0);
+  ok("retrieval persists", picked.indexOf("Retrieval: Dock") >= 0);
+  ok("waypoint persists", !!state.waypoints.find(w => w.name === "Staging" && w.active));
+  showPage("home");
+  const ropes = [...document.querySelectorAll("#ropeLine .mark")];
+  const ropeCaps = () => [...document.querySelectorAll("#ropeLine .cap")].map(c => c.textContent).join(",");
+  ok("rope line", ropes.length === 9 && ropeCaps() === "15,22,25,28,32,35,38,39.5,41" && document.querySelector(".rope-label").textContent === "Rope Length (off)");
+  ok("rope default", ropes.find(b => b.classList.contains("on")).querySelector(".cap").textContent === "15");
+  const ropeColors = ropes.map(b => getComputedStyle(b.querySelector(".seg")).backgroundColor);
+  ok("rope colors", ropeColors[0] === "rgb(224, 35, 42)" && ropeColors[1] === "rgb(255, 122, 0)" && ropeColors[3] === "rgb(240, 208, 0)" && ropeColors[4] === "rgb(61, 222, 106)" && ropeColors[5] === "rgb(47, 107, 255)" && ropeColors[6] === "rgb(155, 77, 255)" && ropeColors[7] === "rgb(244, 247, 250)" && ropeColors[8] === "rgb(255, 79, 154)");
+  const split = ropes[2].querySelectorAll(".seg.split b");
+  ok("rope orange white", split.length === 2 && getComputedStyle(split[0]).backgroundColor === "rgb(255, 122, 0)" && getComputedStyle(split[1]).backgroundColor === "rgb(244, 247, 250)");
+  const ropeBox = document.getElementById("ropeBox").getBoundingClientRect();
+  const skierRope = document.getElementById("btnSkier").getBoundingClientRect();
+  const driveRope = document.getElementById("btnDrive").getBoundingClientRect();
+  ok("rope under skier", ropeBox.top >= skierRope.bottom - 1 && ropeBox.bottom <= driveRope.top + 1 && ropeBox.width > 700);
+  const shortenGap = document.getElementById("swShorten").getBoundingClientRect();
+  const lineGap = document.getElementById("ropeLine").getBoundingClientRect();
+  ok("rope row gap", lineGap.top - shortenGap.bottom >= 24 && lineGap.top - shortenGap.bottom <= 40);
+  ropes.find(b => b.dataset.rope === "32").click();
+  ok("rope selected", document.querySelector("#ropeLine .mark.on .cap").textContent === "32");
+  state.ropeOff = 15;
+  loadRope();
+  renderRope();
+  ok("rope persists", document.querySelector("#ropeLine .mark.on .cap").textContent === "32");
+  state.useMPH = false;
+  renderRope();
+  ok("rope metric", ropeCaps() === "18.25,16,15,14.25,13,12,11.25,10.75,10.25" && document.querySelector(".rope-label").textContent === "Rope Length (m)");
+  state.useMPH = true;
+  renderRope();
+  document.getElementById("drive").classList.add("on");
+  paintDrive();
+  const speedEl = document.getElementById("lblDriveSpeed");
+  const glassBox = document.getElementById("glass").getBoundingClientRect();
+  const speedBox = speedEl.getBoundingClientRect();
+  ok("drive speed", speedEl.textContent === "32.4 mph");
+  ok("drive speed grey", getComputedStyle(speedEl).color === "rgb(138, 160, 172)" && getComputedStyle(speedEl).fontSize === "44px");
+  ok("drive speed center", Math.abs((speedBox.left + speedBox.right) / 2 - (glassBox.left + glassBox.right) / 2) < 8 && speedBox.top - glassBox.top < 16);
+  const ropeEl = document.getElementById("lblDriveRope");
+  const driveRopeBox = ropeEl.getBoundingClientRect();
+  ok("drive rope", ropeEl.textContent === "32 off");
+  ok("drive rope size", getComputedStyle(ropeEl).color === "rgb(138, 160, 172)" && getComputedStyle(ropeEl).fontSize === "36px");
+  ok("drive rope under", driveRopeBox.top >= speedBox.bottom - 2 && driveRopeBox.top - speedBox.bottom <= 6 && driveRopeBox.bottom < glassBox.top + 108 && Math.abs((driveRopeBox.left + driveRopeBox.right) / 2 - (glassBox.left + glassBox.right) / 2) < 8);
+  state.useMPH = false;
+  paintDrive();
+  ok("drive speed metric", speedEl.textContent === "52.2 kph");
+  ok("drive rope metric", document.getElementById("lblDriveRope").textContent === "13 m");
+  state.useMPH = true;
+  document.getElementById("drive").classList.remove("on");
+  document.getElementById("selftest").hidden = false;
+  document.getElementById("selftest").textContent = out.join("\n");
+}
+</script>
+</body>
+</html>

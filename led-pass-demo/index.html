@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LED pass walkthrough</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #10141c; color: #e6e8ee;
+    font: 14px/1.4 "Avenir Next", "Helvetica Neue", sans-serif;
+  }
+  main { max-width: 1040px; margin: 0 auto; padding: 18px 16px 40px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .lead { margin: 0 0 12px; color: #9aa3b5; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 8px 0; }
+  label { display: flex; align-items: center; gap: 6px; }
+  button, select, input[type="range"] { font: inherit; }
+  button {
+    background: #243044; color: #fff; border: 0; border-radius: 6px;
+    padding: 6px 10px; cursor: pointer;
+  }
+  button.primary { background: #0b6bcb; }
+  button.on { outline: 2px solid #8ab4ff; }
+  canvas { display: block; width: 100%; background: #0c1018; border-radius: 8px; }
+  #cue {
+    margin: 10px 0; padding: 10px 12px; background: #1a2030; border-radius: 8px;
+  }
+  #cue b { color: #fff; }
+  #cue p { margin: 4px 0 0; color: #c5ccda; }
+  .meta { color: #8b93a3; font-size: 12px; }
+  .bar { position: relative; height: 14px; background: #1c2230; border-radius: 7px; margin: 8px 0; cursor: pointer; }
+  .bar i { position: absolute; top: 0; bottom: 0; }
+  .bar .playhead { position: absolute; top: -3px; width: 2px; height: 20px; background: #fff; }
+  .notes { color: #8b93a3; font-size: 13px; }
+  #selftest { white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>LED pass walkthrough</h1>
+  <p class="lead">One slalom pass on the hull strips. Above 18 mph, both strips flash red twice a second until the virtual course settles or the boat reaches a plotted course. Next cue steps through the schedule. The boat lengths are assumptions until they are measured.</p>
+  <div class="row">
+    <button id="prev" type="button">Back</button>
+    <button id="next" class="primary" type="button">Next cue</button>
+    <button id="play" type="button">Play</button>
+    <label>Rate
+      <select id="rate">
+        <option value="1">1×</option>
+        <option value="4" selected>4×</option>
+        <option value="8">8×</option>
+      </select>
+    </label>
+    <label><input type="radio" name="mode" value="virtual" checked> Virtual</label>
+    <label><input type="radio" name="mode" value="marked"> Marked</label>
+  </div>
+  <div class="row">
+    <label>Line
+      <select id="rope"></select>
+    </label>
+    <label>Boat speed <input id="mph" type="range" min="18" max="36" value="30" step="1"> <span id="mphOut">30 mph</span></label>
+    <label>Bow to pylon <input id="bow" type="range" min="2" max="6" value="3.5" step="0.1"> <span id="bowOut">3.5 m</span></label>
+    <label>Pylon to transom <input id="stern" type="range" min="1.5" max="5" value="3" step="0.1"> <span id="sternOut">3.0 m</span></label>
+  </div>
+  <div id="cue"><b id="cueTitle">—</b><p id="cueBody"></p><div class="meta" id="cueMeta"></div></div>
+  <div class="bar" id="bar"></div>
+  <input id="scrub" type="range" min="-120" max="300" value="-110" step="0.1" style="width:100%">
+  <canvas id="course" width="1000" height="220"></canvas>
+  <canvas id="boat" width="1000" height="300" style="margin-top:8px"></canvas>
+  <p class="notes" id="assume"></p>
+  <pre id="selftest" hidden></pre>
+</main>
+<script>
+const ROPES = [
+  ["15 off", 18.25], ["22 off", 16], ["25 off", 15.24], ["28 off", 14.25],
+  ["32 off", 13], ["35 off", 12], ["38 off", 11.25], ["39 off", 10.75], ["41 off", 10.25]
+];
+const BALLS = [27, 68, 109, 150, 191, 232];
+const EXIT = 259;
+const LED_M = 60;
+const HALF = 96 * 0.0254 / 2;
+const FWD = 3.5 * 0.3048;
+const LOCK = -85;
+
+const ui = {
+  mode: "virtual",
+  rope: 18.25,
+  ropeName: "15 off",
+  mph: 30,
+  bow: 3.5,
+  stern: 3.0,
+  sBow: -110,
+  playing: false,
+  rate: 4,
+  chapter: 0
+};
+let table = [];
+let flashOn = true;
+let last = performance.now();
+
+const ropeSel = document.getElementById("rope");
+ROPES.forEach(([name, m]) => {
+  const o = document.createElement("option");
+  o.value = String(m);
+  o.textContent = name;
+  ropeSel.appendChild(o);
+});
+
+function lateral(s) {
+  if (s <= 0 || s >= EXIT) return 0;
+  if (s < 27) return 11.5 * (s / 27);
+  if (s <= 232) {
+    const i = Math.min(4, Math.floor((s - 27) / 41));
+    const d = s - BALLS[i];
+    const sign = i % 2 === 0 ? 1 : -1;
+    if (d <= 20.5) return sign * 11.5 * (1 - d / 20.5);
+    return -sign * 11.5 * ((d - 20.5) / 20.5);
+  }
+  return -11.5 * (1 - (s - 232) / 27);
+}
+function lagAt(s) {
+  const y = Math.abs(lateral(s));
+  return ui.rope > y ? Math.sqrt(ui.rope * ui.rope - y * y) : 0;
+}
+function rebuild() {
+  table = [];
+  let maxB = -1e9;
+  for (let s = -160; s <= 290; s += 0.25) {
+    let bow = s + lagAt(s) + ui.bow;
+    if (bow < maxB) bow = maxB;
+    else maxB = bow;
+    table.push({ s, bow, y: lateral(s) });
+  }
+}
+function skierAt(bow) {
+  let lo = 0, hi = table.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (table[mid].bow <= bow) lo = mid;
+    else hi = mid - 1;
+  }
+  return table[lo];
+}
+function bowAt(s) {
+  let best = table[0], bestD = 1e9;
+  for (const row of table) {
+    const d = Math.abs(row.s - s);
+    if (d < bestD) { best = row; bestD = d; }
+  }
+  return best.bow;
+}
+function mps() { return ui.mph * 0.44704; }
+function tickAft() {
+  if (ui.rope <= 11.5) return 0;
+  const behind = Math.sqrt(ui.rope * ui.rope - 11.5 * 11.5);
+  return HALF * behind / 11.5;
+}
+function counts() {
+  const nSide = Math.max(8, Math.round((FWD + ui.stern) * LED_M));
+  const nStern = Math.max(4, Math.round(HALF * LED_M));
+  let tick = Math.round((FWD + tickAft()) * LED_M);
+  tick = Math.max(0, Math.min(nSide - 3, tick));
+  return { nSide, nStern, n: nSide + nStern, tick };
+}
+
+function phaseAt(bow) {
+  const sk = skierAt(bow);
+  const darkEnd = -55 + mps() * 1;
+  const ballSide = i => (i % 2 === 0 ? "starboard" : "port");
+  if (bow < LOCK) {
+    if (ui.mode === "virtual") {
+      return { id: "unsettled", title: "Not settled",
+        body: "Above 18 mph the whole strip flashes red twice a second until speed has stayed inside 1 mph and heading inside 5° for 3 seconds. Below 18 mph the strips stay off.",
+        paint: "flash" };
+    }
+    return { id: "approach", title: "Marked course, not armed",
+      body: "Above 18 mph the whole strip flashes red twice a second until the bow is 30 m short of the plotted 55s. Fixed and hybrid both use this arm. Below 18 mph the strips stay off.",
+      paint: "flash" };
+  }
+  if (bow < -55) {
+    const p = (bow - LOCK) / 30;
+    return { id: "fiftyfive", title: "55 m buoys", p,
+      body: "The pass is armed. The forward 3 LEDs are green. The fill grows from the stern center toward them and is complete when the bow reaches the 55s. That is the skier’s cue to start the pull-out.",
+      paint: "approach", color: "#00cc44" };
+  }
+  if (bow < darkEnd) {
+    return { id: "dark", title: "Dark after the 55s",
+      body: "The strips are off for one second after the bow passes the 55s.",
+      paint: "off" };
+  }
+  if (bow < -30) {
+    return { id: "between", title: "Off, before the gate approach",
+      body: "The gate fill starts when the bow is 30 m short of the entry gates.",
+      paint: "off" };
+  }
+  if (bow < 0) {
+    const p = (bow + 30) / 30;
+    return { id: "gate-bow", title: "Entry gates, bow", p,
+      body: "Same shape as the 55s, in red. This cue is the bow reaching the gates, not the skier.",
+      paint: "approach", color: "#ff2a2a" };
+  }
+  if (sk.s < 0) {
+    const start = skierAt(0).s;
+    const p = start === 0 ? 1 : (sk.s - start) / (0 - start);
+    return { id: "skier-gate", title: "Entry gates, skier", p: Math.min(1, Math.max(0, p)),
+      body: "The bow has passed the gates. The fill reverses: from the forward 3 LEDs back to the stern, full when the skier reaches the gates, then off.",
+      paint: "front-back", color: "#ff2a2a" };
+  }
+  for (let i = 0; i < 6; i++) {
+    const startS = i === 0 ? 0 : BALLS[i] - 30;
+    const endS = BALLS[i];
+    const endBow = bowAt(endS);
+    const flashEnd = endBow + mps() * 0.25;
+    if (sk.s < startS) {
+      return { id: "between-balls", title: "Dark between balls",
+        body: "The next ball fill starts when the skier is 30 m short of that ball. Ball 1 starts as soon as the skier is through the gates.",
+        paint: "off" };
+    }
+    if (bow < endBow || sk.s < endS) {
+      const p = (sk.s - startS) / (endS - startS);
+      return { id: "ball", title: "Ball " + (i + 1), p: Math.min(1, Math.max(0, p)),
+        side: ballSide(i),
+        body: "Three red LEDs mark the rope angle on the " + ballSide(i) + " side. The fill grows from the stern up to that tick and meets it as the skier reaches the ball.",
+        paint: "to-tick", color: "#ff2a2a" };
+    }
+    if (bow < flashEnd) {
+      return { id: "ball-flash", title: "Ball " + (i + 1) + " flash",
+        body: "The whole strip flashes red for a quarter second, then goes dark.",
+        paint: "solid", color: "#ff2a2a" };
+    }
+  }
+  const exitStartBow = bowAt(232) + mps() * 0.25;
+  const exitEndBow = bowAt(EXIT);
+  if (bow < exitEndBow) {
+    const p = (bow - exitStartBow) / Math.max(0.1, exitEndBow - exitStartBow);
+    return { id: "exit", title: "Exit gates", p: Math.min(1, Math.max(0, p)),
+      body: "Right after ball 6, both sides fill from the middle of the strip back to the stern. The fill is complete when the skier reaches the exit gates.",
+      paint: "exit", color: "#ff2a2a" };
+  }
+  return { id: "done", title: "Pass complete",
+    body: "The skier is through the exit gates. A 20° turn or a 20% speed drop would have ended the run earlier.",
+    paint: "off" };
+}
+
+function pixelOn(ph, i, n, tick) {
+  if (ph.paint === "off") return false;
+  if (ph.paint === "flash") return flashOn;
+  if (ph.paint === "solid") return true;
+  if (ph.paint === "approach" || ph.paint === "to-tick") {
+    const anchor = ph.paint === "approach" ? 0 : tick;
+    if (ph.paint === "approach" && i < 3) return true;
+    if (ph.paint === "to-tick" && i >= tick && i < tick + 3) return true;
+    const from = anchor + (ph.paint === "approach" ? 3 : 3);
+    const span = n - (anchor + 3);
+    const lit = Math.round(Math.min(1, Math.max(0, ph.p)) * span);
+    return i >= n - lit && i >= anchor + 3;
+  }
+  if (ph.paint === "front-back") {
+    if (i < 3) return true;
+    return i < Math.round(Math.min(1, ph.p) * n);
+  }
+  if (ph.paint === "exit") {
+    const mid = Math.floor(n / 2);
+    const lit = Math.round(Math.min(1, ph.p) * (n - mid));
+    return i >= mid && i < mid + Math.max(lit, ph.p > 0 ? 1 : 0);
+  }
+  return false;
+}
+
+function chapters() {
+  const list = [
+    { s: -110, title: "Not settled" },
+    { s: LOCK, title: "Lock, 55 fill starts" },
+    { s: -70, title: "Mid 55" },
+    { s: -55, title: "Bow at the 55s" },
+    { s: -55 + mps() * 0.4, title: "Dark" },
+    { s: -15, title: "Gate approach" },
+    { s: 0, title: "Bow at the gates" },
+    { s: bowAt(-0.2), title: "Skier closing the gates" },
+    { s: bowAt(13.5), title: "Ball 1" },
+    { s: bowAt(27) + mps() * 0.1, title: "Ball 1 flash" },
+    { s: bowAt(68 - 15), title: "Ball 2" },
+    { s: bowAt(109 - 15), title: "Ball 3" },
+    { s: bowAt(232 - 15), title: "Ball 6" },
+    { s: (bowAt(232) + mps() * 0.25 + bowAt(EXIT)) / 2, title: "Exit" },
+    { s: bowAt(EXIT) + 2, title: "Pass complete" }
+  ];
+  return list;
+}
+
+function render() {
+  const { nSide, nStern, n, tick } = counts();
+  const ph = phaseAt(ui.sBow);
+  const sk = skierAt(ui.sBow);
+  document.getElementById("cueTitle").textContent = ph.title;
+  document.getElementById("cueBody").textContent = ph.body;
+  const aft = tickAft();
+  document.getElementById("cueMeta").textContent =
+    `Bow ${ui.sBow.toFixed(1)} m on course  ·  skier ${sk.s.toFixed(1)} m, ${sk.y.toFixed(1)} m off center  ·  ` +
+    `aim tick ${aft.toFixed(2)} m aft of the pylon  ·  ${ui.ropeName}`;
+  document.getElementById("assume").textContent =
+    "Assumed until measured: bow-to-pylon " + ui.bow.toFixed(1) + " m, pylon-to-transom " + ui.stern.toFixed(1) +
+    " m. 55s and gates light both sides. Balls light the turn side only, ball 1 on starboard. " +
+    "Above 18 mph the strips flash red twice a second until the pass arms. Boat speed sets the 1 s dark and the quarter-second ball flash. " +
+    (aft > ui.stern ? "The aim tick is aft of the transom at this pylon-to-transom setting." : "");
+
+  drawBar(ph);
+  drawCourse(sk);
+  drawBoat(ph, nSide, nStern, n, tick);
+  document.getElementById("scrub").value = String(ui.sBow);
+}
+
+function drawBar() {
+  const bar = document.getElementById("bar");
+  const min = -120, max = 300, span = max - min;
+  const marks = [
+    [LOCK, -55, "#00cc44"],
+    [-55, -55 + mps(), "#333"],
+    [-30, 0, "#992222"],
+    [0, bowAt(0), "#cc4444"],
+    [bowAt(0), bowAt(27), "#ff2a2a"]
+  ];
+  bar.innerHTML = "";
+  marks.forEach(([a, b, c]) => {
+    const i = document.createElement("i");
+    i.style.left = ((a - min) / span * 100) + "%";
+    i.style.width = ((b - a) / span * 100) + "%";
+    i.style.background = c;
+    bar.appendChild(i);
+  });
+  const head = document.createElement("i");
+  head.className = "playhead";
+  head.style.left = ((ui.sBow - min) / span * 100) + "%";
+  bar.appendChild(head);
+}
+
+function drawCourse(sk) {
+  const c = document.getElementById("course");
+  const g = c.getContext("2d");
+  const w = c.width, h = c.height;
+  g.clearRect(0, 0, w, h);
+  const windowM = 90;
+  const xOf = s => (s - (ui.sBow - windowM * 0.35)) / windowM * w;
+  const cy = h * 0.48;
+  g.strokeStyle = "#2a3344";
+  g.lineWidth = 2;
+  g.beginPath(); g.moveTo(0, cy); g.lineTo(w, cy); g.stroke();
+  function buoy(s, y, color) {
+    const x = xOf(s);
+    if (x < -10 || x > w + 10) return;
+    g.fillStyle = color;
+    g.beginPath();
+    g.arc(x, cy + y * 7, 6, 0, Math.PI * 2);
+    g.fill();
+  }
+  buoy(-55, 1.15 * 4, "#19c37d");
+  buoy(-55, -1.15 * 4, "#19c37d");
+  buoy(0, 1.25 * 4, "#ff3b3b");
+  buoy(0, -1.25 * 4, "#ff3b3b");
+  buoy(EXIT, 1.25 * 4, "#ff3b3b");
+  buoy(EXIT, -1.25 * 4, "#ff3b3b");
+  BALLS.forEach((s, i) => buoy(s, (i % 2 === 0 ? 1 : -1) * 11.5, "#ff5a3c"));
+  const bx = xOf(ui.sBow);
+  g.fillStyle = "#d7dde8";
+  g.beginPath();
+  g.moveTo(bx + 16, cy);
+  g.lineTo(bx - 18, cy - 10);
+  g.lineTo(bx - 18, cy + 10);
+  g.fill();
+  const sx = xOf(sk.s);
+  g.fillStyle = "#f5d90a";
+  g.beginPath();
+  g.arc(sx, cy + sk.y * 7, 5, 0, Math.PI * 2);
+  g.fill();
+  g.fillStyle = "#8b93a3";
+  g.font = "12px sans-serif";
+  g.fillText("Bow", bx - 10, cy - 16);
+  g.fillText("Skier", sx + 8, cy + sk.y * 7 - 8);
+}
+
+function drawBoat(ph, nSide, nStern, n, tick) {
+  const c = document.getElementById("boat");
+  const g = c.getContext("2d");
+  const w = c.width, h = c.height;
+  g.clearRect(0, 0, w, h);
+  const totalM = ui.bow + ui.stern;
+  const scale = 760 / totalM;
+  const sternX = 80;
+  const bowX = sternX + totalM * scale;
+  const cy = h / 2;
+  const halfPx = Math.min(70, HALF * scale);
+  const pylonX = sternX + ui.stern * scale;
+  g.fillStyle = "#1c2433";
+  g.beginPath();
+  g.moveTo(bowX, cy);
+  g.lineTo(pylonX, cy - halfPx);
+  g.lineTo(sternX, cy - halfPx);
+  g.lineTo(sternX, cy + halfPx);
+  g.lineTo(pylonX, cy + halfPx);
+  g.closePath();
+  g.fill();
+  g.fillStyle = "#8ab4ff";
+  g.fillRect(pylonX - 2, cy - 8, 4, 16);
+  function pt(side, i) {
+    const ySign = side === "port" ? -1 : 1;
+    if (i < nSide) {
+      const t = nSide === 1 ? 0 : i / (nSide - 1);
+      const x0 = pylonX + FWD * scale;
+      return [x0 + (sternX - x0) * t, cy + ySign * halfPx];
+    }
+    const t = (i - nSide + 1) / nStern;
+    return [sternX, cy + ySign * halfPx * (1 - t)];
+  }
+  ["port", "starboard"].forEach(side => {
+    for (let i = 0; i < n; i++) {
+      const active = ph.side && ph.side !== side ? false : pixelOn(ph, i, n, tick);
+      const [x, y] = pt(side, i);
+      g.fillStyle = active ? (ph.color || "#ff2a2a") : "#2a313f";
+      if (ph.paint === "flash" && active) g.fillStyle = "#ff2a2a";
+      g.beginPath();
+      g.arc(x, y, active ? 3.2 : 1.6, 0, Math.PI * 2);
+      g.fill();
+    }
+  });
+  g.fillStyle = "#8b93a3";
+  g.font = "12px sans-serif";
+  g.fillText("BOW", bowX - 20, cy - halfPx - 8);
+  g.fillText("PYLON", pylonX - 16, cy + halfPx + 28);
+  g.fillText("STERN", sternX - 10, cy + halfPx + 28);
+}
+
+function jump(listIndex) {
+  const list = chapters();
+  ui.chapter = Math.max(0, Math.min(list.length - 1, listIndex));
+  ui.sBow = list[ui.chapter].s;
+  ui.playing = false;
+  document.getElementById("play").textContent = "Play";
+}
+
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  flashOn = Math.floor(now / 250) % 2 === 0;
+  if (ui.playing) {
+    ui.sBow += mps() * dt * ui.rate;
+    if (ui.sBow > 300) { ui.sBow = 300; ui.playing = false; document.getElementById("play").textContent = "Play"; }
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+
+document.getElementById("next").onclick = () => jump(ui.chapter + 1);
+document.getElementById("prev").onclick = () => jump(ui.chapter - 1);
+document.getElementById("play").onclick = () => {
+  ui.playing = !ui.playing;
+  document.getElementById("play").textContent = ui.playing ? "Pause" : "Play";
+};
+document.getElementById("rate").onchange = e => { ui.rate = Number(e.target.value); };
+document.getElementById("scrub").oninput = e => {
+  ui.playing = false;
+  document.getElementById("play").textContent = "Play";
+  ui.sBow = Number(e.target.value);
+};
+document.getElementById("bar").onclick = e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  ui.sBow = -120 + (e.clientX - r.left) / r.width * 420;
+  ui.playing = false;
+};
+ropeSel.onchange = e => {
+  ui.rope = Number(e.target.value);
+  ui.ropeName = ropeSel.selectedOptions[0].textContent;
+  rebuild();
+};
+document.querySelectorAll('input[name="mode"]').forEach(el => {
+  el.onchange = () => { ui.mode = el.value; };
+});
+document.getElementById("mph").oninput = e => {
+  ui.mph = Number(e.target.value);
+  document.getElementById("mphOut").textContent = ui.mph + " mph";
+};
+document.getElementById("bow").oninput = e => {
+  ui.bow = Number(e.target.value);
+  document.getElementById("bowOut").textContent = ui.bow.toFixed(1) + " m";
+  rebuild();
+};
+document.getElementById("stern").oninput = e => {
+  ui.stern = Number(e.target.value);
+  document.getElementById("sternOut").textContent = ui.stern.toFixed(1) + " m";
+};
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowRight") jump(ui.chapter + 1);
+  if (e.key === "ArrowLeft") jump(ui.chapter - 1);
+  if (e.key === " ") { e.preventDefault(); document.getElementById("play").click(); }
+});
+
+rebuild();
+const q = new URLSearchParams(location.search);
+if (q.get("mode") === "marked") {
+  ui.mode = "marked";
+  document.querySelector('input[value="marked"]').checked = true;
+}
+if (q.get("s")) ui.sBow = Number(q.get("s"));
+if (q.get("flash") === "1") flashOn = true;
+requestAnimationFrame(loop);
+
+if (q.get("selftest") === "1") {
+  const out = [];
+  const ok = (name, cond) => out.push((cond ? "PASS " : "FAIL ") + name);
+  ui.sBow = -100;
+  ok("unsettled", phaseAt(-100).id === "unsettled" && phaseAt(-100).paint === "flash");
+  ok("fiftyfive", phaseAt(-70).id === "fiftyfive");
+  ok("skier behind bow", skierAt(-70).s < -70);
+  const ph55 = phaseAt(-70);
+  const { n, tick } = counts();
+  ok("forward green", pixelOn(ph55, 0, n, tick) && ph55.color === "#00cc44");
+  ok("stern filling", pixelOn(ph55, n - 1, n, tick));
+  flashOn = true;
+  ok("red flash lights the stern", pixelOn(phaseAt(-100), n - 1, n, tick));
+  flashOn = false;
+  ok("red flash off half", !pixelOn(phaseAt(-100), 0, n, tick));
+  flashOn = true;
+  ok("dark", phaseAt(-50).id === "dark");
+  ok("gate", phaseAt(-15).id === "gate-bow");
+  const b1 = bowAt(13.5);
+  const p1 = phaseAt(b1);
+  ok("ball1 starboard", p1.id === "ball" && p1.side === "starboard");
+  const b2 = bowAt(68 - 15);
+  const p2 = phaseAt(b2);
+  ok("ball2 port", p2.id === "ball" && p2.side === "port");
+  const ex = (bowAt(232) + mps() * 0.25 + bowAt(259)) / 2;
+  ok("exit", phaseAt(ex).id === "exit");
+  ui.mode = "marked";
+  ok("marked flashes red", phaseAt(-100).id === "approach" && phaseAt(-100).paint === "flash");
+  ok("marked fill after arm", phaseAt(-70).id === "fiftyfive");
+  ui.mode = "virtual";
+  const aft = tickAft();
+  ok("tick aft of pylon", aft > 1.4 && aft < 1.6);
+  document.getElementById("selftest").hidden = false;
+  document.getElementById("selftest").textContent = out.join("\n");
+}
+</script>
+</body>
+</html>
